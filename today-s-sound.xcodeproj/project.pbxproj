@@ -14,7 +14,7 @@
 		259FC9B72E8922E6001152B9 /* Exceptions for "today-s-sound" folder in "today-s-sound" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				"today-s-sound/Info.plist",
 			);
 			target = 259FC9662E890D7F001152B9 /* today-s-sound */;
 		};
