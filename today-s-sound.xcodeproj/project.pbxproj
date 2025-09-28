@@ -10,9 +10,22 @@
 		259FC9672E890D7F001152B9 /* today-s-sound.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "today-s-sound.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		259FCA0C2E89895B001152B9 /* Exceptions for "today-s-sound" folder in "today-s-sound" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 259FC9662E890D7F001152B9 /* today-s-sound */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		259FC9852E890F54001152B9 /* today-s-sound */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				259FCA0C2E89895B001152B9 /* Exceptions for "today-s-sound" folder in "today-s-sound" target */,
+			);
 			path = "today-s-sound";
 			sourceTree = "<group>";
 		};
