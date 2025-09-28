@@ -1,0 +1,4 @@
+--indent 2
+--swiftversion 5.9
+--stripunusedargs closure-only
+--disable trailingCommas

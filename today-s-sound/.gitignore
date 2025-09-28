@@ -1,0 +1,15 @@
+DerivedData/
+build/
+*.xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+.build/
+Package.resolved
+Pods/
+Carthage/
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/
+.DS_Store
+xcuserdata/
