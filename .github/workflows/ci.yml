@@ -1,7 +1,7 @@
 name: iOS CI (today-s-sound)
 
 on:
-  pull_request:
+  pull_request
 
 jobs:
   lint-build-test:
