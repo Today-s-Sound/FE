@@ -13,13 +13,7 @@ struct NotificationListView: View {
 
                 VStack(spacing: 0) {
                     Spacer()
-                    // 타이틀
-                    Text("최근 알림")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(Color.text(colorScheme))
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 24)
-                        .padding(.bottom, 16)
+                    ScreenSectionTitle(text: "최근 알림", colorScheme: colorScheme)
 
                     ScrollView {
                         VStack(spacing: 16) {
