@@ -8,7 +8,7 @@ struct NotificationListView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                (colorScheme == .dark ? Color.black : Color(white: 0.95))
+                Color.background(colorScheme)
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
@@ -16,7 +16,7 @@ struct NotificationListView: View {
                     // 타이틀
                     Text("최근 알림")
                         .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .foregroundColor(Color.text(colorScheme))
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 24)
                         .padding(.bottom, 16)
@@ -40,15 +40,13 @@ struct NotificationListView: View {
 struct AlertCardView: View {
     let alert: Alert
     let colorScheme: ColorScheme
-    let customPink = Color(red: 1.0, green: 0.298, blue: 0.729, opacity: 1.0)
-    let customGreen = Color(red: 0 / 255, green: 223 / 255, blue: 119 / 255)
     
     private var cardColor: Color {
-        alert.isUrgent ? customPink : customGreen
+        alert.isUrgent ? .urgentPink : .primaryGreen
     }
     
     private var buttonBackgroundColor: Color {
-        colorScheme == .dark ? .black : .white
+        Color.buttonBackground(colorScheme)
     }
 
     var body: some View {
@@ -81,12 +79,12 @@ struct AlertCardView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "speaker.wave.2.fill")
                         .font(.system(size: 18))
-                        .foregroundStyle(colorScheme == .dark ? .white : .black)
+                        .foregroundStyle(Color.text(colorScheme))
                     Text("음성으로 듣기")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .foregroundColor(Color.text(colorScheme))
                 }
-                .foregroundColor(colorScheme == .dark ? .black : .white)
+                .foregroundColor(Color.buttonBackground(colorScheme))
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 14)
                 .background(
@@ -99,7 +97,7 @@ struct AlertCardView: View {
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(cardColor)
-                .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
+                .shadow(color: .black15, radius: 8, x: 0, y: 4)
         )
     }
 }

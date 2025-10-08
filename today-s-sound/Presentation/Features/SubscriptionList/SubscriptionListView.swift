@@ -6,11 +6,10 @@ struct SubscriptionListView: View {
     @StateObject private var viewModel = SubscriptionListViewModel()
     @Environment(\.colorScheme) var colorScheme
     @State private var showAddSubscription = false
-    let customGreen = Color(red: 0 / 255, green: 223 / 255, blue: 119 / 255)
     var body: some View {
         NavigationView {
             ZStack {
-                (colorScheme == .dark ? Color.black : .white)
+                Color.background(colorScheme)
                     .ignoresSafeArea()
 
                 VStack(alignment: .leading, spacing: 12) {
@@ -19,14 +18,14 @@ struct SubscriptionListView: View {
                     // 타이틀
                     Text("구독 설정")
                         .font(.system(size: 31, weight: .bold))
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .foregroundColor(Color.text(colorScheme))
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 24)
                         .padding(.bottom, 16)
 
                     Text("구독 중인 페이지")
                         .font(.system(size:28, weight: .bold))
-                        .foregroundStyle(customGreen)
+                        .foregroundStyle(Color.primaryGreen)
                         .padding(.horizontal, 24)
                     
                     // 구독 목록
@@ -56,7 +55,7 @@ struct SubscriptionListView: View {
                             .padding(.vertical, 16)
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.green.opacity(0.9))
+                                    .fill(Color.primaryGreen90)
                             )
                         }
 
@@ -77,7 +76,6 @@ struct SubscriptionCardView: View {
     let subscription: Subscription
     let colorScheme: ColorScheme
     
-    let cardGreyColor = Color(red: 245 / 255, green: 245 / 255, blue: 245 / 255)
     
     
     var body: some View {
@@ -85,11 +83,11 @@ struct SubscriptionCardView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(subscription.name)
                     .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(colorScheme == .dark ? .white : .black)
+                    .foregroundColor(Color.text(colorScheme))
 
                 Text(subscription.url)
                     .font(.system(size: 13))
-                    .foregroundColor(colorScheme == .dark ? .white.opacity(0.8) : .black.opacity(0.6))
+                    .foregroundColor(Color.secondaryText(colorScheme))
                     .lineLimit(1)
 
                 HStack(spacing: 8) {
@@ -109,8 +107,8 @@ struct SubscriptionCardView: View {
         .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(colorScheme == .dark ? Color(white: 0.15) : cardGreyColor)
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .fill(Color.secondaryBackground(colorScheme))
+                .shadow(color: .black5, radius: 4, x: 0, y: 2)
         )
     }
 }
@@ -119,18 +117,16 @@ struct StatusBadge: View {
     let text: String
     let colorScheme: ColorScheme
 
-    let fontgreenColor = Color(red: 0 / 255, green: 223 / 255, blue: 119 / 255)
-    let badgeBackgroundColor = Color(red: 52 / 255, green: 199 / 255, blue: 89 / 255, opacity: 0.16)
     
     var body: some View {
         Text(text)
             .font(.system(size: 14, weight: .medium))
-            .foregroundColor(colorScheme == .dark ? .white :fontgreenColor)
+            .foregroundColor(colorScheme == .dark ? .white : .primaryGreen)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)
             .background(
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(badgeBackgroundColor)
+                    .fill(Color.badgeGreen)
             )
     }
 }
