@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ScreenTitle: View {
+struct ScreenSubTitle: View {
     let text: String
     let colorScheme: ColorScheme
 
@@ -24,8 +24,8 @@ struct ScreenTitle: View {
 struct ScreenTitle_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 0) {
-            ScreenTitle(text: "새 웹페이지 추가", colorScheme: .light)
-            ScreenTitle(text: "새 웹페이지 추가", colorScheme: .dark)
+            ScreenSubTitle(text: "새 웹페이지 추가", colorScheme: .light)
+            ScreenSubTitle(text: "새 웹페이지 추가", colorScheme: .dark)
         }
     }
 }

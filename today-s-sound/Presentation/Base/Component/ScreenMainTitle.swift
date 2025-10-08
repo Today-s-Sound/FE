@@ -8,7 +8,7 @@
 import SwiftUI
 
 /// 공통 타이틀 컴포넌트. 다양한 화면에서 재사용 가능
-struct ScreenSectionTitle: View {
+struct ScreenMainTitle: View {
     let text: String
     let colorScheme: ColorScheme
 
@@ -25,8 +25,8 @@ struct ScreenSectionTitle: View {
 struct ScreenSectionTitle_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 16) {
-            ScreenSectionTitle(text: "최근 알림", colorScheme: .light)
-            ScreenSectionTitle(text: "구독 설정", colorScheme: .light)
+            ScreenMainTitle(text: "최근 알림", colorScheme: .light)
+            ScreenMainTitle(text: "구독 설정", colorScheme: .light)
         }
         .padding()
     }

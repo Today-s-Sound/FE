@@ -15,7 +15,7 @@ struct AddSubscriptionView: View {
                 VStack(spacing: 0) {
                     HeaderBar(colorScheme: colorScheme, onClose: { dismiss() })
 
-                    ScreenTitle(text: "새 웹페이지 추가", colorScheme: colorScheme)
+                    ScreenSubTitle(text: "새 웹페이지 추가", colorScheme: colorScheme)
 
                     ScrollView {
                         VStack(spacing: 24) {
