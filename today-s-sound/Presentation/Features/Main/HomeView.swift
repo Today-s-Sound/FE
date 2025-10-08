@@ -18,23 +18,6 @@ struct HomeView: View {
         .ignoresSafeArea()
 
       VStack(spacing: 0) {
-//        HStack {
-//            Button(action: {}) {
-//              Image(systemName: "bell")
-//                .font(.system(size: 48, weight: .medium))
-//                .foregroundColor(colorScheme == .dark ? .white : Color.primaryGreen90)
-//            }
-//            Spacer()
-//            Button(action: {}) {
-//              Image(systemName: "line.3.horizontal")
-//                .font(.system(size: 48, weight: .medium))
-//                .foregroundColor(colorScheme == .dark ? .white : Color.primaryGreen90)
-//            }
-//        }
-//        .padding(.horizontal, 24)
-//        .padding(.top, 16)
-//
-//        Spacer()
           Spacer()
 
         // 오늘의 소리 타이틀

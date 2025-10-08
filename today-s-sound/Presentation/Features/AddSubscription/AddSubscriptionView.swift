@@ -13,109 +13,45 @@ struct AddSubscriptionView: View {
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
-                    // 상단 바
-                    HStack {
-                        Button(action: {
-                            dismiss()
-                        }) {
-                            Image(systemName: "xmark")
-                                .font(.title2)
-                                .foregroundColor(Color.text(colorScheme))
-                        }
-                        Spacer()
-                    }
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 16)
+                    HeaderBar(colorScheme: colorScheme, onClose: { dismiss() })
 
-                    // 타이틀
-                    Text("새 웹페이지 추가")
-                        .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(colorScheme == .dark ? .white : .primaryGreen)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, 24)
-                        .padding(.bottom, 16)
-
+                    ScreenTitle(text: "새 웹페이지 추가", colorScheme: colorScheme)
 
                     ScrollView {
                         VStack(spacing: 24) {
-                            // URL 입력 섹션
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("웹사이트 URL")
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(Color.text(colorScheme))
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(Color.secondaryBackground(colorScheme))
+                            InputFieldSection(
+                                title: "웹사이트 URL",
+                                placeholder: "https://www.example.com",
+                                description: "모니터링 할 웹페이지 URL을 입력하세요.",
+                                text: $viewModel.urlText,
+                                colorScheme: colorScheme
+                            )
+
+                            InputFieldSection(
+                                title: "웹페이지 별명",
+                                placeholder: "동국대학교 공지사항",
+                                description: "웹 페이지를 식별할 명칭을 입력하세요.",
+                                text: $viewModel.nameText,
+                                colorScheme: colorScheme
+                            )
+
+                            InputFieldSection(
+                                title: "키워드 필터",
+                                placeholder: "장학금, 교직, 학생회",
+                                description: "관심 키워드가 포함된 내용을 걸러낼 필요가 있으면 입력하세요.",
+                                text: $viewModel.keywordsText,
+                                colorScheme: colorScheme,
+                                additionalContent: {
+                                    AnyView(
+                                        HStack(spacing: 8) {
+                                            KeywordBadge(text: "장학금", colorScheme: colorScheme)
+                                            KeywordBadge(text: "교직부공지사항", colorScheme: colorScheme)
+                                        }
                                     )
-
-                                TextField("https://www.example.com", text: $viewModel.urlText)
-                                    .padding()
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(Color.secondaryBackground(colorScheme))
-                                            .stroke(Color.border(colorScheme), lineWidth: 1)
-                                    )
-                                    .foregroundColor(Color.text(colorScheme))
-
-                                Text("모니터링 할 웹페이지 URL을 입력하세요.")
-                                    .font(.system(size: 13))
-                                    .foregroundColor(Color.secondaryText(colorScheme))
-                            }
-
-                            // 웹페이지 별명 섹션
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("웹페이지 별명")
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(Color.text(colorScheme))
-
-                                TextField("동국대학교 공지사항", text: $viewModel.nameText)
-                                    .padding()
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(Color.secondaryBackground(colorScheme))
-                                            .stroke(Color.border(colorScheme), lineWidth: 1)
-                                    )
-                                    .foregroundColor(Color.text(colorScheme))
-
-                                Text("웹 페이지를 식별할 명칭을 입력하세요.")
-                                    .font(.system(size: 13))
-                                    .foregroundColor(Color.secondaryText(colorScheme))
-                            }
-
-                            // 키워드 필터 섹션
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("키워드 필터")
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(Color.text(colorScheme))
-
-                                TextField("장학금, 교직, 학생회", text: $viewModel.keywordsText)
-                                    .padding()
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 12)
-                                            .fill(Color.secondaryBackground(colorScheme))
-                                            .stroke(Color.border(colorScheme), lineWidth: 1)
-                                    )
-                                    .foregroundColor(Color.text(colorScheme))
-                                HStack(spacing: 8) {
-                                    KeywordBadge(text: "장학금", colorScheme: colorScheme)
-                                    KeywordBadge(text: "교직부공지사항", colorScheme: colorScheme)
                                 }
+                            )
 
-                                Text("관심 키워드가 포함된 내용을 걸러낼 필요가 있으면 입력하세요.")
-                                    .font(.system(size: 13))
-                                    .foregroundColor(Color.secondaryText(colorScheme))
-                            }
-
-                            // 긴급 알림으로 설정 토글
-                            HStack {
-                                Text("긴급 알림으로 설정")
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(Color.text(colorScheme))
-                                Spacer()
-                                Toggle("", isOn: $viewModel.isUrgent)
-                                    .labelsHidden()
-                            }
-                            .padding()
+                            UrgentToggleRow(isOn: $viewModel.isUrgent, colorScheme: colorScheme)
 
                             // 하단 버튼
                             Button(action: {
