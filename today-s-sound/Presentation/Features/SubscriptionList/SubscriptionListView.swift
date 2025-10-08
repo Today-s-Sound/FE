@@ -113,23 +113,6 @@ struct SubscriptionCardView: View {
     }
 }
 
-struct StatusBadge: View {
-    let text: String
-    let colorScheme: ColorScheme
-
-    
-    var body: some View {
-        Text(text)
-            .font(.system(size: 14, weight: .medium))
-            .foregroundColor(colorScheme == .dark ? .white : .primaryGreen)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(Color.badgeGreen)
-            )
-    }
-}
 
 struct SubscriptionListView_Previews: PreviewProvider {
     static var previews: some View {

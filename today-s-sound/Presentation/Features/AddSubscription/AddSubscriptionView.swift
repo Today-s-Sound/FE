@@ -142,22 +142,6 @@ struct AddSubscriptionView: View {
     }
 }
 
-struct KeywordBadge: View {
-    let text: String
-    let colorScheme: ColorScheme
-
-    var body: some View {
-        Text(text)
-            .font(.system(size: 12, weight: .medium))
-            .foregroundColor(Color.text(colorScheme))
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            .background(
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.primaryGreen20)
-            )
-    }
-}
 
 struct AddSubscriptionView_Previews: PreviewProvider {
     static var previews: some View {
