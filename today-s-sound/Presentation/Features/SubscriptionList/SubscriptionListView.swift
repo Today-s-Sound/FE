@@ -5,6 +5,7 @@ import SwiftUI
 struct SubscriptionListView: View {
     @StateObject private var viewModel = SubscriptionListViewModel()
     @Environment(\.colorScheme) var colorScheme
+    @State private var showAddSubscription = false
     let customGreen = Color(red: 0 / 255, green: 223 / 255, blue: 119 / 255)
     var body: some View {
         NavigationView {
@@ -41,7 +42,9 @@ struct SubscriptionListView: View {
 
                     // 하단 버튼
                     VStack(spacing: 12) {
-                        Button(action: {}) {
+                        Button(action: { 
+                            showAddSubscription = true 
+                        }) {
                             HStack {
                                 Image(systemName: "plus.circle.fill")
                                     .font(.system(size: 18))
@@ -63,6 +66,9 @@ struct SubscriptionListView: View {
                 }
             }
             .navigationBarHidden(true)
+        }
+        .sheet(isPresented: $showAddSubscription) {
+            AddSubscriptionView()
         }
     }
 }

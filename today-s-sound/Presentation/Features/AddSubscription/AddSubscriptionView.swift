@@ -4,27 +4,26 @@ import SwiftUI
 struct AddSubscriptionView: View {
     @StateObject private var viewModel = AddSubscriptionViewModel()
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.dismiss) var dismiss
 
+    let customGreen = Color(red: 0 / 255, green: 223 / 255, blue: 119 / 255)
+    
     var body: some View {
-        NavigationView {
-            ZStack {
-                (colorScheme == .dark ? Color.black : Color(white: 0.95))
+        ZStack {
+            (colorScheme == .dark ? Color.black : .white)
                     .ignoresSafeArea()
 
                 VStack(spacing: 0) {
                     // 상단 바
                     HStack {
-                        Button(action: {}) {
-                            Image(systemName: "bell")
-                                .font(.title2)
-                                .foregroundColor(.green)
-                        }
-                        Spacer()
-                        Button(action: {}) {
-                            Image(systemName: "line.3.horizontal")
+                        Button(action: {
+                            dismiss()
+                        }) {
+                            Image(systemName: "xmark")
                                 .font(.title2)
                                 .foregroundColor(colorScheme == .dark ? .white : .black)
                         }
+                        Spacer()
                     }
                     .padding(.horizontal, 24)
                     .padding(.vertical, 16)
@@ -32,10 +31,11 @@ struct AddSubscriptionView: View {
                     // 타이틀
                     Text("새 웹페이지 추가")
                         .font(.system(size: 28, weight: .bold))
-                        .foregroundColor(colorScheme == .dark ? .white : .black)
+                        .foregroundColor(colorScheme == .dark ? .white : customGreen)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 24)
                         .padding(.bottom, 16)
+
 
                     ScrollView {
                         VStack(spacing: 24) {
@@ -44,14 +44,20 @@ struct AddSubscriptionView: View {
                                 Text("웹사이트 URL")
                                     .font(.system(size: 16, weight: .semibold))
                                     .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color(white : 0.95))
+                                    )
 
                                 TextField("https://www.example.com", text: $viewModel.urlText)
                                     .padding()
                                     .background(
                                         RoundedRectangle(cornerRadius: 12)
-                                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white)
+                                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color(white: 0.95))
+                                            .stroke(colorScheme == .dark ? Color.white.opacity(0.2) : Color.gray.opacity(0.3), lineWidth: 1)
                                     )
                                     .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .accentColor(colorScheme == .dark ? .white : .black)
 
                                 Text("모니터링 할 웹페이지 URL을 입력하세요.")
                                     .font(.system(size: 13))
@@ -68,18 +74,20 @@ struct AddSubscriptionView: View {
                                     .padding()
                                     .background(
                                         RoundedRectangle(cornerRadius: 12)
-                                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white)
+                                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color(white: 0.95))
+                                            .stroke(colorScheme == .dark ? Color.white.opacity(0.2) : Color.gray.opacity(0.3), lineWidth: 1)
                                     )
                                     .foregroundColor(colorScheme == .dark ? .white : .black)
+                                    .accentColor(colorScheme == .dark ? .white : .black)
 
                                 Text("웹 페이지를 식별할 명칭을 입력하세요.")
                                     .font(.system(size: 13))
                                     .foregroundColor(colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6))
                             }
 
-                            // 키워드 벡터 섹션
+                            // 키워드 필터 섹션
                             VStack(alignment: .leading, spacing: 12) {
-                                Text("키워드 벡터")
+                                Text("키워드 필터")
                                     .font(.system(size: 16, weight: .semibold))
                                     .foregroundColor(colorScheme == .dark ? .white : .black)
 
@@ -87,10 +95,11 @@ struct AddSubscriptionView: View {
                                     .padding()
                                     .background(
                                         RoundedRectangle(cornerRadius: 12)
-                                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color.white)
+                                            .fill(colorScheme == .dark ? Color(white: 0.15) : Color(white: 0.95))
+                                            .stroke(colorScheme == .dark ? Color.white.opacity(0.2) : Color.gray.opacity(0.3), lineWidth: 1)
                                     )
                                     .foregroundColor(colorScheme == .dark ? .white : .black)
-
+                                    .accentColor(colorScheme == .dark ? .white : .black)
                                 HStack(spacing: 8) {
                                     KeywordBadge(text: "장학금", colorScheme: colorScheme)
                                     KeywordBadge(text: "교직부공지사항", colorScheme: colorScheme)
@@ -117,7 +126,10 @@ struct AddSubscriptionView: View {
                             )
 
                             // 하단 버튼
-                            Button(action: {}) {
+                            Button(action: {
+                                // TODO: 등록 로직 추가
+                                dismiss()
+                            }) {
                                 Text("등록 승인 요청")
                                     .font(.system(size: 16, weight: .semibold))
                                     .foregroundColor(.white)
@@ -135,8 +147,6 @@ struct AddSubscriptionView: View {
                     }
                 }
             }
-            .navigationBarHidden(true)
-        }
     }
 }
 
