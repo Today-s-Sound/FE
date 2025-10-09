@@ -1,7 +1,7 @@
 # ===== Config =====
 SCHEME   ?= today-s-sound
 PROJECT  ?= today-s-sound.xcodeproj
-DEST     ?= platform=iOS Simulator,name=iPhone 16 Pro
+DEST     ?= platform=iOS Simulator,name=iPhone 16 Pro,OS=18.6
 CONFIG   ?= Debug
 SDK      ?= iphonesimulator
 

@@ -18,7 +18,7 @@ struct HomeView: View {
         .ignoresSafeArea()
 
       VStack(spacing: 0) {
-          Spacer()
+        Spacer()
 
         // 오늘의 소리 타이틀
         Text("오늘의 소리")
@@ -48,7 +48,7 @@ struct HomeView: View {
               .font(.system(size: 35, weight: .medium))
               .foregroundColor(colorScheme == .dark ? .white : Color.primaryGreen90)
           }
-            
+
           Text(String(format: "%.1f x", viewModel.playbackRate))
             .font(.system(size: 48, weight: .bold))
             .foregroundColor(Color.text(colorScheme))

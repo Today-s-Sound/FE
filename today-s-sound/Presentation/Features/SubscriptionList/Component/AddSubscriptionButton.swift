@@ -8,30 +8,28 @@
 import SwiftUI
 
 struct AddSubscriptionButton: View {
-    let colorScheme: ColorScheme
-    let onTap: () -> Void
+  let colorScheme: ColorScheme
+  let onTap: () -> Void
 
-    var body: some View {
-        VStack(spacing: 12) {
-            Button(action: onTap) {
-                HStack {
-                    Image(systemName: "plus.circle.fill")
-                        .font(.system(size: 18))
-                    Text("새로운 웹페이지 추가")
-                        .font(.system(size: 24, weight: .semibold))
-                }
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.primaryGreen90)
-                )
-            }
+  var body: some View {
+    VStack(spacing: 12) {
+      Button(action: onTap) {
+        HStack {
+          Image(systemName: "plus.circle.fill")
+            .font(.system(size: 18))
+          Text("새로운 웹페이지 추가")
+            .font(.system(size: 24, weight: .semibold))
         }
-        .padding(.horizontal, 16)
-        .padding(.bottom, 16)
+        .foregroundColor(.white)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 16)
+        .background(
+          RoundedRectangle(cornerRadius: 12)
+            .fill(Color.primaryGreen90)
+        )
+      }
     }
+    .padding(.horizontal, 16)
+    .padding(.bottom, 16)
+  }
 }
-
-
