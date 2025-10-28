@@ -54,7 +54,7 @@ struct AddSubscriptionView: View {
             // 하단 버튼
             Button(action: {
               dismiss()
-            }) {
+            }, label: {
               Text("등록 승인 요청")
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(.white)
@@ -64,7 +64,7 @@ struct AddSubscriptionView: View {
                   RoundedRectangle(cornerRadius: 12)
                     .fill(Color.primaryGreen90)
                 )
-            }
+            })
           }
           .padding(.horizontal, 16)
           .padding(.top, 8)

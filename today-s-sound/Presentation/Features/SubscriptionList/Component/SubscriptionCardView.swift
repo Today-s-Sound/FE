@@ -31,11 +31,11 @@ struct SubscriptionCardView: View {
 
       Spacer()
 
-      Button(action: {}) {
+      Button(action: {}, label: {
         Image(systemName: "bell")
           .font(.system(size: 40))
           .foregroundColor(.green)
-      }
+      })
     }
     .padding(16)
     .background(

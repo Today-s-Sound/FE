@@ -17,8 +17,8 @@ extension AuthAPITarget: APITargetType {
 
   var task: Task {
     switch self {
-    case let .refresh(rt):
-      .requestParameters(parameters: ["refreshToken": rt], encoding: JSONEncoding.default)
+    case let .refresh(refreshToken: refreshToken):
+      .requestParameters(parameters: ["refreshToken": refreshToken], encoding: JSONEncoding.default)
     }
   }
 

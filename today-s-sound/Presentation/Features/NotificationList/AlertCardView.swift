@@ -44,7 +44,7 @@ struct AlertCardView: View {
       // 하단: 음성으로 듣기 버튼
       Button(action: {
         SpeechService.shared.speak(text: alert.title)
-      }) {
+      }, label: {
         HStack(spacing: 8) {
           Image(systemName: "speaker.wave.2.fill")
             .font(.system(size: 18))
@@ -60,7 +60,7 @@ struct AlertCardView: View {
           RoundedRectangle(cornerRadius: 12)
             .fill(buttonBackgroundColor)
         )
-      }
+      })
     }
     .padding(24)
     .background(
