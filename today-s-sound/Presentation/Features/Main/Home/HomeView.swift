@@ -27,27 +27,33 @@ struct HomeView: View {
           .shadow(color: .black25, radius: 2, x: 0, y: 4)
           .padding(.bottom, 60)
 
-        Button(action: {
-          if let first = viewModel.recentAlerts.first {
-            viewModel.playAlert(first)
+        Button(
+          action: {
+            if let first = viewModel.recentAlerts.first {
+              viewModel.playAlert(first)
+            }
+          },
+          label: {
+            Image(systemName: "play.fill")
+              .resizable()
+              .scaledToFit()
+              .frame(width: 120, height: 120)
+              .foregroundColor(Color.primaryGreen90)
+              .padding(40)
           }
-        }) {
-          Image(systemName: "play.fill")
-            .resizable()
-            .scaledToFit()
-            .frame(width: 120, height: 120)
-            .foregroundColor(Color.primaryGreen90)
-            .padding(40)
-        }
+        )
         .padding(.bottom, 60)
 
         // 속도 조절
         HStack(spacing: 48) {
-          Button(action: { viewModel.decreaseRate() }) {
-            Image(systemName: "minus")
-              .font(.system(size: 35, weight: .medium))
-              .foregroundColor(colorScheme == .dark ? .white : Color.primaryGreen90)
-          }
+          Button(
+            action: { viewModel.decreaseRate() },
+            label: {
+              Image(systemName: "minus")
+                .font(.system(size: 35, weight: .medium))
+                .foregroundColor(colorScheme == .dark ? .white : Color.primaryGreen90)
+            }
+          )
 
           Text(String(format: "%.1f x", viewModel.playbackRate))
             .font(.system(size: 48, weight: .bold))
@@ -55,11 +61,14 @@ struct HomeView: View {
             .monospacedDigit()
             .frame(minWidth: 100)
 
-          Button(action: { viewModel.increaseRate() }) {
-            Image(systemName: "plus")
-              .font(.system(size: 35, weight: .medium))
-              .foregroundColor(colorScheme == .dark ? .white : Color.primaryGreen90)
-          }
+          Button(
+            action: { viewModel.increaseRate() },
+            label: {
+              Image(systemName: "plus")
+                .font(.system(size: 35, weight: .medium))
+                .foregroundColor(colorScheme == .dark ? .white : Color.primaryGreen90)
+            }
+          )
         }
 
         Spacer()

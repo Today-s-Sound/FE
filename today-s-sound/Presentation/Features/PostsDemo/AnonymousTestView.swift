@@ -29,28 +29,28 @@ final class AnonymousTestViewModel: ObservableObject {
 }
 
 struct AnonymousTestView: View {
-  @StateObject private var vm = AnonymousTestViewModel()
+  @StateObject private var viewModel = AnonymousTestViewModel()
 
   var body: some View {
     Form {
       Section(header: Text("디바이스 시크릿")) {
-        TextField("deviceSecret", text: $vm.deviceSecret)
+        TextField("deviceSecret", text: $viewModel.deviceSecret)
           .textInputAutocapitalization(.never)
           .autocorrectionDisabled()
       }
       Section(header: Text("동작")) {
         Button("익명 사용자 생성") {
-          vm.createAnonymous()
+          viewModel.createAnonymous()
         }
       }
-      if !vm.userId.isEmpty {
+      if !viewModel.userId.isEmpty {
         Section(header: Text("결과 user_id")) {
-          Text(vm.userId)
+          Text(viewModel.userId)
             .font(.system(.body, design: .monospaced))
         }
       }
       Section(header: Text("로그")) {
-        Text(vm.log)
+        Text(viewModel.log)
           .font(.footnote)
           .foregroundColor(.gray)
       }
