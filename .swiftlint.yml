@@ -1,11 +1,1 @@
-disabled_rules:
-  - line_length
-  - trailing_whitespace
-included:
-  - today-s-sound
-  - Tests
-excluded:
-  - Pods
-  - Carthage
-  - DerivedData
-reporter: "xcode"
+데

@@ -4,9 +4,9 @@
 <dict>
 	<key>UIAppFonts</key>
 	<array>
-		<string>KoddiUDOnGothic-ExtraBold</string>
-		<string>KoddiUDOnGothic-Regular</string>
-		<string>KoddiUDOnGothic-Bold</string>
+		<string>KoddiUDOnGothic-ExtraBold.otf</string>
+		<string>KoddiUDOnGothic-Regular.otf</string>
+		<string>KoddiUDOnGothic-Bold.otf</string>
 	</array>
 </dict>
 </plist>
