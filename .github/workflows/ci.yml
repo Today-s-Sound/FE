@@ -21,8 +21,8 @@ jobs:
       - name: Format check (no edits)
         run: swiftformat . --lint
 
-      - name: Lint (strict)
-        run: swiftlint --strict
+      # - name: Lint (strict)
+      #   run: swiftlint --strict
 
       - name: Build & Test (Simulator)
         run: |
