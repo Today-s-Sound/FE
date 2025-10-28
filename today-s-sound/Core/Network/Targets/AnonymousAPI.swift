@@ -6,11 +6,10 @@ enum AnonymousAPI {
 }
 
 extension AnonymousAPI: APITargetType {
-
   var path: String {
     switch self {
     case .createAnonymous:
-      return "/api/users/anonymous"
+      "/api/users/anonymous"
     }
   }
 
@@ -19,11 +18,9 @@ extension AnonymousAPI: APITargetType {
   var task: Task {
     switch self {
     case let .createAnonymous(deviceSecret):
-      return .requestParameters(parameters: ["deviceSecret": deviceSecret], encoding: JSONEncoding.default)
+      .requestParameters(parameters: ["deviceSecret": deviceSecret], encoding: JSONEncoding.default)
     }
   }
 
-  var headers: [String : String]? { ["Content-Type": "application/json"] }
+  var headers: [String: String]? { ["Content-Type": "application/json"] }
 }
-
-

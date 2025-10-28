@@ -10,5 +10,3 @@ final class UserSession: ObservableObject {
     refreshToken = ""
   }
 }
-
-

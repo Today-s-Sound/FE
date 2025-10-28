@@ -13,5 +13,3 @@ struct AnonymousUserResult: Codable {
     case userId = "user_id"
   }
 }
-
-

@@ -1,5 +1,5 @@
-import SwiftUI
 import Combine
+import SwiftUI
 
 final class AnonymousTestViewModel: ObservableObject {
   @Published var deviceSecret: String = UUID().uuidString
@@ -60,11 +60,9 @@ struct AnonymousTestView: View {
 }
 
 #if DEBUG
-struct AnonymousTestView_Previews: PreviewProvider {
-  static var previews: some View {
-    NavigationView { AnonymousTestView() }
+  struct AnonymousTestView_Previews: PreviewProvider {
+    static var previews: some View {
+      NavigationView { AnonymousTestView() }
+    }
   }
-}
 #endif
-
-

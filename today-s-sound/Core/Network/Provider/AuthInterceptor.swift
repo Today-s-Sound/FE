@@ -1,5 +1,5 @@
-import Foundation
 import Alamofire
+import Foundation
 import Moya
 
 final class AuthInterceptor: RequestInterceptor {
@@ -18,7 +18,8 @@ final class AuthInterceptor: RequestInterceptor {
 
   func adapt(_ urlRequest: URLRequest,
              for session: Session,
-             completion: @escaping (Result<URLRequest, Error>) -> Void) {
+             completion: @escaping (Result<URLRequest, Error>) -> Void)
+  {
     var req = urlRequest
     let path = req.url?.path ?? ""
 
@@ -43,8 +44,8 @@ final class AuthInterceptor: RequestInterceptor {
   func retry(_ request: Request,
              for session: Session,
              dueTo error: Error,
-             completion: @escaping (RetryResult) -> Void) {
-
+             completion: @escaping (RetryResult) -> Void)
+  {
     let path = request.request?.url?.path ?? "nil"
     let status = request.response?.statusCode ?? -1
 
@@ -77,10 +78,11 @@ final class AuthInterceptor: RequestInterceptor {
       var queuedResult: RetryResult = .doNotRetry
 
       switch result {
-      case .success(let res):
-        if (200..<300).contains(res.statusCode),
+      case let .success(res):
+        if (200 ..< 300).contains(res.statusCode),
            let dto = try? JSONDecoder().decode(RefreshResponseDTO.self, from: res.data),
-           dto.isSuccess, let data = dto.data {
+           dto.isSuccess, let data = dto.data
+        {
           DispatchQueue.main.async {
             self.userSession.accessToken = data.accessToken
             self.userSession.refreshToken = data.refreshToken
@@ -94,15 +96,13 @@ final class AuthInterceptor: RequestInterceptor {
         DispatchQueue.main.async { self.userSession.clear() }
       }
 
-      self.lock.lock()
-      let queued = self.waiting
-      self.waiting.removeAll()
-      self.isRefreshing = false
-      self.lock.unlock()
+      lock.lock()
+      let queued = waiting
+      waiting.removeAll()
+      isRefreshing = false
+      lock.unlock()
 
       queued.forEach { $0(queuedResult) }
     }
   }
 }
-
-

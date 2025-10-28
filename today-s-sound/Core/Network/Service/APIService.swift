@@ -4,7 +4,7 @@ import Foundation
 import Moya
 
 protocol APIServiceType {
-  func request<T: Decodable, Target: TargetType>(_ target: Target) -> AnyPublisher<T, NetworkError>
+  func request<T: Decodable>(_ target: some TargetType) -> AnyPublisher<T, NetworkError>
   func createAnonymous(deviceSecret: String) -> AnyPublisher<AnonymousUserResponse, NetworkError>
 }
 
@@ -12,10 +12,10 @@ class APIService: APIServiceType {
   private let anonymousProvider: MoyaProvider<AnonymousAPI>
 
   init(userSession: UserSession = UserSession()) {
-    self.anonymousProvider = NetworkKit.provider(userSession: userSession)
+    anonymousProvider = NetworkKit.provider(userSession: userSession)
   }
 
-  func request<T: Decodable, Target: TargetType>(_ target: Target) -> AnyPublisher<T, NetworkError> {
+  func request<T: Decodable>(_ target: some TargetType) -> AnyPublisher<T, NetworkError> {
     Fail<T, NetworkError>(error: .requestFailed(NSError(domain: "NotImplemented", code: -1))).eraseToAnyPublisher()
   }
 
@@ -40,5 +40,3 @@ class APIService: APIServiceType {
       .eraseToAnyPublisher()
   }
 }
-
-

@@ -6,11 +6,10 @@ enum AuthAPITarget {
 }
 
 extension AuthAPITarget: APITargetType {
-
   var path: String {
     switch self {
     case .refresh:
-      return "/api/auth/refresh"
+      "/api/auth/refresh"
     }
   }
 
@@ -19,11 +18,11 @@ extension AuthAPITarget: APITargetType {
   var task: Task {
     switch self {
     case let .refresh(rt):
-      return .requestParameters(parameters: ["refreshToken": rt], encoding: JSONEncoding.default)
+      .requestParameters(parameters: ["refreshToken": rt], encoding: JSONEncoding.default)
     }
   }
 
-  var headers: [String : String]? { ["Content-Type": "application/json"] }
+  var headers: [String: String]? { ["Content-Type": "application/json"] }
 }
 
 struct RefreshResponseDTO: Codable {
@@ -35,5 +34,3 @@ struct RefreshTokensDTO: Codable {
   let accessToken: String
   let refreshToken: String
 }
-
-
