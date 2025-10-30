@@ -33,21 +33,51 @@ struct AddSubscriptionView: View {
               colorScheme: colorScheme
             )
 
-            InputFieldSection(
-              title: "키워드 필터",
-              placeholder: "장학금, 교직, 학생회",
-              description: "관심 키워드가 포함된 내용을 걸러낼 필요가 있으면 입력하세요.",
-              text: $viewModel.keywordsText,
-              colorScheme: colorScheme,
-              additionalContent: {
-                AnyView(
-                  HStack(spacing: 8) {
-                    KeywordBadge(text: "장학금", colorScheme: colorScheme)
-                    KeywordBadge(text: "교직부공지사항", colorScheme: colorScheme)
+            VStack(alignment: .leading, spacing: 12) {
+              // 키워드 필터 섹션
+              VStack(alignment: .leading, spacing: 8) {
+                Text("키워드 필터")
+                  .font(.system(size: 14, weight: .semibold))
+                  .foregroundColor(Color.primaryGreen)
+                
+                // 키워드 추가 버튼
+                Button(action: {
+                  viewModel.showKeywordSelector = true
+                }) {
+                  HStack {
+                    Text("키워드 추가...")
+                      .font(.system(size: 16))
+                      .foregroundColor(Color.secondaryText(colorScheme))
+                    Spacer()
                   }
-                )
+                  .padding(.horizontal, 16)
+                  .padding(.vertical, 12)
+                  .background(
+                    RoundedRectangle(cornerRadius: 8)
+                      .fill(Color.secondaryBackground(colorScheme))
+                  )
+                }
+                
+                Text("관심 키워드가 포함된 내용을 걸러낼 필요가 있으면 입력하세요.")
+                  .font(.system(size: 12))
+                  .foregroundColor(Color.secondaryText(colorScheme))
+                  .fixedSize(horizontal: false, vertical: true)
               }
-            )
+              
+              // 선택된 키워드 배지들
+              if !viewModel.selectedKeywords.isEmpty {
+                FlowLayout(spacing: 8) {
+                  ForEach(viewModel.selectedKeywords, id: \.self) { keyword in
+                    KeywordBadgeWithDelete(
+                      text: keyword,
+                      colorScheme: colorScheme
+                    ) {
+                      viewModel.removeKeyword(keyword)
+                    }
+                  }
+                }
+              }
+            }
 
             UrgentToggleRow(isOn: $viewModel.isUrgent, colorScheme: colorScheme)
 
@@ -71,6 +101,184 @@ struct AddSubscriptionView: View {
           .padding(.bottom, 16)
         }
       }
+    }
+    .sheet(isPresented: $viewModel.showKeywordSelector) {
+      KeywordSelectorSheet(viewModel: viewModel, colorScheme: colorScheme)
+    }
+  }
+}
+
+// 키워드 선택 시트
+struct KeywordSelectorSheet: View {
+  @ObservedObject var viewModel: AddSubscriptionViewModel
+  let colorScheme: ColorScheme
+  @Environment(\.dismiss) var dismiss
+  
+  var body: some View {
+    ZStack {
+      Color.background(colorScheme)
+        .ignoresSafeArea()
+      
+      VStack(spacing: 0) {
+        // 헤더
+        HStack {
+          Spacer()
+          Text("구독 설정")
+            .font(.custom("KoddiUD OnGothic Bold", size: 24))
+            .foregroundColor(Color.text(colorScheme))
+          Spacer()
+          Button(action: {
+            dismiss()
+          }) {
+            Image(systemName: "xmark")
+              .font(.system(size: 20))
+              .foregroundColor(Color.text(colorScheme))
+          }
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 20)
+        .padding(.bottom, 32)
+        
+        // 키워드 설정 섹션
+        VStack(alignment: .leading, spacing: 16) {
+          HStack {
+            Text("키워드 설정")
+              .font(.custom("KoddiUD OnGothic Bold", size: 20))
+              .foregroundColor(Color.primaryGreen)
+            
+            Spacer()
+            
+            Button(action: {
+              // 승인 액션
+            }) {
+              Circle()
+                .fill(Color.blue)
+                .frame(width: 50, height: 50)
+                .overlay(
+                  Text("승인")
+                    .font(.custom("KoddiUD OnGothic Bold", size: 14))
+                    .foregroundColor(.white)
+                )
+            }
+          }
+          .padding(.horizontal, 20)
+          
+          // 키워드 체크박스 리스트
+          VStack(spacing: 0) {
+            ForEach(Array(viewModel.availableKeywords.enumerated()), id: \.offset) { index, keyword in
+              KeywordCheckboxRow(
+                keyword: keyword,
+                isSelected: viewModel.selectedKeywords.contains(keyword),
+                colorScheme: colorScheme
+              ) {
+                viewModel.toggleKeyword(keyword)
+              }
+              
+              if index < viewModel.availableKeywords.count - 1 {
+                Divider()
+                  .background(Color.border(colorScheme))
+                  .padding(.horizontal, 20)
+              }
+            }
+          }
+        }
+        
+        Spacer()
+        
+        // 저장하기 버튼
+        Button(action: {
+          dismiss()
+        }) {
+          Text("저장하기")
+            .font(.custom("KoddiUD OnGothic Bold", size: 18))
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity)
+            .frame(height: 56)
+            .background(Color.primaryGreen)
+            .cornerRadius(12)
+        }
+        .padding(.horizontal, 20)
+        .padding(.bottom, 34)
+      }
+    }
+  }
+}
+
+// 삭제 가능한 키워드 배지
+struct KeywordBadgeWithDelete: View {
+  let text: String
+  let colorScheme: ColorScheme
+  let onDelete: () -> Void
+  
+  var body: some View {
+    HStack(spacing: 6) {
+      Text(text)
+        .font(.system(size: 14, weight: .medium))
+        .foregroundColor(.white)
+      
+      Button(action: onDelete) {
+        Image(systemName: "xmark")
+          .font(.system(size: 10, weight: .bold))
+          .foregroundColor(.white)
+      }
+    }
+    .padding(.horizontal, 12)
+    .padding(.vertical, 8)
+    .background(
+      RoundedRectangle(cornerRadius: 16)
+        .fill(Color.primaryGreen)
+    )
+  }
+}
+
+// FlowLayout for keywords
+struct FlowLayout: Layout {
+  var spacing: CGFloat = 8
+  
+  func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    let result = FlowResult(
+      in: proposal.replacingUnspecifiedDimensions().width,
+      subviews: subviews,
+      spacing: spacing
+    )
+    return result.size
+  }
+  
+  func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+    let result = FlowResult(
+      in: bounds.width,
+      subviews: subviews,
+      spacing: spacing
+    )
+    for (index, subview) in subviews.enumerated() {
+      subview.place(at: CGPoint(x: bounds.minX + result.positions[index].x, y: bounds.minY + result.positions[index].y), proposal: .unspecified)
+    }
+  }
+  
+  struct FlowResult {
+    var size: CGSize = .zero
+    var positions: [CGPoint] = []
+    
+    init(in maxWidth: CGFloat, subviews: Subviews, spacing: CGFloat) {
+      var currentX: CGFloat = 0
+      var currentY: CGFloat = 0
+      var lineHeight: CGFloat = 0
+      
+      for subview in subviews {
+        let size = subview.sizeThatFits(.unspecified)
+        
+        if currentX + size.width > maxWidth && currentX > 0 {
+          currentX = 0
+          currentY += lineHeight + spacing
+          lineHeight = 0
+        }
+        
+        positions.append(CGPoint(x: currentX, y: currentY))
+        lineHeight = max(lineHeight, size.height)
+        currentX += size.width + spacing
+      }
+      
+      self.size = CGSize(width: maxWidth, height: currentY + lineHeight)
     }
   }
 }
