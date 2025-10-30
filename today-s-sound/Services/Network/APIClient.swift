@@ -46,7 +46,8 @@ final class APIClient {
         req.httpMethod = "POST"
         req.httpBody = try JSONEncoder().encode(body)
 
-        let (data, resp) = try await session.data(for: req)
+        let (data, resp) = try await session.data(for: req)  // 요청 보내는 코드
+        print("서버 raw 응답:", String(data: data, encoding: .utf8) ?? "<binary>")
         guard let http = resp as? HTTPURLResponse else { throw APIError.underlying(URLError(.badServerResponse)) }
         guard (200..<300).contains(http.statusCode) else {
             throw APIError.http(status: http.statusCode, data: data)

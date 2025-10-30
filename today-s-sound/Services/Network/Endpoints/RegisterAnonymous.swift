@@ -14,14 +14,14 @@ struct RegisterAnonymousBody: Encodable {
 }
 
 // 2) 성공 Response 래퍼
-struct SuccessEnvelope<Result: Decodable>: Decodable {
+struct SuccessEnvelope<AnonymousResult: Decodable>: Decodable {
     let errorCode: String?
     let message: String
-    let result: Result
+    let result: AnonymousResult
 }
 
 struct AnonymousResult: Decodable {
-    let user_id: String
+    let userId: String
     // 서버가 추가로 키 같은 걸 준다면 여기에 옵셔널로:
     // let api_key: String?
 }

@@ -45,8 +45,8 @@ final class SessionStore: ObservableObject {
             let envelope: Resp = try await api.postJSON(path: "/api/users/anonymous", body: body)
 
             // 3) user_id 보관
-            Keychain.setString(envelope.result.user_id, for: KeychainKey.userId)
-            self.userId = envelope.result.user_id
+            Keychain.setString(envelope.result.userId, for: KeychainKey.userId)
+            self.userId = envelope.result.userId
             self.isRegistered = true
 
             // (옵션) 서버가 api_key 같은 걸 준다면 저장
