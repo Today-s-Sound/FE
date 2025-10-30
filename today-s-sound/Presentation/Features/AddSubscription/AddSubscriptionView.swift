@@ -148,18 +148,6 @@ struct KeywordSelectorSheet: View {
             
             Spacer()
             
-            Button(action: {
-              // 승인 액션
-            }) {
-              Circle()
-                .fill(Color.blue)
-                .frame(width: 50, height: 50)
-                .overlay(
-                  Text("승인")
-                    .font(.custom("KoddiUD OnGothic Bold", size: 14))
-                    .foregroundColor(.white)
-                )
-            }
           }
           .padding(.horizontal, 20)
           
