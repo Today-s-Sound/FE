@@ -6,13 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		9ADF457E2E950B6100E8B5A2 /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 9ADF457D2E950B6100E8B5A2 /* CombineMoya */; };
-		9ADF45802E950B6100E8B5A2 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 9ADF457F2E950B6100E8B5A2 /* Moya */; };
-		9ADF45822E950B6100E8B5A2 /* ReactiveMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 9ADF45812E950B6100E8B5A2 /* ReactiveMoya */; };
-		9ADF45842E950B6100E8B5A2 /* RxMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 9ADF45832E950B6100E8B5A2 /* RxMoya */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		259FC9672E890D7F001152B9 /* today-s-sound.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "today-s-sound.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -43,10 +36,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9ADF45802E950B6100E8B5A2 /* Moya in Frameworks */,
-				9ADF457E2E950B6100E8B5A2 /* CombineMoya in Frameworks */,
-				9ADF45842E950B6100E8B5A2 /* RxMoya in Frameworks */,
-				9ADF45822E950B6100E8B5A2 /* ReactiveMoya in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -89,10 +78,6 @@
 			);
 			name = "today-s-sound";
 			packageProductDependencies = (
-				9ADF457D2E950B6100E8B5A2 /* CombineMoya */,
-				9ADF457F2E950B6100E8B5A2 /* Moya */,
-				9ADF45812E950B6100E8B5A2 /* ReactiveMoya */,
-				9ADF45832E950B6100E8B5A2 /* RxMoya */,
 			);
 			productName = "today-s-sound";
 			productReference = 259FC9672E890D7F001152B9 /* today-s-sound.app */;
@@ -123,7 +108,6 @@
 			mainGroup = 259FC95E2E890D7E001152B9;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				9ADF457C2E950ADB00E8B5A2 /* XCRemoteSwiftPackageReference "Moya" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 259FC9682E890D7F001152B9 /* Products */;
@@ -353,40 +337,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		9ADF457C2E950ADB00E8B5A2 /* XCRemoteSwiftPackageReference "Moya" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Moya/Moya";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 15.0.3;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		9ADF457D2E950B6100E8B5A2 /* CombineMoya */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9ADF457C2E950ADB00E8B5A2 /* XCRemoteSwiftPackageReference "Moya" */;
-			productName = CombineMoya;
-		};
-		9ADF457F2E950B6100E8B5A2 /* Moya */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9ADF457C2E950ADB00E8B5A2 /* XCRemoteSwiftPackageReference "Moya" */;
-			productName = Moya;
-		};
-		9ADF45812E950B6100E8B5A2 /* ReactiveMoya */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9ADF457C2E950ADB00E8B5A2 /* XCRemoteSwiftPackageReference "Moya" */;
-			productName = ReactiveMoya;
-		};
-		9ADF45832E950B6100E8B5A2 /* RxMoya */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9ADF457C2E950ADB00E8B5A2 /* XCRemoteSwiftPackageReference "Moya" */;
-			productName = RxMoya;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 259FC95F2E890D7E001152B9 /* Project object */;
 }

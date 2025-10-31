@@ -1,56 +1,41 @@
-import Combine
 import SwiftUI
 
-final class AnonymousTestViewModel: ObservableObject {
-  @Published var deviceSecret: String = UUID().uuidString
-  @Published var userId: String = ""
-  @Published var log: String = ""
-
-  private let api = APIService()
-  private var cancellables: Set<AnyCancellable> = []
-
-  func createAnonymous() {
-    log = "요청 중..."
-    api.createAnonymous(deviceSecret: deviceSecret)
-      .receive(on: DispatchQueue.main)
-      .sink { [weak self] completion in
-        switch completion {
-        case .finished:
-          break
-        case let .failure(error):
-          self?.log = "실패: \(error)"
-        }
-      } receiveValue: { [weak self] response in
-        self?.userId = response.result.userId
-        self?.log = "성공: user_id=\(response.result.userId)"
-      }
-      .store(in: &cancellables)
-  }
-}
-
 struct AnonymousTestView: View {
-  @StateObject private var viewModel = AnonymousTestViewModel()
+  @StateObject private var store = SessionStore()
+  @State private var log: String = ""
 
   var body: some View {
     Form {
-      Section(header: Text("디바이스 시크릿")) {
-        TextField("deviceSecret", text: $viewModel.deviceSecret)
-          .textInputAutocapitalization(.never)
-          .autocorrectionDisabled()
-      }
       Section(header: Text("동작")) {
-        Button("익명 사용자 생성") {
-          viewModel.createAnonymous()
+        Button("익명 사용자 등록") {
+          log = "요청 중..."
+          Task {
+            await store.registerIfNeeded()
+            if let err = store.lastError {
+              log = "실패: \(err)"
+            } else if let id = store.userId {
+              log = "성공: user_id=\(id)"
+            } else {
+              log = "상태 변경 없음"
+            }
+          }
         }
       }
-      if !viewModel.userId.isEmpty {
+      if let id = store.userId, !id.isEmpty {
         Section(header: Text("결과 user_id")) {
-          Text(viewModel.userId)
+          Text(id)
             .font(.system(.body, design: .monospaced))
         }
       }
+      if let err = store.lastError, !err.isEmpty {
+        Section(header: Text("에러")) {
+          Text(err)
+            .font(.footnote)
+            .foregroundColor(.red)
+        }
+      }
       Section(header: Text("로그")) {
-        Text(viewModel.log)
+        Text(log)
           .font(.footnote)
           .foregroundColor(.gray)
       }
