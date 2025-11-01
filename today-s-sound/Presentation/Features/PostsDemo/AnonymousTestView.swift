@@ -8,97 +8,97 @@ final class AnonymousTestViewModel: ObservableObject {
   @Published var log: String = ""
   @Published var isLoading: Bool = false
   @Published var keychainData: [String: String] = [:]
-  
+
   private let apiService = APIService()
   private var cancellables: Set<AnyCancellable> = []
-  
+
   // 키체인 데이터 로드
   func loadKeychainData() {
     keychainData.removeAll()
-    
+
     if let secret = Keychain.getString(for: KeychainKey.deviceSecret) {
       keychainData["deviceSecret"] = secret
     } else {
       keychainData["deviceSecret"] = "(없음)"
     }
-    
+
     if let uid = Keychain.getString(for: KeychainKey.userId) {
       keychainData["userId"] = uid
     } else {
       keychainData["userId"] = "(없음)"
     }
-    
+
     if let apiKey = Keychain.getString(for: KeychainKey.apiKey) {
       keychainData["apiKey"] = apiKey
     } else {
       keychainData["apiKey"] = "(없음)"
     }
-    
+
     log = "🔑 키체인 데이터 로드 완료"
   }
-  
+
   // 키체인 초기화
   func clearKeychain() {
     Keychain.delete(for: KeychainKey.deviceSecret)
     Keychain.delete(for: KeychainKey.userId)
     Keychain.delete(for: KeychainKey.apiKey)
-    
+
     loadKeychainData()
     log = "🗑️ 키체인 데이터 삭제 완료"
   }
-  
+
   // 디바이스 시크릿 재생성
   func regenerateDeviceSecret() {
     deviceSecret = DeviceSecretGenerator.generate()
     log = "새로운 deviceSecret 생성됨"
   }
-  
+
   // 익명 사용자 등록
   func registerAnonymous() {
     isLoading = true
     userId = ""
     log = "📤 익명 사용자 등록 요청 중...\ndeviceSecret: \(deviceSecret.prefix(20))..."
-    
+
     apiService.registerAnonymous(deviceSecret: deviceSecret)
       .receive(on: DispatchQueue.main)
       .sink(
         receiveCompletion: { [weak self] completion in
-          guard let self = self else { return }
-          self.isLoading = false
-          
+          guard let self else { return }
+          isLoading = false
+
           switch completion {
           case .finished:
             break
-            
-          case .failure(let error):
+
+          case let .failure(error):
             // 상세한 에러 메시지
             var errorLog = "❌ 등록 실패\n"
             switch error {
-            case .serverError(let statusCode):
+            case let .serverError(statusCode):
               errorLog += "서버 오류 (상태: \(statusCode))"
-              
-            case .decodingFailed(let decodeError):
+
+            case let .decodingFailed(decodeError):
               errorLog += "응답 처리 실패\n\(decodeError.localizedDescription)"
-              
-            case .requestFailed(let requestError):
+
+            case let .requestFailed(requestError):
               errorLog += "요청 실패\n\(requestError.localizedDescription)"
-              
+
             case .invalidURL:
               errorLog += "잘못된 URL"
-              
+
             case .unknown:
               errorLog += "알 수 없는 오류"
             }
-            
-            self.log = errorLog
+
+            log = errorLog
             print("❌ \(errorLog)")
           }
         },
         receiveValue: { [weak self] response in
-          guard let self = self else { return }
-          
-          self.userId = response.result.userId
-          
+          guard let self else { return }
+
+          userId = response.result.userId
+
           var successLog = "✅ 등록 성공!\n"
           successLog += "━━━━━━━━━━━━━━━━━━\n"
           successLog += "User ID: \(response.result.userId)\n"
@@ -107,8 +107,8 @@ final class AnonymousTestViewModel: ObservableObject {
             successLog += "Error Code: \(errorCode)\n"
           }
           successLog += "━━━━━━━━━━━━━━━━━━"
-          
-          self.log = successLog
+
+          log = successLog
           print("✅ 익명 사용자 등록 성공: \(response.result.userId)")
         }
       )
@@ -118,16 +118,17 @@ final class AnonymousTestViewModel: ObservableObject {
 
 struct AnonymousTestView: View {
   @StateObject private var viewModel = AnonymousTestViewModel()
-  
+
   var body: some View {
     Form {
       // MARK: - Device Secret 섹션
+
       Section {
         VStack(alignment: .leading, spacing: 8) {
           Text("Device Secret")
             .font(.caption)
             .foregroundColor(.secondary)
-          
+
           Text(viewModel.deviceSecret)
             .font(.system(.caption, design: .monospaced))
             .foregroundColor(.primary)
@@ -136,7 +137,7 @@ struct AnonymousTestView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Color.secondary.opacity(0.1))
             .cornerRadius(8)
-          
+
           Button(action: viewModel.regenerateDeviceSecret) {
             HStack {
               Image(systemName: "arrow.clockwise")
@@ -150,8 +151,9 @@ struct AnonymousTestView: View {
       } header: {
         Label("디바이스 시크릿", systemImage: "key.fill")
       }
-      
+
       // MARK: - 동작 섹션
+
       Section {
         Button(action: viewModel.registerAnonymous) {
           HStack {
@@ -173,8 +175,9 @@ struct AnonymousTestView: View {
         Text("서버에 익명 사용자를 등록합니다.")
           .font(.caption)
       }
-      
+
       // MARK: - 결과 섹션
+
       if !viewModel.userId.isEmpty {
         Section {
           VStack(alignment: .leading, spacing: 8) {
@@ -191,7 +194,7 @@ struct AnonymousTestView: View {
               }
               .buttonStyle(.borderless)
             }
-            
+
             Text(viewModel.userId)
               .font(.system(.body, design: .monospaced))
               .foregroundColor(.green)
@@ -207,8 +210,9 @@ struct AnonymousTestView: View {
             .foregroundColor(.green)
         }
       }
-      
+
       // MARK: - 키체인 확인 섹션
+
       Section {
         Button(action: viewModel.loadKeychainData) {
           HStack {
@@ -218,7 +222,7 @@ struct AnonymousTestView: View {
           }
           .frame(maxWidth: .infinity)
         }
-        
+
         if !viewModel.keychainData.isEmpty {
           VStack(alignment: .leading, spacing: 12) {
             ForEach(viewModel.keychainData.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
@@ -226,7 +230,7 @@ struct AnonymousTestView: View {
                 Text(key)
                   .font(.caption)
                   .foregroundColor(.secondary)
-                
+
                 Text(value)
                   .font(.system(.caption, design: .monospaced))
                   .foregroundColor(value == "(없음)" ? .red : .primary)
@@ -239,7 +243,7 @@ struct AnonymousTestView: View {
             }
           }
           .padding(.vertical, 8)
-          
+
           Button(action: viewModel.clearKeychain) {
             HStack {
               Image(systemName: "trash.fill")
@@ -256,15 +260,16 @@ struct AnonymousTestView: View {
         Text("시뮬레이터에 저장된 Keychain 데이터를 확인합니다.")
           .font(.caption)
       }
-      
+
       // MARK: - 로그 섹션
+
       if !viewModel.log.isEmpty {
         Section {
           ScrollView {
             Text(viewModel.log)
               .font(.system(.caption, design: .monospaced))
-              .foregroundColor(viewModel.log.contains("❌") ? .red : 
-                              viewModel.log.contains("✅") ? .green : .secondary)
+              .foregroundColor(viewModel.log.contains("❌") ? .red :
+                viewModel.log.contains("✅") ? .green : .secondary)
               .textSelection(.enabled)
               .padding(8)
               .frame(maxWidth: .infinity, alignment: .leading)

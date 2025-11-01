@@ -25,12 +25,13 @@ struct SubscriptionsListSection: View {
                 // 마지막에서 5번째 아이템이 보일 때만 트리거
                 if let lastIndex = subscriptions.indices.last,
                    let currentIndex = subscriptions.firstIndex(where: { $0.id == subscription.id }),
-                   currentIndex >= lastIndex - 4 {  // 마지막에서 5번째부터
+                   currentIndex >= lastIndex - 4
+                { // 마지막에서 5번째부터
                   onLoadMore(subscription)
                 }
               }
           }
-          
+
           // 더 불러오는 중 인디케이터
           if isLoadingMore {
             HStack {

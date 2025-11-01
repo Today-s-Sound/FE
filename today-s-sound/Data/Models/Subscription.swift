@@ -7,10 +7,10 @@ struct SubscriptionListResponse: Codable {
   let errorCode: Int?
   let message: String
   let result: [SubscriptionItem]
-  
+
   // 편의 속성: result를 subscriptions로 접근
   var subscriptions: [SubscriptionItem] {
-    return result
+    result
   }
 }
 
@@ -21,7 +21,7 @@ struct SubscriptionItem: Codable, Identifiable {
   let alias: String
   let isUrgent: Bool
   let keywords: [KeywordItem]
-  
+
   enum CodingKeys: String, CodingKey {
     case id
     case url

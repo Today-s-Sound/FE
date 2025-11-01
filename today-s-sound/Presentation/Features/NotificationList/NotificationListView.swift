@@ -15,7 +15,7 @@ struct NotificationListView: View {
           ScreenMainTitle(text: "최근 알림", colorScheme: colorScheme)
 
           // 로딩 상태
-          if viewModel.isLoading && viewModel.alarms.isEmpty {
+          if viewModel.isLoading, viewModel.alarms.isEmpty {
             Spacer()
             ProgressView("불러오는 중...")
               .progressViewStyle(CircularProgressViewStyle())
@@ -30,12 +30,12 @@ struct NotificationListView: View {
               Text("⚠️")
                 .font(.system(size: 48))
                 .accessibilityHidden(true) // 이모지는 숨김, 텍스트로 전달
-              
+
               Text(errorMessage)
                 .font(.system(size: 16))
                 .foregroundColor(Color.secondaryText(colorScheme))
                 .accessibilityLabel("오류: \(errorMessage)")
-              
+
               Button("다시 시도") {
                 viewModel.refresh()
               }
@@ -56,7 +56,7 @@ struct NotificationListView: View {
               Text("📭")
                 .font(.system(size: 48))
                 .accessibilityHidden(true) // 이모지는 숨김
-              
+
               Text("최근 알림이 없습니다")
                 .font(.system(size: 16))
                 .foregroundColor(Color.secondaryText(colorScheme))
@@ -76,12 +76,13 @@ struct NotificationListView: View {
                       // 마지막에서 3번째 아이템이 보일 때만 트리거
                       if let lastIndex = viewModel.alarms.indices.last,
                          let currentIndex = viewModel.alarms.firstIndex(where: { $0.id == alarm.id }),
-                         currentIndex >= lastIndex - 2 {
+                         currentIndex >= lastIndex - 2
+                      {
                         viewModel.loadMoreIfNeeded(currentItem: alarm)
                       }
                     }
                 }
-                
+
                 // 더 불러오는 중 인디케이터
                 if viewModel.isLoadingMore {
                   HStack {

@@ -11,18 +11,19 @@ struct DebugSettingsView: View {
   @EnvironmentObject var sessionStore: SessionStore
   @Environment(\.dismiss) var dismiss
   @State private var showingAlert = false
-  
+
   var body: some View {
     NavigationView {
       Form {
         // MARK: - 키체인 정보
+
         Section {
           if let userId = sessionStore.userId {
             VStack(alignment: .leading, spacing: 8) {
               Text("User ID")
                 .font(.caption)
                 .foregroundColor(.secondary)
-              
+
               Text(userId)
                 .font(.system(.caption, design: .monospaced))
                 .textSelection(.enabled)
@@ -31,13 +32,13 @@ struct DebugSettingsView: View {
             Text("User ID: (없음)")
               .foregroundColor(.secondary)
           }
-          
+
           if let deviceSecret = Keychain.getString(for: KeychainKey.deviceSecret) {
             VStack(alignment: .leading, spacing: 8) {
               Text("Device Secret")
                 .font(.caption)
                 .foregroundColor(.secondary)
-              
+
               Text(deviceSecret.prefix(40) + "...")
                 .font(.system(.caption, design: .monospaced))
                 .textSelection(.enabled)
@@ -49,8 +50,9 @@ struct DebugSettingsView: View {
         } header: {
           Label("키체인 정보", systemImage: "key.fill")
         }
-        
+
         // MARK: - 위험 구역
+
         Section {
           Button(role: .destructive, action: {
             showingAlert = true
@@ -77,7 +79,7 @@ struct DebugSettingsView: View {
         }
       }
       .alert("키체인 초기화", isPresented: $showingAlert) {
-        Button("취소", role: .cancel) { }
+        Button("취소", role: .cancel) {}
         Button("초기화", role: .destructive) {
           sessionStore.logout()
           dismiss()
@@ -90,11 +92,10 @@ struct DebugSettingsView: View {
 }
 
 #if DEBUG
-struct DebugSettingsView_Previews: PreviewProvider {
-  static var previews: some View {
-    DebugSettingsView()
-      .environmentObject(SessionStore())
+  struct DebugSettingsView_Previews: PreviewProvider {
+    static var previews: some View {
+      DebugSettingsView()
+        .environmentObject(SessionStore())
+    }
   }
-}
 #endif
-

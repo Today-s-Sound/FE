@@ -19,32 +19,31 @@ extension UserAPI: APITargetType {
   var path: String {
     switch self {
     case .registerAnonymous:
-      return "/api/users/anonymous"
+      "/api/users/anonymous"
     }
   }
-  
+
   var method: Moya.Method {
     switch self {
     case .registerAnonymous:
-      return .post
+      .post
     }
   }
-  
+
   var task: Task {
     switch self {
-    case .registerAnonymous(let deviceSecret):
-      return .requestParameters(
+    case let .registerAnonymous(deviceSecret):
+      .requestParameters(
         parameters: ["deviceSecret": deviceSecret],
         encoding: JSONEncoding.default
       )
     }
   }
-  
+
   var headers: [String: String]? {
-    return [
+    [
       "Content-Type": "application/json",
       "Accept": "application/json"
     ]
   }
 }
-

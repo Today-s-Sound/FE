@@ -16,21 +16,21 @@ extension SubscriptionAPI: APITargetType {
   var path: String {
     switch self {
     case .getSubscriptions:
-      return "/api/subscriptions"
+      "/api/subscriptions"
     }
   }
-  
+
   var method: Moya.Method {
     switch self {
     case .getSubscriptions:
-      return .get
+      .get
     }
   }
-  
+
   var task: Task {
     switch self {
     case let .getSubscriptions(_, _, page, size):
-      return .requestParameters(
+      .requestParameters(
         parameters: [
           "page": page,
           "size": size
@@ -39,11 +39,11 @@ extension SubscriptionAPI: APITargetType {
       )
     }
   }
-  
+
   var headers: [String: String]? {
     switch self {
     case let .getSubscriptions(userId, deviceSecret, _, _):
-      return [
+      [
         "Content-Type": "application/json",
         "Accept": "application/json",
         "X-User-ID": userId,
@@ -52,4 +52,3 @@ extension SubscriptionAPI: APITargetType {
     }
   }
 }
-

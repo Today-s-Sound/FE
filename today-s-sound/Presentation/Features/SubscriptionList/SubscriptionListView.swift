@@ -17,7 +17,7 @@ struct SubscriptionListView: View {
           ScreenSubTitle(text: "구독 중인 페이지", colorScheme: colorScheme)
 
           // 로딩 상태
-          if viewModel.isLoading && viewModel.subscriptions.isEmpty {
+          if viewModel.isLoading, viewModel.subscriptions.isEmpty {
             Spacer()
             ProgressView("불러오는 중...")
               .progressViewStyle(CircularProgressViewStyle())

@@ -45,4 +45,3 @@ enum DeviceSecretGenerator {
       .replacingOccurrences(of: "=", with: "")
   }
 }
-

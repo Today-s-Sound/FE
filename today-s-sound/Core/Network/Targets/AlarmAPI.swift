@@ -16,21 +16,21 @@ extension AlarmAPI: APITargetType {
   var path: String {
     switch self {
     case .getAlarms:
-      return "/api/alarms"
+      "/api/alarms"
     }
   }
-  
+
   var method: Moya.Method {
     switch self {
     case .getAlarms:
-      return .get
+      .get
     }
   }
-  
+
   var task: Task {
     switch self {
     case let .getAlarms(_, _, page, size):
-      return .requestParameters(
+      .requestParameters(
         parameters: [
           "page": page,
           "size": size
@@ -39,11 +39,11 @@ extension AlarmAPI: APITargetType {
       )
     }
   }
-  
+
   var headers: [String: String]? {
     switch self {
     case let .getAlarms(userId, deviceSecret, _, _):
-      return [
+      [
         "Content-Type": "application/json",
         "Accept": "application/json",
         "X-User-ID": userId,
@@ -52,4 +52,3 @@ extension AlarmAPI: APITargetType {
     }
   }
 }
-

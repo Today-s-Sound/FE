@@ -31,7 +31,7 @@ struct SubscriptionCardView: View {
             ForEach(subscription.keywords.prefix(3)) { keyword in
               StatusBadge(text: keyword.name, colorScheme: colorScheme)
             }
-            
+
             // 더 많은 키워드가 있으면 "+" 표시
             if subscription.keywords.count > 3 {
               StatusBadge(

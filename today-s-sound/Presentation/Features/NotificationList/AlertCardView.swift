@@ -5,18 +5,18 @@
 //  Created by Assistant on 12/19/24.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 
 struct AlertCardView: View {
   let alert: Alert?
   let alarm: AlarmItem?
   let colorScheme: ColorScheme
-  
+
   @State private var isPlaying: Bool = false
   @State private var currentSummaryIndex: Int = 0
   @State private var cancellables = Set<AnyCancellable>()
-  
+
   // Alert 또는 AlarmItem 중 하나만 있어야 함
   init(alert: Alert? = nil, alarm: AlarmItem? = nil, colorScheme: ColorScheme) {
     self.alert = alert
@@ -25,31 +25,31 @@ struct AlertCardView: View {
   }
 
   private var cardColor: Color {
-    if let alert = alert {
+    if let alert {
       return alert.isUrgent ? .urgentPink : .primaryGreen
-    } else if let alarm = alarm {
+    } else if let alarm {
       // AlarmItem의 isUrgent 필드로 긴급 여부 판단
       return (alarm.isUrgent ?? false) ? .urgentPink : .primaryGreen
     }
     return .primaryGreen
   }
-  
+
   private var title: String {
     alert?.title ?? alarm?.alias ?? ""
   }
-  
+
   private var timeText: String {
     alert.map { _ in "2시간 전" } ?? alarm?.timeAgo ?? ""
   }
-  
+
   private var summaries: [String] {
-    alarm?.summaries.map { $0.summary } ?? []
+    alarm?.summaries.map(\.summary) ?? []
   }
-  
+
   private var isUrgent: Bool {
-    if let alert = alert {
+    if let alert {
       return alert.isUrgent
-    } else if let alarm = alarm {
+    } else if let alarm {
       return alarm.isUrgent ?? false
     }
     return false
@@ -93,13 +93,13 @@ struct AlertCardView: View {
           isPlaying = false
           currentSummaryIndex = 0
           cancellables.removeAll()
-          
+
           // VoiceOver 알림
           UIAccessibility.post(notification: .announcement, argument: "재생이 중단되었습니다")
         } else {
           // 재생 시작
           playAllSummaries()
-          
+
           // 재생 시작 VoiceOver 알림
           let summaryCount = summaries.count
           if summaryCount > 0 {
@@ -114,7 +114,7 @@ struct AlertCardView: View {
             .font(.system(size: 18))
             .foregroundStyle(isPlaying ? .red : Color.text(colorScheme))
             .accessibilityHidden(true) // 아이콘은 숨김, 텍스트로 전달
-          
+
           Text(isPlaying ? "재생 중단" : "음성으로 듣기")
             .font(.system(size: 18, weight: .semibold))
             .foregroundColor(Color.text(colorScheme))
@@ -141,18 +141,18 @@ struct AlertCardView: View {
     .accessibilityElement(children: .combine) // 카드를 하나의 요소로 그룹화
     .accessibilityLabel(accessibilityCardLabel)
   }
-  
+
   // MARK: - 접근성 속성
-  
+
   private var accessibilityCardLabel: String {
     let typeText = isUrgent ? "긴급 알림" : "알림"
     return "\(typeText), \(title), \(timeText)"
   }
-  
+
   private var accessibilityButtonLabel: String {
     isPlaying ? "재생 중단 버튼" : "음성으로 듣기 버튼"
   }
-  
+
   private var accessibilityButtonHint: String {
     if isPlaying {
       return "이중탭하여 재생을 중단합니다"
@@ -165,7 +165,7 @@ struct AlertCardView: View {
       }
     }
   }
-  
+
   private var accessibilityButtonValue: String {
     if isPlaying {
       let total = summaries.count
@@ -183,112 +183,113 @@ struct AlertCardView: View {
       }
     }
   }
-  
+
   // MARK: - 음성 재생 함수
-  
+
   private func playAllSummaries() {
-    guard let alarm = alarm, !alarm.summaries.isEmpty else {
+    guard let alarm, !alarm.summaries.isEmpty else {
       // AlarmItem이 없으면 Alert의 title만 재생
-      if let alert = alert {
+      if let alert {
         SpeechService.shared.speak(text: alert.title)
         isPlaying = true
-        
+
         // 재생 완료 감지
         SpeechService.shared.didFinishSpeaking
           .sink { [self] _ in
-            self.isPlaying = false
+            isPlaying = false
           }
           .store(in: &cancellables)
       }
       return
     }
-    
+
     // 첫 번째 summary 재생
     currentSummaryIndex = 0
     isPlaying = true
     playSummary(at: 0)
   }
-  
+
   private func playSummary(at index: Int) {
-    guard let alarm = alarm,
-          index < alarm.summaries.count else {
+    guard let alarm,
+          index < alarm.summaries.count
+    else {
       // 모든 summary 재생 완료
       isPlaying = false
       currentSummaryIndex = 0
       cancellables.removeAll()
-      
+
       // VoiceOver 알림: 재생 완료
       UIAccessibility.post(notification: .announcement, argument: "모든 내용 재생이 완료되었습니다")
       return
     }
-    
+
     // 중복 재생 방지: 이미 다른 summary를 재생 중이면 리턴
     guard currentSummaryIndex == index || !SpeechService.shared.isSpeaking else {
       print("⚠️ 이미 재생 중입니다. 중복 재생 방지: 현재 index=\(currentSummaryIndex), 요청된 index=\(index)")
       return
     }
-    
+
     // 이전 cancellable 정리
     cancellables.removeAll()
-    
+
     let summary = alarm.summaries[index]
     currentSummaryIndex = index
-    
+
     // 순서 안내 음성 재생 (예: "첫 번째 내용", "두 번째 내용")
     let orderText = getOrderText(index: index, total: alarm.summaries.count)
     let fullText = "\(orderText). \(summary.summary)"
-    
+
     // 재생 시작 전에 중복 체크
     guard !SpeechService.shared.isSpeaking else {
       print("⚠️ SpeechService가 이미 재생 중입니다. 중복 재생 방지")
       return
     }
-    
+
     // 재생 시작
     SpeechService.shared.speak(text: fullText)
-    
+
     // VoiceOver 알림: 현재 재생 중인 내용
     let total = alarm.summaries.count
     UIAccessibility.post(notification: .announcement, argument: "\(index + 1)번째 내용 재생 중, 전체 \(total)개 중")
-    
+
     // 재생 완료 감지 (index 검증으로 중복 방지)
     let cancellable = SpeechService.shared.didFinishSpeaking
-      .sink(receiveValue: { [self] (_: Void) in
+      .sink(receiveValue: { [self] _ in
         // 현재 재생 중인 index가 변경되었으면 리턴 (중복 방지)
-        guard self.currentSummaryIndex == index else {
-          print("⚠️ 재생 중 index 변경됨. 무시: 예상=\(index), 현재=\(self.currentSummaryIndex)")
+        guard currentSummaryIndex == index else {
+          print("⚠️ 재생 중 index 변경됨. 무시: 예상=\(index), 현재=\(currentSummaryIndex)")
           return
         }
-        
+
         // 다음 summary 재생
         let nextIndex = index + 1
         if nextIndex < alarm.summaries.count {
           // 약간의 딜레이 후 다음 재생
           DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             // 딜레이 후에도 여전히 같은 index인지 확인
-            if self.currentSummaryIndex == index {
-              self.playSummary(at: nextIndex)
+            if currentSummaryIndex == index {
+              playSummary(at: nextIndex)
             }
           }
         } else {
           // 모두 재생 완료
-          self.isPlaying = false
-          self.currentSummaryIndex = 0
-          self.cancellables.removeAll()
-          
+          isPlaying = false
+          currentSummaryIndex = 0
+          cancellables.removeAll()
+
           // VoiceOver 알림: 재생 완료
           UIAccessibility.post(notification: .announcement, argument: "모든 내용 재생이 완료되었습니다")
         }
       })
-    
+
     cancellable.store(in: &cancellables)
   }
-  
+
   // MARK: - 순서 텍스트 생성
-  
+
   private func getOrderText(index: Int, total: Int) -> String {
     let numbers = ["첫", "두", "세", "네", "다섯", "여섯", "일곱", "여덟", "아홉", "열"]
-    
+
     if index < numbers.count {
       return "\(numbers[index]) 번째 내용"
     } else {
