@@ -16,10 +16,44 @@ struct SubscriptionListView: View {
           ScreenMainTitle(text: "구독 설정", colorScheme: colorScheme)
           ScreenSubTitle(text: "구독 중인 페이지", colorScheme: colorScheme)
 
-          SubscriptionsListSection(
-            subscriptions: viewModel.subscriptions,
-            colorScheme: colorScheme
-          )
+          // 로딩 상태
+          if viewModel.isLoading && viewModel.subscriptions.isEmpty {
+            Spacer()
+            ProgressView("불러오는 중...")
+              .progressViewStyle(CircularProgressViewStyle())
+            Spacer()
+          }
+          // 에러 메시지
+          else if let errorMessage = viewModel.errorMessage {
+            Spacer()
+            VStack(spacing: 16) {
+              Text("⚠️")
+                .font(.system(size: 48))
+              Text(errorMessage)
+                .font(.system(size: 16))
+                .foregroundColor(Color.secondaryText(colorScheme))
+              Button("다시 시도") {
+                viewModel.refresh()
+              }
+              .padding(.horizontal, 24)
+              .padding(.vertical, 12)
+              .background(Color.primaryGreen)
+              .foregroundColor(.white)
+              .cornerRadius(8)
+            }
+            Spacer()
+          }
+          // 구독 목록
+          else {
+            SubscriptionsListSection(
+              subscriptions: viewModel.subscriptions,
+              colorScheme: colorScheme,
+              onLoadMore: { item in
+                viewModel.loadMoreIfNeeded(currentItem: item)
+              },
+              isLoadingMore: viewModel.isLoadingMore
+            )
+          }
 
           AddSubscriptionButton(colorScheme: colorScheme) {
             showAddSubscription = true
@@ -27,6 +61,16 @@ struct SubscriptionListView: View {
         }
       }
       .navigationBarHidden(true)
+      .onAppear {
+        // 처음 로드
+        if viewModel.subscriptions.isEmpty {
+          viewModel.loadSubscriptions()
+        }
+      }
+      .refreshable {
+        // Pull to refresh
+        viewModel.refresh()
+      }
     }
     .sheet(isPresented: $showAddSubscription) {
       AddSubscriptionView()

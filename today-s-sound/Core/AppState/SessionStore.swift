@@ -10,7 +10,7 @@ import SwiftUI
 import Combine
 
 @MainActor
-final class SessionStor e: ObservableObject {
+final class SessionStore: ObservableObject {
   @Published private(set) var userId: String?
   @Published private(set) var isRegistered: Bool = false
   @Published var lastError: String?
@@ -28,7 +28,7 @@ final class SessionStor e: ObservableObject {
     print("🔐 키체인 확인 (SessionStore.init)")
     print("━━━━━━━━━━━━━━━━━━━━━━━━━━")
     if let deviceSecret = Keychain.getString(for: KeychainKey.deviceSecret) {
-      print("✅ deviceSecret: \(deviceSecret.prefix(30))...")
+      print("✅ deviceSecret: \(deviceSecret)")
     } else {
       print("❌ deviceSecret: (없음)")
     }
