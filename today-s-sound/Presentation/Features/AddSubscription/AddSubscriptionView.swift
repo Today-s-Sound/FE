@@ -1,14 +1,29 @@
 import SwiftUI
 
 struct AddSubscriptionView: View {
-  @StateObject private var viewModel = AddSubscriptionViewModel()
+  // 주의: 호출하는 쪽에서 .environmentObject(session)을 넘겨도,
+  // ViewModel은 생성 시점에 필요하므로 init(session:) 으로 주입합니다.
   @Environment(\.colorScheme) var colorScheme
   @Environment(\.dismiss) var dismiss
 
+  @StateObject private var viewModel: AddSubscriptionViewModel
+
+  // MARK: - Initializers
+
+  /// 실제 사용: AddSubscriptionView(session: session)
+  init(session: SessionStore) {
+    _viewModel = StateObject(wrappedValue: AddSubscriptionViewModel(session: session))
+  }
+
+  /// 프리뷰/임시용(실서비스에서는 사용하지 마세요)
+  init() {
+    let dummy = SessionStore()
+    _viewModel = StateObject(wrappedValue: AddSubscriptionViewModel(session: dummy))
+  }
+
   var body: some View {
     ZStack {
-      Color.background(colorScheme)
-        .ignoresSafeArea()
+      Color.background(colorScheme).ignoresSafeArea()
 
       VStack(spacing: 0) {
         HeaderBar(colorScheme: colorScheme, onClose: { dismiss() })
@@ -17,6 +32,7 @@ struct AddSubscriptionView: View {
 
         ScrollView {
           VStack(spacing: 24) {
+            // URL
             InputFieldSection(
               title: "웹사이트 URL",
               placeholder: "https://www.example.com",
@@ -25,6 +41,7 @@ struct AddSubscriptionView: View {
               colorScheme: colorScheme
             )
 
+            // 별명 (현재 API에는 전송하지 않지만 UI는 유지)
             InputFieldSection(
               title: "웹페이지 별명",
               placeholder: "동국대학교 공지사항",
@@ -33,17 +50,14 @@ struct AddSubscriptionView: View {
               colorScheme: colorScheme
             )
 
+            // 키워드 필터
             VStack(alignment: .leading, spacing: 12) {
-              // 키워드 필터 섹션
               VStack(alignment: .leading, spacing: 8) {
                 Text("키워드 필터")
                   .font(.system(size: 14, weight: .semibold))
                   .foregroundColor(Color.primaryGreen)
 
-                // 키워드 추가 버튼
-                Button(action: {
-                  viewModel.showKeywordSelector = true
-                }) {
+                Button(action: { viewModel.showKeywordSelector = true }) {
                   HStack {
                     Text("키워드 추가...")
                       .font(.system(size: 16))
@@ -64,37 +78,50 @@ struct AddSubscriptionView: View {
                   .fixedSize(horizontal: false, vertical: true)
               }
 
-              // 선택된 키워드 배지들
               if !viewModel.selectedKeywords.isEmpty {
                 FlowLayout(spacing: 8) {
                   ForEach(viewModel.selectedKeywords, id: \.self) { keyword in
                     KeywordBadgeWithDelete(
                       text: keyword,
                       colorScheme: colorScheme
-                    ) {
-                      viewModel.removeKeyword(keyword)
-                    }
+                    ) { viewModel.removeKeyword(keyword) }
                   }
                 }
               }
             }
 
+            // 긴급 토글 (현재 API 전송은 보류)
             UrgentToggleRow(isOn: $viewModel.isUrgent, colorScheme: colorScheme)
 
-            // 하단 버튼
+            // 에러 메시지
+            if let err = viewModel.errorMessage {
+              Text(err)
+                .font(.system(size: 13, weight: .medium))
+                .foregroundColor(.red)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 2)
+            }
+
+            // 하단 제출 버튼
             Button(action: {
-              dismiss()
-            }, label: {
-              Text("등록 승인 요청")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(
-                  RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.primaryGreen90)
-                )
-            })
+              viewModel.submit()
+            }) {
+              ZStack {
+                Text(viewModel.isLoading ? "요청 중…" : "등록 승인 요청")
+                  .font(.system(size: 16, weight: .semibold))
+                  .foregroundColor(.white)
+                  .frame(maxWidth: .infinity)
+                  .padding(.vertical, 16)
+                if viewModel.isLoading {
+                  ProgressView().tint(.white)
+                }
+              }
+              .background(
+                RoundedRectangle(cornerRadius: 12)
+                  .fill(viewModel.canSubmit ? Color.primaryGreen90 : Color.primaryGreen90.opacity(0.5))
+              )
+            }
+            .disabled(!viewModel.canSubmit)
           }
           .padding(.horizontal, 16)
           .padding(.top, 8)
@@ -102,13 +129,18 @@ struct AddSubscriptionView: View {
         }
       }
     }
+    // 키워드 선택 시트
     .sheet(isPresented: $viewModel.showKeywordSelector) {
       KeywordSelectorSheet(viewModel: viewModel, colorScheme: colorScheme)
+    }
+    // 성공 시 자동 닫기
+    .onChange(of: viewModel.successSubscriptionId) { newID in
+      if newID != nil { dismiss() }
     }
   }
 }
 
-// 키워드 선택 시트
+// 그대로 유지: 키워드 선택 시트/배지/FlowLayout (네가 준 버전과 동일)
 struct KeywordSelectorSheet: View {
   @ObservedObject var viewModel: AddSubscriptionViewModel
   let colorScheme: ColorScheme
@@ -116,20 +148,16 @@ struct KeywordSelectorSheet: View {
 
   var body: some View {
     ZStack {
-      Color.background(colorScheme)
-        .ignoresSafeArea()
+      Color.background(colorScheme).ignoresSafeArea()
 
       VStack(spacing: 0) {
-        // 헤더
         HStack {
           Spacer()
           Text("구독 설정")
             .font(.custom("KoddiUD OnGothic Bold", size: 24))
             .foregroundColor(Color.text(colorScheme))
           Spacer()
-          Button(action: {
-            dismiss()
-          }) {
+          Button(action: { dismiss() }) {
             Image(systemName: "xmark")
               .font(.system(size: 20))
               .foregroundColor(Color.text(colorScheme))
@@ -139,27 +167,22 @@ struct KeywordSelectorSheet: View {
         .padding(.top, 20)
         .padding(.bottom, 32)
 
-        // 키워드 설정 섹션
         VStack(alignment: .leading, spacing: 16) {
           HStack {
             Text("키워드 설정")
               .font(.custom("KoddiUD OnGothic Bold", size: 20))
               .foregroundColor(Color.primaryGreen)
-
             Spacer()
           }
           .padding(.horizontal, 20)
 
-          // 키워드 체크박스 리스트
           VStack(spacing: 0) {
             ForEach(Array(viewModel.availableKeywords.enumerated()), id: \.offset) { index, keyword in
               KeywordCheckboxRow(
                 keyword: keyword,
                 isSelected: viewModel.selectedKeywords.contains(keyword),
                 colorScheme: colorScheme
-              ) {
-                viewModel.toggleKeyword(keyword)
-              }
+              ) { viewModel.toggleKeyword(keyword) }
 
               if index < viewModel.availableKeywords.count - 1 {
                 Divider()
@@ -172,10 +195,7 @@ struct KeywordSelectorSheet: View {
 
         Spacer()
 
-        // 저장하기 버튼
-        Button(action: {
-          dismiss()
-        }) {
+        Button(action: { dismiss() }) {
           Text("저장하기")
             .font(.custom("KoddiUD OnGothic Bold", size: 18))
             .foregroundColor(.white)
@@ -191,7 +211,6 @@ struct KeywordSelectorSheet: View {
   }
 }
 
-// 삭제 가능한 키워드 배지
 struct KeywordBadgeWithDelete: View {
   let text: String
   let colorScheme: ColorScheme
@@ -202,7 +221,6 @@ struct KeywordBadgeWithDelete: View {
       Text(text)
         .font(.system(size: 14, weight: .medium))
         .foregroundColor(.white)
-
       Button(action: onDelete) {
         Image(systemName: "xmark")
           .font(.system(size: 10, weight: .bold))
@@ -218,7 +236,6 @@ struct KeywordBadgeWithDelete: View {
   }
 }
 
-// FlowLayout for keywords
 struct FlowLayout: Layout {
   var spacing: CGFloat = 8
 
@@ -232,13 +249,13 @@ struct FlowLayout: Layout {
   }
 
   func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-    let result = FlowResult(
-      in: bounds.width,
-      subviews: subviews,
-      spacing: spacing
-    )
+    let result = FlowResult(in: bounds.width, subviews: subviews, spacing: spacing)
     for (index, subview) in subviews.enumerated() {
-      subview.place(at: CGPoint(x: bounds.minX + result.positions[index].x, y: bounds.minY + result.positions[index].y), proposal: .unspecified)
+      subview.place(
+        at: CGPoint(x: bounds.minX + result.positions[index].x,
+                    y: bounds.minY + result.positions[index].y),
+        proposal: .unspecified
+      )
     }
   }
 
@@ -253,18 +270,15 @@ struct FlowLayout: Layout {
 
       for subview in subviews {
         let size = subview.sizeThatFits(.unspecified)
-
         if currentX + size.width > maxWidth, currentX > 0 {
           currentX = 0
           currentY += lineHeight + spacing
           lineHeight = 0
         }
-
         positions.append(CGPoint(x: currentX, y: currentY))
         lineHeight = max(lineHeight, size.height)
         currentX += size.width + spacing
       }
-
       size = CGSize(width: maxWidth, height: currentY + lineHeight)
     }
   }
@@ -272,6 +286,7 @@ struct FlowLayout: Layout {
 
 struct AddSubscriptionView_Previews: PreviewProvider {
   static var previews: some View {
-    AddSubscriptionView()
+    AddSubscriptionView() // 미리보기 전용 이니셜라이저
+      .preferredColorScheme(.light)
   }
 }

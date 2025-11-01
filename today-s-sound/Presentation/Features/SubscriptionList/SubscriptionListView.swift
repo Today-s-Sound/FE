@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct SubscriptionListView: View {
+  @EnvironmentObject var session: SessionStore // ✅ SessionStore 주입 받기
   @StateObject private var viewModel = SubscriptionListViewModel()
   @Environment(\.colorScheme) var colorScheme
   @State private var showAddSubscription = false
@@ -8,8 +9,7 @@ struct SubscriptionListView: View {
   var body: some View {
     NavigationView {
       ZStack {
-        Color.background(colorScheme)
-          .ignoresSafeArea()
+        Color.background(colorScheme).ignoresSafeArea()
 
         VStack(alignment: .leading, spacing: 12) {
           Spacer()
@@ -29,7 +29,9 @@ struct SubscriptionListView: View {
       .navigationBarHidden(true)
     }
     .sheet(isPresented: $showAddSubscription) {
-      AddSubscriptionView()
+      // ✅ 세션을 전달해서 AddSubscriptionViewModel이 API를 쓸 수 있게 함
+      AddSubscriptionView(session: session)
+        .environmentObject(session) // 선택적이지만 유지해두면 하위에서도 접근 가능
     }
   }
 }
@@ -37,5 +39,6 @@ struct SubscriptionListView: View {
 struct SubscriptionListView_Previews: PreviewProvider {
   static var previews: some View {
     SubscriptionListView()
+      .environmentObject(SessionStore()) // ✅ 프리뷰용 더미 세션 주입
   }
 }

@@ -9,18 +9,18 @@ import SwiftUI
 
 @main
 struct TodaySSoundApp: App {
-    @StateObject private var session = SessionStore()
-    
-    var body: some Scene {
-        WindowGroup {
-            Group {
-                if session.isRegistered {
-                    MainView()
-                } else {
-                    OnBoardingView()
-                }
-            }
-            .environmentObject(session)
+  @StateObject private var session = SessionStore()
+
+  var body: some Scene {
+    WindowGroup {
+      Group {
+        if session.isRegistered {
+          MainView()
+        } else {
+          OnBoardingView()
         }
+      }
+      .environmentObject(session)
     }
+  }
 }
