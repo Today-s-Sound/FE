@@ -13,15 +13,12 @@ struct RegisterAnonymousRequest: Codable {
   let deviceSecret: String
 }
 
-struct RegisterAnonymousResponse: Codable {
-  let errorCode: String?
-  let message: String
-  let result: AnonymousUserResult
-}
-
 struct AnonymousUserResult: Codable {
   let userId: String
 }
+
+/// 익명 사용자 등록 응답
+typealias RegisterAnonymousResponse = APIResponse<AnonymousUserResult>
 
 // MARK: - 에러 응답
 

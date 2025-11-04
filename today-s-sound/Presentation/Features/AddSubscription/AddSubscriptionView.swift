@@ -105,6 +105,12 @@ struct AddSubscriptionView: View {
     .sheet(isPresented: $viewModel.showKeywordSelector) {
       KeywordSelectorSheet(viewModel: viewModel, colorScheme: colorScheme)
     }
+    .onAppear {
+      // 화면이 나타날 때 키워드 목록 로드
+      if viewModel.availableKeywords.isEmpty {
+        viewModel.loadKeywords()
+      }
+    }
   }
 }
 
@@ -151,20 +157,63 @@ struct KeywordSelectorSheet: View {
           .padding(.horizontal, 20)
 
           // 키워드 체크박스 리스트
-          VStack(spacing: 0) {
-            ForEach(Array(viewModel.availableKeywords.enumerated()), id: \.offset) { index, keyword in
-              KeywordCheckboxRow(
-                keyword: keyword,
-                isSelected: viewModel.selectedKeywords.contains(keyword),
-                colorScheme: colorScheme
-              ) {
-                viewModel.toggleKeyword(keyword)
-              }
-
-              if index < viewModel.availableKeywords.count - 1 {
-                Divider()
-                  .background(Color.border(colorScheme))
+          if viewModel.isLoadingKeywords {
+            VStack(spacing: 16) {
+              ProgressView()
+                .padding(.top, 40)
+              Text("키워드를 불러오는 중...")
+                .font(.system(size: 14))
+                .foregroundColor(Color.secondaryText(colorScheme))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 40)
+          } else if let errorMessage = viewModel.keywordErrorMessage {
+            VStack(spacing: 16) {
+              Image(systemName: "exclamationmark.triangle")
+                .font(.system(size: 32))
+                .foregroundColor(.red)
+              Text(errorMessage)
+                .font(.system(size: 14))
+                .foregroundColor(Color.secondaryText(colorScheme))
+                .multilineTextAlignment(.center)
+              Button(action: {
+                viewModel.loadKeywords()
+              }) {
+                Text("다시 시도")
+                  .font(.system(size: 14, weight: .semibold))
+                  .foregroundColor(.white)
                   .padding(.horizontal, 20)
+                  .padding(.vertical, 8)
+                  .background(Color.primaryGreen)
+                  .cornerRadius(8)
+              }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 40)
+          } else if viewModel.availableKeywords.isEmpty {
+            VStack(spacing: 16) {
+              Text("등록된 키워드가 없습니다")
+                .font(.system(size: 14))
+                .foregroundColor(Color.secondaryText(colorScheme))
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 40)
+          } else {
+            VStack(spacing: 0) {
+              ForEach(Array(viewModel.availableKeywords.enumerated()), id: \.offset) { index, keyword in
+                KeywordCheckboxRow(
+                  keyword: keyword,
+                  isSelected: viewModel.selectedKeywords.contains(keyword),
+                  colorScheme: colorScheme
+                ) {
+                  viewModel.toggleKeyword(keyword)
+                }
+
+                if index < viewModel.availableKeywords.count - 1 {
+                  Divider()
+                    .background(Color.border(colorScheme))
+                    .padding(.horizontal, 20)
+                }
               }
             }
           }
@@ -186,6 +235,12 @@ struct KeywordSelectorSheet: View {
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 34)
+      }
+    }
+    .onAppear {
+      // 시트가 나타날 때 키워드 목록이 비어있으면 로드
+      if viewModel.availableKeywords.isEmpty && !viewModel.isLoadingKeywords {
+        viewModel.loadKeywords()
       }
     }
   }

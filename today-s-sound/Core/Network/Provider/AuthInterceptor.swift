@@ -25,7 +25,8 @@ final class AuthInterceptor: RequestInterceptor {
 
     let bypass: Set<String> = [
       "/api/auth/login",
-      "/api/auth/refresh"
+      "/api/auth/refresh",
+      "/api/subscriptions/keywords"
     ]
 
     if bypass.contains(path) {
