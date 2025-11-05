@@ -9,6 +9,9 @@ protocol APIServiceType {
   func getSubscriptions(
     userId: String, deviceSecret: String, page: Int, size: Int
   ) -> AnyPublisher<SubscriptionListResponse, NetworkError>
+  func deleteSubscription(
+    userId: String, deviceSecret: String, subscriptionId: Int64
+  ) -> AnyPublisher<DeleteSubscriptionResponse, NetworkError>
   func getAlarms(
     userId: String, deviceSecret: String, page: Int, size: Int
   ) -> AnyPublisher<AlarmListResponse, NetworkError>
@@ -149,6 +152,30 @@ class APIService: APIServiceType {
           .eraseToAnyPublisher()
       }
       return self.handleResponse(response, decodeTo: SubscriptionListResponse.self, debugLabel: "구독 목록 응답")
+    }
+    .eraseToAnyPublisher()
+  }
+
+
+  // MARK: - Subscription API (Delete)
+
+  func deleteSubscription(
+    userId: String, deviceSecret: String, subscriptionId: Int64
+  ) -> AnyPublisher<DeleteSubscriptionResponse, NetworkError> {
+    subscriptionProvider.requestPublisher(.deleteSubscription(
+      userId: userId,
+      deviceSecret: deviceSecret,
+      subscriptionId: subscriptionId
+    ))
+    .mapError { moyaError -> NetworkError in
+      .requestFailed(moyaError)
+    }
+    .flatMap { [weak self] response -> AnyPublisher<DeleteSubscriptionResponse, NetworkError> in
+      guard let self else {
+        return Fail(error: NetworkError.unknown)
+          .eraseToAnyPublisher()
+      }
+      return self.handleResponse(response, decodeTo: DeleteSubscriptionResponse.self, debugLabel: "구독 삭제 응답")
     }
     .eraseToAnyPublisher()
   }

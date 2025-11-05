@@ -127,4 +127,60 @@ class SubscriptionListViewModel: ObservableObject {
     // View에서 이미 threshold 체크했으므로 바로 로드
     loadSubscriptions()
   }
+
+  /// 구독 삭제
+  func deleteSubscription(_ subscription: SubscriptionItem) {
+    guard let userId = Keychain.getString(for: KeychainKey.userId),
+          let deviceSecret = Keychain.getString(for: KeychainKey.deviceSecret)
+    else {
+      errorMessage = "사용자 정보가 없습니다"
+      return
+    }
+
+    print("🗑️ 구독 삭제 요청: subscriptionId=\(subscription.id)")
+
+    apiService.deleteSubscription(
+      userId: userId,
+      deviceSecret: deviceSecret,
+      subscriptionId: subscription.id
+    )
+    .receive(on: DispatchQueue.main)
+    .sink(
+      receiveCompletion: { [weak self] completion in
+        guard let self else { return }
+
+        switch completion {
+        case .finished:
+          // 삭제 성공 시 목록에서 제거
+          self.subscriptions.removeAll { $0.id == subscription.id }
+          print("✅ 구독 삭제 성공: subscriptionId=\(subscription.id)")
+
+        case let .failure(error):
+          switch error {
+          case let .serverError(statusCode):
+            self.errorMessage = "서버 오류 (상태: \(statusCode))"
+
+          case .decodingFailed:
+            self.errorMessage = "응답 처리 실패"
+
+          case let .requestFailed(requestError):
+            self.errorMessage = "요청 실패: \(requestError.localizedDescription)"
+
+          case .invalidURL:
+            self.errorMessage = "잘못된 URL"
+
+          case .unknown:
+            self.errorMessage = "알 수 없는 오류"
+          }
+
+          print("❌ 구독 삭제 실패: \(self.errorMessage ?? "")")
+        }
+      },
+      receiveValue: { [weak self] response in
+        guard let self else { return }
+        print("📥 구독 삭제 응답: \(response.message)")
+      }
+    )
+    .store(in: &cancellables)
+  }
 }

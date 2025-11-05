@@ -1,9 +1,27 @@
 import Foundation
 
+// MARK: - Subscription Request Models
+
+/// 구독 생성 요청
+struct CreateSubscriptionRequest: Codable {
+  let url: String
+  let keywords: [String]
+}
+
 // MARK: - Subscription Response Models
 
 /// 구독 목록 응답
 typealias SubscriptionListResponse = APIResponse<[SubscriptionItem]>
+
+/// 구독 생성 응답
+struct CreateSubscriptionResponse: Codable {
+  let subscriptionId: Int64
+}
+
+/// 구독 삭제 응답
+struct DeleteSubscriptionResponse: Codable {
+  let message: String
+}
 
 extension SubscriptionListResponse {
   // 편의 속성: result를 subscriptions로 접근

@@ -10,6 +10,7 @@ import Moya
 
 enum SubscriptionAPI {
   case getSubscriptions(userId: String, deviceSecret: String, page: Int, size: Int)
+  case deleteSubscription(userId: String, deviceSecret: String, subscriptionId: Int64)
 }
 
 extension SubscriptionAPI: APITargetType {
@@ -17,6 +18,8 @@ extension SubscriptionAPI: APITargetType {
     switch self {
     case .getSubscriptions:
       "/api/subscriptions"
+    case let .deleteSubscription(_, _, subscriptionId):
+      "/api/subscriptions/\(subscriptionId)"
     }
   }
 
@@ -24,6 +27,8 @@ extension SubscriptionAPI: APITargetType {
     switch self {
     case .getSubscriptions:
       .get
+    case .deleteSubscription:
+      .delete
     }
   }
 
@@ -37,12 +42,21 @@ extension SubscriptionAPI: APITargetType {
         ],
         encoding: URLEncoding.queryString
       )
+    case .deleteSubscription:
+      .requestPlain
     }
   }
 
   var headers: [String: String]? {
     switch self {
     case let .getSubscriptions(userId, deviceSecret, _, _):
+      [
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-User-ID": userId,
+        "X-Device-Secret": deviceSecret
+      ]
+    case let .deleteSubscription(userId, deviceSecret, _):
       [
         "Content-Type": "application/json",
         "Accept": "application/json",
