@@ -239,7 +239,7 @@ struct KeywordSelectorSheet: View {
     }
     .onAppear {
       // 시트가 나타날 때 키워드 목록이 비어있으면 로드
-      if viewModel.availableKeywords.isEmpty && !viewModel.isLoadingKeywords {
+      if viewModel.availableKeywords.isEmpty, !viewModel.isLoadingKeywords {
         viewModel.loadKeywords()
       }
     }

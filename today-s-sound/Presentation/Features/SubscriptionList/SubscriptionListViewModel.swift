@@ -152,28 +152,28 @@ class SubscriptionListViewModel: ObservableObject {
         switch completion {
         case .finished:
           // 삭제 성공 시 목록에서 제거
-          self.subscriptions.removeAll { $0.id == subscription.id }
+          subscriptions.removeAll { $0.id == subscription.id }
           print("✅ 구독 삭제 성공: subscriptionId=\(subscription.id)")
 
         case let .failure(error):
           switch error {
           case let .serverError(statusCode):
-            self.errorMessage = "서버 오류 (상태: \(statusCode))"
+            errorMessage = "서버 오류 (상태: \(statusCode))"
 
           case .decodingFailed:
-            self.errorMessage = "응답 처리 실패"
+            errorMessage = "응답 처리 실패"
 
           case let .requestFailed(requestError):
-            self.errorMessage = "요청 실패: \(requestError.localizedDescription)"
+            errorMessage = "요청 실패: \(requestError.localizedDescription)"
 
           case .invalidURL:
-            self.errorMessage = "잘못된 URL"
+            errorMessage = "잘못된 URL"
 
           case .unknown:
-            self.errorMessage = "알 수 없는 오류"
+            errorMessage = "알 수 없는 오류"
           }
 
-          print("❌ 구독 삭제 실패: \(self.errorMessage ?? "")")
+          print("❌ 구독 삭제 실패: \(errorMessage ?? "")")
         }
       },
       receiveValue: { [weak self] response in

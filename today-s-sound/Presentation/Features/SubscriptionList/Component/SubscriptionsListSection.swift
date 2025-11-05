@@ -28,7 +28,7 @@ struct SubscriptionsListSection: View {
               Button(role: .destructive) {
                 onDelete(subscription)
               } label: {
-                Label(systemImage: "trash")
+                Label("삭제", systemImage: "trash")
               }
             }
             .onAppear {

@@ -21,7 +21,7 @@ class AddSubscriptionViewModel: ObservableObject {
   /// 서버에서 키워드 목록 불러오기
   func loadKeywords() {
     guard !isLoadingKeywords else { return }
-    
+
     isLoadingKeywords = true
     keywordErrorMessage = nil
 
@@ -60,7 +60,7 @@ class AddSubscriptionViewModel: ObservableObject {
         receiveValue: { [weak self] response in
           guard let self else { return }
           // 서버에서 받은 KeywordItem 배열을 String 배열로 변환
-          availableKeywords = response.keywords.map { $0.name }
+          availableKeywords = response.keywords.map(\.name)
           print("✅ 키워드 목록 조회 성공: \(availableKeywords.count)개")
         }
       )

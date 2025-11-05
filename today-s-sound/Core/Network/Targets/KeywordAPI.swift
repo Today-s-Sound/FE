@@ -41,4 +41,3 @@ extension KeywordAPI: APITargetType {
     ]
   }
 }
-

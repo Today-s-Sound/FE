@@ -60,7 +60,7 @@ class APIService: APIServiceType {
     decodeTo type: T.Type,
     debugLabel: String = ""
   ) -> AnyPublisher<T, NetworkError> {
-    return Just(response)
+    Just(response)
       .tryMap { response -> Data in
         // 상태 코드 체크
         guard (200 ... 299).contains(response.statusCode) else {
@@ -127,7 +127,7 @@ class APIService: APIServiceType {
           return Fail(error: NetworkError.unknown)
             .eraseToAnyPublisher()
         }
-        return self.handleResponse(response, decodeTo: RegisterAnonymousResponse.self, debugLabel: "익명 사용자 등록 응답")
+        return handleResponse(response, decodeTo: RegisterAnonymousResponse.self, debugLabel: "익명 사용자 등록 응답")
       }
       .eraseToAnyPublisher()
   }
@@ -151,11 +151,10 @@ class APIService: APIServiceType {
         return Fail(error: NetworkError.unknown)
           .eraseToAnyPublisher()
       }
-      return self.handleResponse(response, decodeTo: SubscriptionListResponse.self, debugLabel: "구독 목록 응답")
+      return handleResponse(response, decodeTo: SubscriptionListResponse.self, debugLabel: "구독 목록 응답")
     }
     .eraseToAnyPublisher()
   }
-
 
   // MARK: - Subscription API (Delete)
 
@@ -175,7 +174,7 @@ class APIService: APIServiceType {
         return Fail(error: NetworkError.unknown)
           .eraseToAnyPublisher()
       }
-      return self.handleResponse(response, decodeTo: DeleteSubscriptionResponse.self, debugLabel: "구독 삭제 응답")
+      return handleResponse(response, decodeTo: DeleteSubscriptionResponse.self, debugLabel: "구독 삭제 응답")
     }
     .eraseToAnyPublisher()
   }
@@ -199,7 +198,7 @@ class APIService: APIServiceType {
         return Fail(error: NetworkError.unknown)
           .eraseToAnyPublisher()
       }
-      return self.handleResponse(response, decodeTo: AlarmListResponse.self, debugLabel: "알림 목록 응답")
+      return handleResponse(response, decodeTo: AlarmListResponse.self, debugLabel: "알림 목록 응답")
     }
     .eraseToAnyPublisher()
   }
@@ -216,7 +215,7 @@ class APIService: APIServiceType {
           return Fail(error: NetworkError.unknown)
             .eraseToAnyPublisher()
         }
-        return self.handleResponse(response, decodeTo: KeywordsResponse.self, debugLabel: "키워드 목록 응답")
+        return handleResponse(response, decodeTo: KeywordsResponse.self, debugLabel: "키워드 목록 응답")
       }
       .eraseToAnyPublisher()
   }

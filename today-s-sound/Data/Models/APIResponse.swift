@@ -9,4 +9,3 @@ struct APIResponse<T: Codable>: Codable {
   let message: String
   let result: T
 }
-

@@ -16,4 +16,3 @@ extension KeywordsResponse {
     result.keywords
   }
 }
-
