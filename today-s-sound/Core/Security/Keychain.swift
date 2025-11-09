@@ -11,6 +11,7 @@ import Security
 enum KeychainKey {
   static let deviceSecret = "device_secret"
   static let userId = "user_id"
+  static let fcmToken = "fcm_token"
   static let apiKey = "api_key" // 서버가 추가 키를 준다면 여기에 저장 (옵셔널)
 }
 

@@ -5,7 +5,7 @@ import Moya
 
 protocol APIServiceType {
   func request<T: Decodable>(_ target: some TargetType) -> AnyPublisher<T, NetworkError>
-  func registerAnonymous(deviceSecret: String) -> AnyPublisher<RegisterAnonymousResponse, NetworkError>
+  func registerAnonymous(request: RegisterAnonymousRequest) -> AnyPublisher<RegisterAnonymousResponse, NetworkError>
   func getSubscriptions(
     userId: String, deviceSecret: String, page: Int, size: Int
   ) -> AnyPublisher<SubscriptionListResponse, NetworkError>
@@ -117,8 +117,8 @@ class APIService: APIServiceType {
 
   // MARK: - User API
 
-  func registerAnonymous(deviceSecret: String) -> AnyPublisher<RegisterAnonymousResponse, NetworkError> {
-    userProvider.requestPublisher(.registerAnonymous(deviceSecret: deviceSecret))
+  func registerAnonymous(request: RegisterAnonymousRequest) -> AnyPublisher<RegisterAnonymousResponse, NetworkError> {
+    userProvider.requestPublisher(.registerAnonymous(request: request))
       .mapError { moyaError -> NetworkError in
         .requestFailed(moyaError)
       }

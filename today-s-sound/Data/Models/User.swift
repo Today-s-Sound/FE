@@ -11,6 +11,8 @@ import Foundation
 
 struct RegisterAnonymousRequest: Codable {
   let deviceSecret: String
+  let model: String?
+  let fcmToken: String?
 }
 
 struct AnonymousUserResult: Codable {
