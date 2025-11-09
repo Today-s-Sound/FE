@@ -6,10 +6,10 @@
 //
 
 import Combine
+import FirebaseMessaging
 import Foundation
 import SwiftUI
 import UIKit
-import FirebaseMessaging
 
 @MainActor
 final class SessionStore: ObservableObject {
@@ -53,7 +53,7 @@ final class SessionStore: ObservableObject {
     let hasUserId = Keychain.getString(for: KeychainKey.userId) != nil
     let hasFcmToken = Keychain.getString(for: KeychainKey.fcmToken) != nil
 
-    if hasDeviceSecret && hasUserId && hasFcmToken {
+    if hasDeviceSecret, hasUserId, hasFcmToken {
       userId = Keychain.getString(for: KeychainKey.userId)
       isRegistered = true
     } else {
@@ -82,7 +82,7 @@ final class SessionStore: ObservableObject {
     let fcmToken = Messaging.messaging().fcmToken
 
     // 4) FCM 토큰이 있으면 키체인에 저장
-    if let fcmToken = fcmToken {
+    if let fcmToken {
       Keychain.setString(fcmToken, for: KeychainKey.fcmToken)
     }
 

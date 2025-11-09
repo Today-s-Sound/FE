@@ -1,7 +1,7 @@
 import Combine
+import FirebaseMessaging
 import SwiftUI
 import UIKit
-import FirebaseMessaging
 
 @MainActor
 final class AnonymousTestViewModel: ObservableObject {
@@ -73,7 +73,7 @@ final class AnonymousTestViewModel: ObservableObject {
     )
 
     log += "\nModel: \(deviceModel)"
-    if let fcmToken = fcmToken {
+    if let fcmToken {
       log += "\nFCM Token: \(fcmToken.prefix(20))..."
     } else {
       log += "\nFCM Token: (없음)"
