@@ -5,13 +5,17 @@ import Moya
 
 protocol APIServiceType {
   func request<T: Decodable>(_ target: some TargetType) -> AnyPublisher<T, NetworkError>
-  func registerAnonymous(deviceSecret: String) -> AnyPublisher<RegisterAnonymousResponse, NetworkError>
+  func registerAnonymous(request: RegisterAnonymousRequest) -> AnyPublisher<RegisterAnonymousResponse, NetworkError>
   func getSubscriptions(
     userId: String, deviceSecret: String, page: Int, size: Int
   ) -> AnyPublisher<SubscriptionListResponse, NetworkError>
+  func deleteSubscription(
+    userId: String, deviceSecret: String, subscriptionId: Int64
+  ) -> AnyPublisher<DeleteSubscriptionResponse, NetworkError>
   func getAlarms(
     userId: String, deviceSecret: String, page: Int, size: Int
   ) -> AnyPublisher<AlarmListResponse, NetworkError>
+  func getKeywords() -> AnyPublisher<KeywordsResponse, NetworkError>
 }
 
 class APIService: APIServiceType {
@@ -19,6 +23,7 @@ class APIService: APIServiceType {
   private let authProvider: MoyaProvider<AuthAPITarget>
   private let subscriptionProvider: MoyaProvider<SubscriptionAPI>
   private let alarmProvider: MoyaProvider<AlarmAPI>
+  private let keywordProvider: MoyaProvider<KeywordAPI>
 
   init(userSession: UserSession = UserSession()) {
     #if DEBUG
@@ -30,11 +35,13 @@ class APIService: APIServiceType {
       authProvider = NetworkKit.provider(userSession: userSession, plugins: [logger])
       subscriptionProvider = NetworkKit.provider(userSession: userSession, plugins: [logger])
       alarmProvider = NetworkKit.provider(userSession: userSession, plugins: [logger])
+      keywordProvider = NetworkKit.provider(userSession: userSession, plugins: [logger])
     #else
       userProvider = NetworkKit.provider(userSession: userSession)
       authProvider = NetworkKit.provider(userSession: userSession)
       subscriptionProvider = NetworkKit.provider(userSession: userSession)
       alarmProvider = NetworkKit.provider(userSession: userSession)
+      keywordProvider = NetworkKit.provider(userSession: userSession)
     #endif
   }
 
@@ -45,10 +52,15 @@ class APIService: APIServiceType {
       .eraseToAnyPublisher()
   }
 
-  // MARK: - User API
+  // MARK: - 공통 응답 처리 헬퍼
 
-  func registerAnonymous(deviceSecret: String) -> AnyPublisher<RegisterAnonymousResponse, NetworkError> {
-    userProvider.requestPublisher(.registerAnonymous(deviceSecret: deviceSecret))
+  /// 공통 응답 처리: 상태 코드 체크, 디코딩, 에러 처리
+  private func handleResponse<T: Decodable>(
+    _ response: Response,
+    decodeTo type: T.Type,
+    debugLabel: String = ""
+  ) -> AnyPublisher<T, NetworkError> {
+    Just(response)
       .tryMap { response -> Data in
         // 상태 코드 체크
         guard (200 ... 299).contains(response.statusCode) else {
@@ -58,15 +70,15 @@ class APIService: APIServiceType {
         // 🐛 디버깅: 서버 응답 출력
         #if DEBUG
           if let jsonString = String(data: response.data, encoding: .utf8) {
-            print("📥 서버 응답 (Raw JSON):")
+            let label = debugLabel.isEmpty ? "서버 응답" : debugLabel
+            print("📥 \(label) (Raw JSON):")
             print(jsonString)
           }
         #endif
 
         return response.data
       }
-      // JSON 데이터를 RegisterAnonymousResponse 구조체로 자동 변환
-      .decode(type: RegisterAnonymousResponse.self, decoder: JSONDecoder())
+      .decode(type: type, decoder: JSONDecoder())
       .mapError { error -> NetworkError in
         // 🐛 디버깅: 디코딩 에러 상세 출력
         #if DEBUG
@@ -103,6 +115,23 @@ class APIService: APIServiceType {
       .eraseToAnyPublisher()
   }
 
+  // MARK: - User API
+
+  func registerAnonymous(request: RegisterAnonymousRequest) -> AnyPublisher<RegisterAnonymousResponse, NetworkError> {
+    userProvider.requestPublisher(.registerAnonymous(request: request))
+      .mapError { moyaError -> NetworkError in
+        .requestFailed(moyaError)
+      }
+      .flatMap { [weak self] response -> AnyPublisher<RegisterAnonymousResponse, NetworkError> in
+        guard let self else {
+          return Fail(error: NetworkError.unknown)
+            .eraseToAnyPublisher()
+        }
+        return handleResponse(response, decodeTo: RegisterAnonymousResponse.self, debugLabel: "익명 사용자 등록 응답")
+      }
+      .eraseToAnyPublisher()
+  }
+
   // MARK: - Subscription API
 
   func getSubscriptions(
@@ -114,48 +143,38 @@ class APIService: APIServiceType {
       page: page,
       size: size
     ))
-    .tryMap { response -> Data in
-      // 상태 코드 체크
-      guard (200 ... 299).contains(response.statusCode) else {
-        throw NetworkError.serverError(statusCode: response.statusCode)
-      }
-
-      // 🐛 디버깅: 서버 응답 출력
-      #if DEBUG
-        if let jsonString = String(data: response.data, encoding: .utf8) {
-          print("📥 구독 목록 응답 (Raw JSON):")
-          print(jsonString)
-        }
-      #endif
-
-      return response.data
+    .mapError { moyaError -> NetworkError in
+      .requestFailed(moyaError)
     }
-    .decode(type: SubscriptionListResponse.self, decoder: JSONDecoder())
-    .mapError { error -> NetworkError in
-      // 🐛 디버깅: 디코딩 에러 상세 출력
-      #if DEBUG
-        if let decodingError = error as? DecodingError {
-          print("❌ 디코딩 에러 발생:")
-          switch decodingError {
-          case let .keyNotFound(key, context):
-            print("  - 키를 찾을 수 없음: \(key.stringValue)")
-            print("  - 경로: \(context.codingPath.map(\.stringValue).joined(separator: " -> "))")
-          case let .typeMismatch(type, context):
-            print("  - 타입 불일치: \(type)")
-            print("  - 경로: \(context.codingPath.map(\.stringValue).joined(separator: " -> "))")
-          @unknown default:
-            print("  - 알 수 없는 디코딩 에러")
-          }
-        }
-      #endif
-
-      if let networkError = error as? NetworkError {
-        return networkError
-      } else if error is DecodingError {
-        return .decodingFailed(error)
-      } else {
-        return .requestFailed(error)
+    .flatMap { [weak self] response -> AnyPublisher<SubscriptionListResponse, NetworkError> in
+      guard let self else {
+        return Fail(error: NetworkError.unknown)
+          .eraseToAnyPublisher()
       }
+      return handleResponse(response, decodeTo: SubscriptionListResponse.self, debugLabel: "구독 목록 응답")
+    }
+    .eraseToAnyPublisher()
+  }
+
+  // MARK: - Subscription API (Delete)
+
+  func deleteSubscription(
+    userId: String, deviceSecret: String, subscriptionId: Int64
+  ) -> AnyPublisher<DeleteSubscriptionResponse, NetworkError> {
+    subscriptionProvider.requestPublisher(.deleteSubscription(
+      userId: userId,
+      deviceSecret: deviceSecret,
+      subscriptionId: subscriptionId
+    ))
+    .mapError { moyaError -> NetworkError in
+      .requestFailed(moyaError)
+    }
+    .flatMap { [weak self] response -> AnyPublisher<DeleteSubscriptionResponse, NetworkError> in
+      guard let self else {
+        return Fail(error: NetworkError.unknown)
+          .eraseToAnyPublisher()
+      }
+      return handleResponse(response, decodeTo: DeleteSubscriptionResponse.self, debugLabel: "구독 삭제 응답")
     }
     .eraseToAnyPublisher()
   }
@@ -171,53 +190,33 @@ class APIService: APIServiceType {
       page: page,
       size: size
     ))
-    .tryMap { response -> Data in
-      // 상태 코드 체크
-      guard (200 ... 299).contains(response.statusCode) else {
-        throw NetworkError.serverError(statusCode: response.statusCode)
-      }
-
-      // 🐛 디버깅: 서버 응답 출력
-      #if DEBUG
-        if let jsonString = String(data: response.data, encoding: .utf8) {
-          print("📥 알림 목록 응답 (Raw JSON):")
-          print(jsonString)
-        }
-      #endif
-
-      return response.data
+    .mapError { moyaError -> NetworkError in
+      .requestFailed(moyaError)
     }
-    .decode(type: AlarmListResponse.self, decoder: JSONDecoder())
-    .mapError { error -> NetworkError in
-      // 🐛 디버깅: 디코딩 에러 상세 출력
-      #if DEBUG
-        if let decodingError = error as? DecodingError {
-          print("❌ 디코딩 에러 발생:")
-          switch decodingError {
-          case let .keyNotFound(key, context):
-            print("  - 키를 찾을 수 없음: \(key.stringValue)")
-            print("  - 경로: \(context.codingPath.map(\.stringValue).joined(separator: " -> "))")
-          case let .typeMismatch(type, context):
-            print("  - 타입 불일치: \(type)")
-            print("  - 경로: \(context.codingPath.map(\.stringValue).joined(separator: " -> "))")
-          case let .valueNotFound(type, context):
-            print("  - 값을 찾을 수 없음: \(type)")
-          case let .dataCorrupted(context):
-            print("  - 데이터 손상")
-          @unknown default:
-            print("  - 알 수 없는 디코딩 에러")
-          }
-        }
-      #endif
-
-      if let networkError = error as? NetworkError {
-        return networkError
-      } else if error is DecodingError {
-        return .decodingFailed(error)
-      } else {
-        return .requestFailed(error)
+    .flatMap { [weak self] response -> AnyPublisher<AlarmListResponse, NetworkError> in
+      guard let self else {
+        return Fail(error: NetworkError.unknown)
+          .eraseToAnyPublisher()
       }
+      return handleResponse(response, decodeTo: AlarmListResponse.self, debugLabel: "알림 목록 응답")
     }
     .eraseToAnyPublisher()
+  }
+
+  // MARK: - Keyword API
+
+  func getKeywords() -> AnyPublisher<KeywordsResponse, NetworkError> {
+    keywordProvider.requestPublisher(.getKeywords)
+      .mapError { moyaError -> NetworkError in
+        .requestFailed(moyaError)
+      }
+      .flatMap { [weak self] response -> AnyPublisher<KeywordsResponse, NetworkError> in
+        guard let self else {
+          return Fail(error: NetworkError.unknown)
+            .eraseToAnyPublisher()
+        }
+        return handleResponse(response, decodeTo: KeywordsResponse.self, debugLabel: "키워드 목록 응답")
+      }
+      .eraseToAnyPublisher()
   }
 }

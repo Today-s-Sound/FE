@@ -1,5 +1,7 @@
 import Combine
+import FirebaseMessaging
 import SwiftUI
+import UIKit
 
 @MainActor
 final class AnonymousTestViewModel: ObservableObject {
@@ -59,7 +61,25 @@ final class AnonymousTestViewModel: ObservableObject {
     userId = ""
     log = "📤 익명 사용자 등록 요청 중...\ndeviceSecret: \(deviceSecret.prefix(20))..."
 
-    apiService.registerAnonymous(deviceSecret: deviceSecret)
+    // 디바이스 모델과 FCM 토큰 가져오기
+    let deviceModel = UIDevice.current.model
+    let fcmToken = Messaging.messaging().fcmToken
+
+    // 요청 객체 생성
+    let request = RegisterAnonymousRequest(
+      deviceSecret: deviceSecret,
+      model: deviceModel,
+      fcmToken: fcmToken
+    )
+
+    log += "\nModel: \(deviceModel)"
+    if let fcmToken {
+      log += "\nFCM Token: \(fcmToken.prefix(20))..."
+    } else {
+      log += "\nFCM Token: (없음)"
+    }
+
+    apiService.registerAnonymous(request: request)
       .receive(on: DispatchQueue.main)
       .sink(
         receiveCompletion: { [weak self] completion in

@@ -6,8 +6,10 @@
 //
 
 import Combine
+import FirebaseMessaging
 import Foundation
 import SwiftUI
+import UIKit
 
 @MainActor
 final class SessionStore: ObservableObject {
@@ -36,13 +38,23 @@ final class SessionStore: ObservableObject {
       } else {
         print("❌ userId: (없음)")
       }
+      if let fcmToken = Keychain.getString(for: KeychainKey.fcmToken) {
+        print("✅ fcmToken: \(fcmToken)")
+      } else {
+        print("❌ fcmToken: (없음)")
+      }
       print("━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
     #else
       print("⚠️ RELEASE 모드로 실행 중 - DEBUG 로그 비활성화")
     #endif
 
-    if let savedId = Keychain.getString(for: KeychainKey.userId) {
-      userId = savedId
+    // deviceSecret, userId, fcmToken 모두 있어야 등록된 것으로 간주
+    let hasDeviceSecret = Keychain.getString(for: KeychainKey.deviceSecret) != nil
+    let hasUserId = Keychain.getString(for: KeychainKey.userId) != nil
+    let hasFcmToken = Keychain.getString(for: KeychainKey.fcmToken) != nil
+
+    if hasDeviceSecret, hasUserId, hasFcmToken {
+      userId = Keychain.getString(for: KeychainKey.userId)
       isRegistered = true
     } else {
       isRegistered = false
@@ -63,9 +75,27 @@ final class SessionStore: ObservableObject {
       return generated
     }()
 
-    // 2) Combine을 사용한 비동기 API 호출
+    // 2) 디바이스 모델 정보 가져오기
+    let deviceModel = UIDevice.current.model
+
+    // 3) FCM 토큰 가져오기
+    let fcmToken = Messaging.messaging().fcmToken
+
+    // 4) FCM 토큰이 있으면 키체인에 저장
+    if let fcmToken {
+      Keychain.setString(fcmToken, for: KeychainKey.fcmToken)
+    }
+
+    // 5) 요청 객체 생성
+    let request = RegisterAnonymousRequest(
+      deviceSecret: secret,
+      model: deviceModel,
+      fcmToken: fcmToken
+    )
+
+    // 6) Combine을 사용한 비동기 API 호출
     await withCheckedContinuation { continuation in
-      apiService.registerAnonymous(deviceSecret: secret)
+      apiService.registerAnonymous(request: request)
         .sink(
           receiveCompletion: { [weak self] completion in
             guard let self else { return }
@@ -101,7 +131,7 @@ final class SessionStore: ObservableObject {
           receiveValue: { [weak self] response in
             guard let self else { return }
 
-            // 3) userId 저장
+            // 6) userId 저장
             let userId = response.result.userId
             Keychain.setString(userId, for: KeychainKey.userId)
 
@@ -120,6 +150,7 @@ final class SessionStore: ObservableObject {
   func logout() {
     Keychain.delete(for: KeychainKey.userId)
     Keychain.delete(for: KeychainKey.deviceSecret)
+    Keychain.delete(for: KeychainKey.fcmToken)
 
     userId = nil
     isRegistered = false

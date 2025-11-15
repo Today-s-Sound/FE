@@ -1,13 +1,29 @@
 import Foundation
 
+// MARK: - Subscription Request Models
+
+/// 구독 생성 요청
+struct CreateSubscriptionRequest: Codable {
+  let url: String
+  let keywords: [String]
+}
+
 // MARK: - Subscription Response Models
 
-/// 구독 목록 응답 (서버 Envelope 구조)
-struct SubscriptionListResponse: Codable {
-  let errorCode: Int?
-  let message: String
-  let result: [SubscriptionItem]
+/// 구독 목록 응답
+typealias SubscriptionListResponse = APIResponse<[SubscriptionItem]>
 
+/// 구독 생성 응답
+struct CreateSubscriptionResponse: Codable {
+  let subscriptionId: Int64
+}
+
+/// 구독 삭제 응답
+struct DeleteSubscriptionResponse: Codable {
+  let message: String
+}
+
+extension SubscriptionListResponse {
   // 편의 속성: result를 subscriptions로 접근
   var subscriptions: [SubscriptionItem] {
     result
@@ -31,7 +47,6 @@ struct SubscriptionItem: Codable, Identifiable {
   }
 }
 
-/// 키워드 아이템
 struct KeywordItem: Codable, Identifiable {
   let id: Int64
   let name: String

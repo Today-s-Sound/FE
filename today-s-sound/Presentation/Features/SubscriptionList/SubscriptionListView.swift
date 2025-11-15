@@ -51,6 +51,9 @@ struct SubscriptionListView: View {
               onLoadMore: { item in
                 viewModel.loadMoreIfNeeded(currentItem: item)
               },
+              onDelete: { item in
+                viewModel.deleteSubscription(item)
+              },
               isLoadingMore: viewModel.isLoadingMore
             )
           }

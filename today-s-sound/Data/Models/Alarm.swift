@@ -9,12 +9,10 @@ import Foundation
 
 // MARK: - Alarm Response Models
 
-/// 알림 목록 응답 (서버 Envelope 구조)
-struct AlarmListResponse: Codable {
-  let errorCode: Int?
-  let message: String
-  let result: [AlarmItem]
+/// 알림 목록 응답
+typealias AlarmListResponse = APIResponse<[AlarmItem]>
 
+extension AlarmListResponse {
   // 편의 속성: result를 alarms로 접근
   var alarms: [AlarmItem] {
     result

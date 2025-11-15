@@ -13,3 +13,6 @@ fastlane/screenshots/**/*.png
 fastlane/test_output/
 .DS_Store
 xcuserdata/
+
+# Firebase
+GoogleService-Info.plist
