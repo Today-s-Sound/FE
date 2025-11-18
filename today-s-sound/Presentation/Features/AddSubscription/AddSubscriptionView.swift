@@ -20,7 +20,7 @@ struct AddSubscriptionView: View {
             InputFieldSection(
               title: "웹사이트 URL",
               placeholder: "https://www.example.com",
-              description: "모니터링 할 웹페이지 URL을 입력하세요.",
+              description: "모니터링할 웹페이지의 정확한 URL을 입력하세요.",
               text: $viewModel.urlText,
               colorScheme: colorScheme
             )
@@ -28,7 +28,7 @@ struct AddSubscriptionView: View {
             InputFieldSection(
               title: "웹페이지 별명",
               placeholder: "동국대학교 공지사항",
-              description: "웹 페이지를 식별할 명칭을 입력하세요.",
+              description: "해당 페이지를 식별할 명칭을 입력하세요.",
               text: $viewModel.nameText,
               colorScheme: colorScheme
             )
@@ -92,7 +92,7 @@ struct AddSubscriptionView: View {
                 .padding(.vertical, 16)
                 .background(
                   RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.primaryGreen90)
+                    .fill(Color.primaryGreen)
                 )
             })
           }

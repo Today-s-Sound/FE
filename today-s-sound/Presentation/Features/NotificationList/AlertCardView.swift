@@ -63,22 +63,24 @@ struct AlertCardView: View {
     VStack(spacing: 20) {
       // 상단: 타이틀과 아이콘
       HStack(alignment: .top, spacing: 12) {
-        Image(systemName: isUrgent ? "bell.fill" : "doc.fill")
-          .font(.system(size: 24))
-          .foregroundColor(.white)
+        Image(isUrgent ? "mail" : "notice")
+              .resizable()
+              .scaledToFit()
+              .frame(width: 48, height: 48)
+              .foregroundColor(colorScheme == .dark ? .black : .white)
           .accessibilityHidden(true) // 아이콘은 시각적 장식이므로 숨김
 
         VStack(alignment: .leading, spacing: 8) {
           Text(title)
-            .font(.system(size: 20, weight: .bold))
+            .font(.KoddiExtraBold32)
             .foregroundColor(.white)
             .multilineTextAlignment(.leading)
             .accessibilityAddTraits(.isHeader) // 헤더로 인식
             .accessibilityLabel(title)
 
           Text(timeText)
-            .font(.system(size: 16))
-            .foregroundColor(.white.opacity(0.9))
+            .font(.KoddiExtraBold28)
+            .foregroundColor(colorScheme == .dark ? .black : .white)
             .accessibilityLabel("\(timeText)에 받은 알림")
         }
 
@@ -87,6 +89,7 @@ struct AlertCardView: View {
 
       // 하단: 음성으로 듣기 버튼
       Button(action: {
+          /*
         if isPlaying {
           // 재생 중단
           SpeechService.shared.stop()
@@ -96,6 +99,7 @@ struct AlertCardView: View {
 
           // VoiceOver 알림
           UIAccessibility.post(notification: .announcement, argument: "재생이 중단되었습니다")
+           
         } else {
           // 재생 시작
           playAllSummaries()
@@ -108,6 +112,7 @@ struct AlertCardView: View {
             UIAccessibility.post(notification: .announcement, argument: "알림 내용을 재생합니다")
           }
         }
+        */
       }, label: {
         HStack(spacing: 8) {
           Image(systemName: isPlaying ? "stop.circle.fill" : "speaker.wave.2.fill")
@@ -184,8 +189,8 @@ struct AlertCardView: View {
     }
   }
 
+  /*
   // MARK: - 음성 재생 함수
-
   private func playAllSummaries() {
     guard let alarm, !alarm.summaries.isEmpty else {
       // AlarmItem이 없으면 Alert의 title만 재생
@@ -297,33 +302,39 @@ struct AlertCardView: View {
       return "\(index + 1)번째 내용"
     }
   }
+  */
 }
 
 struct AlertCardView_Previews: PreviewProvider {
-  static var previews: some View {
-    VStack(spacing: 16) {
-      AlertCardView(
-        alert: Alert(
-          id: UUID(),
-          title: "일이삼사오육칠팔",
-          content: "공지 내용 예시",
-          date: Date().addingTimeInterval(-7200),
-          isUrgent: true
-        ),
-        colorScheme: .light
-      )
+  private static let sampleAlert = Alert(
+    id: UUID(),
+    title: "긴급 공지: 서비스 점검 안내",
+    content: "오늘 밤 11시부터 자정까지 점검이 진행됩니다.",
+    date: Date().addingTimeInterval(-7200),
+    isUrgent: true
+  )
 
-      AlertCardView(
-        alert: Alert(
-          id: UUID(),
-          title: "잡코리아 채용 공고",
-          content: "채용 소식",
-          date: Date().addingTimeInterval(-10800),
-          isUrgent: false
-        ),
-        colorScheme: .dark
-      )
+  private static let sampleAlarm = AlarmItem(
+    alias: "접근성 블로그",
+    timeAgo: "3분 전",
+    summaries: [
+      SummaryItem(id: 1, summary: "애플이 새로운 보이스오버 기능을 발표했습니다.", updatedAt: "2024-12-19T09:00:00Z"),
+      SummaryItem(id: 2, summary: "iOS 18에서 접근성 옵션이 대폭 개선됩니다.", updatedAt: "2024-12-19T09:05:00Z")
+    ],
+    isUrgent: false
+  )
+
+  static var previews: some View {
+    Group {
+      AlertCardView(alert: sampleAlert, colorScheme: .light)
+        .padding()
+        .previewDisplayName("Alert - Light")
+
+      AlertCardView(alarm: sampleAlarm, colorScheme: .dark)
+        .padding()
+        .background(Color.black)
+        .previewDisplayName("Alarm - Dark")
     }
-    .padding()
+    .previewLayout(.sizeThatFits)
   }
 }

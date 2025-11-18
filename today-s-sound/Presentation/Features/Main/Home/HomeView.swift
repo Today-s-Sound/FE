@@ -49,7 +49,7 @@ struct HomeView: View {
             label: {
               Image(systemName: "minus")
                     .font(.KoddiBold48)
-                .foregroundColor(Color.primaryGreen90)
+                .foregroundColor(Color.primaryGreen)
             }
           )
 
@@ -64,7 +64,7 @@ struct HomeView: View {
             label: {
               Image(systemName: "plus")
                 .font(.KoddiBold48)
-                .foregroundColor(Color.primaryGreen90)
+                .foregroundColor(Color.primaryGreen)
             }
           )
         }
@@ -78,12 +78,12 @@ struct HomeView: View {
           Text(viewModel.currentCategoryName)
             .font(.KoddiExtraBold32)
             .foregroundColor(colorScheme == .dark ? .black : .white)
-            .padding(.horizontal, 24)
-            .padding(.vertical, 12)
-            .frame(width: 340, height: 85)
+            .padding(.horizontal, 32)
+            .padding(.vertical, 18)
+            .frame(width: 360, height: 84)
             .background(
-              RoundedRectangle(cornerRadius: 16)
-                .fill(Color.primaryGreen90)
+              RoundedRectangle(cornerRadius: 10)
+                .fill(Color.primaryGreen)
             )
             .foregroundColor(.white)
         }

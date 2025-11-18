@@ -14,7 +14,7 @@ struct ScreenSubTitle: View {
   var body: some View {
     Text(text)
       .font(.KoddiExtraBold28)
-      .foregroundColor(colorScheme == .dark ? .white : .primaryGreen)
+      .foregroundColor(.primaryGreen)
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(.horizontal, 24)
       .padding(.bottom, 16)

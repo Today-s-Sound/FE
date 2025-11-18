@@ -13,6 +13,7 @@ class NotificationListViewModel: ObservableObject {
   @Published var isLoading: Bool = false
   @Published var isLoadingMore: Bool = false
   @Published var errorMessage: String?
+  var disableAutoLoad: Bool = false
 
   private let apiService: APIService
   private var cancellables = Set<AnyCancellable>()
@@ -28,6 +29,7 @@ class NotificationListViewModel: ObservableObject {
 
   /// 알림 목록 불러오기
   func loadAlarms() {
+    guard !disableAutoLoad else { return }
     print("\n━━━━━━━━━━━━━━━━━━━━━━━━━━")
     print("📞 loadAlarms() 호출됨!")
     print("━━━━━━━━━━━━━━━━━━━━━━━━━━")

@@ -16,7 +16,8 @@ struct ScreenMainTitle: View {
     Text(text)
       .font(.KoddiBold56)
       .foregroundColor(Color.text(colorScheme))
-      .frame(maxWidth: .infinity, alignment: .leading)
+      .frame(maxWidth: .infinity, alignment: .center)
+      .multilineTextAlignment(.center)
       .padding(.horizontal, 24)
       .padding(.bottom, 16)
   }

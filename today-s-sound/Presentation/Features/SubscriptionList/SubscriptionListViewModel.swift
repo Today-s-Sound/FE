@@ -13,6 +13,7 @@ class SubscriptionListViewModel: ObservableObject {
   @Published var isLoading: Bool = false
   @Published var isLoadingMore: Bool = false
   @Published var errorMessage: String?
+  var disableAutoLoad: Bool = false
 
   private let apiService: APIService
   private var cancellables = Set<AnyCancellable>()
@@ -28,6 +29,8 @@ class SubscriptionListViewModel: ObservableObject {
 
   /// 구독 목록 불러오기
   func loadSubscriptions() {
+    guard !disableAutoLoad else { return }
+
     // 이미 로딩 중이거나 더 이상 데이터가 없으면 리턴
     guard !isLoading, !isLoadingMore, hasMoreData else {
       print("⏸️ 로딩 중단: isLoading=\(isLoading), isLoadingMore=\(isLoadingMore), hasMoreData=\(hasMoreData)")
@@ -114,6 +117,7 @@ class SubscriptionListViewModel: ObservableObject {
 
   /// 새로고침 (처음부터 다시 로드)
   func refresh() {
+    guard !disableAutoLoad else { return }
     print("🔄 새로고침")
     subscriptions = []
     currentPage = 0
@@ -124,6 +128,7 @@ class SubscriptionListViewModel: ObservableObject {
 
   /// 특정 아이템이 보일 때 호출 (무한 스크롤 트리거)
   func loadMoreIfNeeded(currentItem item: SubscriptionItem) {
+    guard !disableAutoLoad else { return }
     // View에서 이미 threshold 체크했으므로 바로 로드
     loadSubscriptions()
   }
@@ -184,3 +189,69 @@ class SubscriptionListViewModel: ObservableObject {
     .store(in: &cancellables)
   }
 }
+
+#if DEBUG
+extension SubscriptionListViewModel {
+  private static func sampleSubscriptions() -> [SubscriptionItem] {
+    [
+      SubscriptionItem(
+        id: 1,
+        url: "https://newsroom.apple.com",
+        alias: "애플 뉴스룸",
+        isUrgent: false,
+        keywords: [
+          KeywordItem(id: 1, name: "아이폰"),
+          KeywordItem(id: 2, name: "애플워치")
+        ]
+      ),
+      SubscriptionItem(
+        id: 2,
+        url: "https://blog.naver.com/accessibility",
+        alias: "접근성 블로그",
+        isUrgent: true,
+        keywords: [
+          KeywordItem(id: 3, name: "시각"),
+          KeywordItem(id: 4, name: "보이스오버"),
+          KeywordItem(id: 5, name: "스크린리더")
+        ]
+      )
+    ]
+  }
+
+  static var previewLoading: SubscriptionListViewModel {
+    let vm = SubscriptionListViewModel(apiService: APIService())
+    vm.disableAutoLoad = true
+    vm.isLoading = true
+    vm.subscriptions = []
+    vm.errorMessage = nil
+    return vm
+  }
+
+  static var previewError: SubscriptionListViewModel {
+    let vm = SubscriptionListViewModel(apiService: APIService())
+    vm.disableAutoLoad = true
+    vm.isLoading = false
+    vm.subscriptions = []
+    vm.errorMessage = "서버와 연결할 수 없습니다"
+    return vm
+  }
+
+  static var previewEmpty: SubscriptionListViewModel {
+    let vm = SubscriptionListViewModel(apiService: APIService())
+    vm.disableAutoLoad = true
+    vm.isLoading = false
+    vm.subscriptions = []
+    vm.errorMessage = nil
+    return vm
+  }
+
+  static var previewData: SubscriptionListViewModel {
+    let vm = SubscriptionListViewModel(apiService: APIService())
+    vm.disableAutoLoad = true
+    vm.isLoading = false
+    vm.subscriptions = sampleSubscriptions()
+    vm.errorMessage = nil
+    return vm
+  }
+}
+#endif

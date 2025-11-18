@@ -12,21 +12,19 @@ struct AddSubscriptionButton: View {
   let onTap: () -> Void
 
   var body: some View {
-    VStack(spacing: 12) {
+    VStack(spacing: 16) {
       Button(action: onTap) {
-        HStack {
-          Image(systemName: "plus.circle.fill")
-            .font(.system(size: 18))
           Text("새로운 웹페이지 추가")
-            .font(.system(size: 24, weight: .semibold))
-        }
-        .foregroundColor(.white)
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
-        .background(
-          RoundedRectangle(cornerRadius: 12)
-            .fill(Color.primaryGreen90)
-        )
+            .font(.KoddiExtraBold32)
+            .foregroundColor(colorScheme == .dark ? .black : .white)
+            .padding(.horizontal, 32)
+            .padding(.vertical, 18)
+            .frame(width: 360, height: 84)
+            .background(
+              RoundedRectangle(cornerRadius: 10)
+                .fill(Color.primaryGreen)
+            )
+            .foregroundColor(.white)
       }
     }
     .padding(.horizontal, 16)
