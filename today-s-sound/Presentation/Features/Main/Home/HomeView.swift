@@ -24,8 +24,7 @@ struct HomeView: View {
         Text("오늘의 소리")
           .font(.KoddiBold56)
           .foregroundStyle(Color.text(colorScheme))
-          .shadow(color: .black25, radius: 2, x: 0, y: 4)
-          .padding(.bottom, 60)
+          .padding(.bottom, 30)
 
         Button(
           action: {
@@ -34,12 +33,11 @@ struct HomeView: View {
             }
           },
           label: {
-            Image(systemName: "play.fill")
+            Image("play")
               .resizable()
               .scaledToFit()
-              .frame(width: 120, height: 120)
-              .foregroundColor(Color.primaryGreen90)
-              .padding(40)
+              .frame(width: 180, height: 180)
+              .padding(20)
           }
         )
         .padding(.bottom, 60)
@@ -50,13 +48,13 @@ struct HomeView: View {
             action: { viewModel.decreaseRate() },
             label: {
               Image(systemName: "minus")
-                .font(.system(size: 35, weight: .medium))
-                .foregroundColor(colorScheme == .dark ? .white : Color.primaryGreen90)
+                    .font(.KoddiBold48)
+                .foregroundColor(Color.primaryGreen90)
             }
           )
 
           Text(String(format: "%.1f x", viewModel.playbackRate))
-            .font(.system(size: 48, weight: .bold))
+            .font(.KoddiBold48)
             .foregroundColor(Color.text(colorScheme))
             .monospacedDigit()
             .frame(minWidth: 100)
@@ -65,22 +63,21 @@ struct HomeView: View {
             action: { viewModel.increaseRate() },
             label: {
               Image(systemName: "plus")
-                .font(.system(size: 35, weight: .medium))
-                .foregroundColor(colorScheme == .dark ? .white : Color.primaryGreen90)
+                .font(.KoddiBold48)
+                .foregroundColor(Color.primaryGreen90)
             }
           )
         }
-
-        Spacer()
+        .padding(.bottom, 60)
 
         VStack(spacing: 16) {
           Text("현재 카테고리")
-            .font(.system(size: 28))
-            .foregroundColor(Color.secondaryText(colorScheme))
-
+                .font(.KoddiBold28)
+            .foregroundColor(Color.text(colorScheme))
+    
           Text(viewModel.currentCategoryName)
-            .font(.system(size: 32, weight: .semibold))
-            .foregroundColor(.white)
+            .font(.KoddiExtraBold32)
+            .foregroundColor(colorScheme == .dark ? .black : .white)
             .padding(.horizontal, 24)
             .padding(.vertical, 12)
             .frame(width: 340, height: 85)
@@ -90,7 +87,7 @@ struct HomeView: View {
             )
             .foregroundColor(.white)
         }
-        .padding(.bottom, 32)
+        .padding(.bottom, 16)
       }
     }
   }

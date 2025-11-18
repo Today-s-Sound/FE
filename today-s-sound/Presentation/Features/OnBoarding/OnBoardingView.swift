@@ -59,3 +59,17 @@ struct OnBoardingView: View {
     }
   }
 }
+
+struct OnBoardingView_Previews: PreviewProvider {
+  static var previews: some View {
+    Group {
+      OnBoardingView()
+        .environmentObject(SessionStore.preview)
+        .preferredColorScheme(.light)
+
+      OnBoardingView()
+        .environmentObject(SessionStore.preview)
+        .preferredColorScheme(.dark)
+    }
+  }
+}

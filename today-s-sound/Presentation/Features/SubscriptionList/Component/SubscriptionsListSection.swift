@@ -59,3 +59,52 @@ struct SubscriptionsListSection: View {
     }
   }
 }
+
+struct SubscriptionsListSection_Previews: PreviewProvider {
+  private static let sampleSubscriptions: [SubscriptionItem] = [
+    SubscriptionItem(
+      id: 1,
+      url: "https://newsroom.apple.com",
+      alias: "애플 뉴스룸",
+      isUrgent: false,
+      keywords: [
+        KeywordItem(id: 1, name: "아이폰"),
+        KeywordItem(id: 2, name: "애플워치")
+      ]
+    ),
+    SubscriptionItem(
+      id: 2,
+      url: "https://blog.naver.com/accessibility",
+      alias: "접근성 블로그",
+      isUrgent: true,
+      keywords: [
+        KeywordItem(id: 3, name: "시각"),
+        KeywordItem(id: 4, name: "보이스오버"),
+        KeywordItem(id: 5, name: "스크린리더")
+      ]
+    )
+  ]
+
+  static var previews: some View {
+    Group {
+      SubscriptionsListSection(
+        subscriptions: sampleSubscriptions,
+        colorScheme: .light,
+        onLoadMore: { _ in },
+        onDelete: { _ in },
+        isLoadingMore: true
+      )
+      .previewDisplayName("List - Light")
+
+      SubscriptionsListSection(
+        subscriptions: [],
+        colorScheme: .dark,
+        onLoadMore: { _ in },
+        onDelete: { _ in },
+        isLoadingMore: false
+      )
+      .previewDisplayName("Empty - Dark")
+      .background(Color.black)
+    }
+  }
+}

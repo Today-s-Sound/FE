@@ -33,3 +33,12 @@ struct AddSubscriptionButton: View {
     .padding(.bottom, 16)
   }
 }
+
+struct AddSubscriptionButton_Previews: PreviewProvider {
+  static var previews: some View {
+    AddSubscriptionButton(colorScheme: .light, onTap: {})
+      .previewLayout(.sizeThatFits)
+      .padding()
+      .background(Color(UIColor.systemBackground))
+  }
+}

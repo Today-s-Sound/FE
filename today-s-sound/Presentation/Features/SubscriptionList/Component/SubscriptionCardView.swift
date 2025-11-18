@@ -60,3 +60,38 @@ struct SubscriptionCardView: View {
     )
   }
 }
+
+struct SubscriptionCardView_Previews: PreviewProvider {
+  private static let sampleSubscription = SubscriptionItem(
+    id: 1,
+    url: "https://newsroom.apple.com",
+    alias: "애플 뉴스룸",
+    isUrgent: true,
+    keywords: [
+      KeywordItem(id: 1, name: "아이폰"),
+      KeywordItem(id: 2, name: "접근성"),
+      KeywordItem(id: 3, name: "애플워치"),
+      KeywordItem(id: 4, name: "iOS")
+    ]
+  )
+
+  static var previews: some View {
+    Group {
+      SubscriptionCardView(
+        subscription: sampleSubscription,
+        colorScheme: .light
+      )
+      .padding()
+      .previewDisplayName("Light")
+
+      SubscriptionCardView(
+        subscription: sampleSubscription,
+        colorScheme: .dark
+      )
+      .padding()
+      .previewDisplayName("Dark")
+      .background(Color.black)
+    }
+    .previewLayout(.sizeThatFits)
+  }
+}

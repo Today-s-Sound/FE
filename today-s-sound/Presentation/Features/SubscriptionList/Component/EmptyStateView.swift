@@ -22,3 +22,24 @@ struct EmptyStateView: View {
     .frame(maxWidth: .infinity, maxHeight: .infinity)
   }
 }
+
+struct EmptyStateView_Previews: PreviewProvider {
+  static var previews: some View {
+    Group {
+      EmptyStateView(
+        message: "구독 중인 페이지가 없어요.",
+        colorScheme: .light
+      )
+      .previewDisplayName("Light")
+
+      EmptyStateView(
+        message: "최근 알림이 없어요.",
+        colorScheme: .dark
+      )
+      .previewDisplayName("Dark")
+      .background(Color.black)
+    }
+    .previewLayout(.sizeThatFits)
+    .padding()
+  }
+}
