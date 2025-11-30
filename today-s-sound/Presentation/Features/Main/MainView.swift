@@ -21,7 +21,7 @@ struct MainView: View {
 
       FeedView()
         .tabItem {
-          Image(systemName: "text.rectangle")
+          Image(systemName: "text.bubble.fill")
           Text("피드")
         }
         .tag(Tab.feed)

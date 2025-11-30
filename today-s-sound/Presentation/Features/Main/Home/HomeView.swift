@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
   @StateObject private var viewModel = MainViewModel()
+  @ObservedObject private var speechService = SpeechService.shared
   @Environment(\.colorScheme) var colorScheme
 
   var body: some View {
@@ -28,18 +29,24 @@ struct HomeView: View {
 
         Button(
           action: {
-            if let first = viewModel.recentAlerts.first {
-              viewModel.playAlert(first)
+            if speechService.isSpeaking {
+              speechService.stop()
+            } else {
+              if let first = viewModel.recentAlerts.first {
+                viewModel.playAlert(first)
+              }
             }
           },
           label: {
-            Image("play")
+            Image(speechService.isSpeaking ? "pause" : "play")
               .resizable()
               .scaledToFit()
               .frame(width: 180, height: 180)
               .padding(20)
           }
         )
+        .accessibilityLabel(speechService.isSpeaking ? "재생 중단 버튼" : "재생 시작 버튼")
+        .accessibilityHint(speechService.isSpeaking ? "이중탭하여 재생을 중단합니다" : "이중탭하여 알림을 재생합니다")
         .padding(.bottom, 60)
 
         // 속도 조절
