@@ -47,3 +47,26 @@ struct KeywordCheckboxRow: View {
     .buttonStyle(PlainButtonStyle())
   }
 }
+
+struct KeywordCheckboxRow_Previews: PreviewProvider {
+  static var previews: some View {
+    VStack(spacing: 12) {
+      KeywordCheckboxRow(
+        keyword: "시각장애",
+        isSelected: true,
+        colorScheme: .light,
+        action: {}
+      )
+
+      KeywordCheckboxRow(
+        keyword: "접근성",
+        isSelected: false,
+        colorScheme: .dark,
+        action: {}
+      )
+    }
+    .previewLayout(.sizeThatFits)
+    .padding()
+    .background(Color(UIColor.systemBackground))
+  }
+}

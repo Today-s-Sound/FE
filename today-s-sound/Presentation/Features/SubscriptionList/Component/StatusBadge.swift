@@ -14,12 +14,12 @@ struct StatusBadge: View {
   var body: some View {
     Text(text)
       .font(.system(size: 14, weight: .medium))
-      .foregroundColor(colorScheme == .dark ? .white : .primaryGreen)
+      .foregroundColor(.primaryGreen)
       .padding(.horizontal, 8)
       .padding(.vertical, 4)
       .background(
         RoundedRectangle(cornerRadius: 20)
-          .fill(Color.badgeGreen)
+          .fill(Color.badgeGreenBackground)
       )
   }
 }

@@ -33,4 +33,32 @@ extension Font {
   static var KoddiBold56: Font {
     .koddi(type: .bold, size: 56)
   }
+
+  static var KoddiBold48: Font {
+    .koddi(type: .bold, size: 48)
+  }
+
+  static var KoddiExtraBold32: Font {
+    .koddi(type: .extraBold, size: 32)
+  }
+
+  static var KoddiBold28: Font {
+    .koddi(type: .bold, size: 28)
+  }
+
+  static var KoddiExtraBold28: Font {
+    .koddi(type: .extraBold, size: 28)
+  }
+
+  static var KoddiBold20: Font {
+    .koddi(type: .bold, size: 20)
+  }
+
+  static var KoddiRegular16: Font {
+    .koddi(type: .regular, size: 16)
+  }
+
+  static var KoddiBold14: Font {
+    .koddi(type: .bold, size: 14)
+  }
 }

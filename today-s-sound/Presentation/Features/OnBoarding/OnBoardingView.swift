@@ -9,49 +9,67 @@ import SwiftUI
 
 struct OnBoardingView: View {
   @EnvironmentObject var session: SessionStore
+  @Environment(\.colorScheme) private var colorScheme
   @State private var isLoading = false
+  @State private var didStartRegistration = false
 
   var body: some View {
-    VStack(spacing: 20) {
-      Text("환영합니다 👋")
-        .font(.largeTitle).bold()
-      Text("이 기기를 익명 사용자로 등록하고 서비스를 시작합니다.")
-        .multilineTextAlignment(.center)
-        .foregroundStyle(.secondary)
+    ZStack {
+      VStack(spacing: 100) {
+        Text("오늘의 소리")
+          .font(.KoddiBold56)
+          .foregroundColor(colorScheme == .dark ? .white : .black)
+          .accessibilityAddTraits(.isHeader)
 
-      if isLoading {
-        ProgressView("등록 중…")
-          .padding(.top, 8)
-      } else {
-        Button {
-          Task {
-            isLoading = true
-            defer { isLoading = false }
-            await session.registerIfNeeded()
+        VStack(spacing: 20) {
+          Image("play")
+            .resizable()
+            .scaledToFit()
+            .frame(width: 180, height: 180)
+            .accessibilityLabel("오늘의 소리 로고")
+
+          if isLoading {
+            ProgressView("초기화 중…")
           }
-        } label: {
-          Text("시작하기")
-            .frame(maxWidth: .infinity)
-            .padding()
-            .background(Color.accentColor)
-            .foregroundColor(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
         }
-        .padding(.top, 12)
       }
+      .multilineTextAlignment(.center)
+      .padding(.horizontal, 32)
+      .offset(y: -80)
 
-      if let err = session.lastError {
-        Text(err)
-          .foregroundStyle(.red)
-          .multilineTextAlignment(.center)
-          .padding(.top, 8)
+      VStack {
+        Spacer()
+        if let err = session.lastError {
+          Text(err)
+            .foregroundStyle(.red)
+            .multilineTextAlignment(.center)
+            .padding(.horizontal, 24)
+            .padding(.bottom, 24)
+        }
       }
-
-      // 디버그: 생성된 deviceSecret 미리보기(실서비스에서는 숨기기)
-      // if let s = Keychain.getString(for: KeychainKey.deviceSecret) {
-      //     Text("secret: \(s)").font(.footnote).foregroundStyle(.secondary)
-      // }
     }
-    .padding(24)
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .background(colorScheme == .dark ? Color.black : Color.white)
+    .task {
+      guard !didStartRegistration else { return }
+      didStartRegistration = true
+      isLoading = true
+      defer { isLoading = false }
+      await session.registerIfNeeded()
+    }
+  }
+}
+
+struct OnBoardingView_Previews: PreviewProvider {
+  static var previews: some View {
+    Group {
+      OnBoardingView()
+        .environmentObject(SessionStore.preview)
+        .preferredColorScheme(.light)
+
+      OnBoardingView()
+        .environmentObject(SessionStore.preview)
+        .preferredColorScheme(.dark)
+    }
   }
 }

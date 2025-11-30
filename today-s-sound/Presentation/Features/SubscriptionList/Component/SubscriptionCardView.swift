@@ -16,20 +16,23 @@ struct SubscriptionCardView: View {
       VStack(alignment: .leading, spacing: 8) {
         // 구독 이름 (alias)
         Text(subscription.alias)
-          .font(.system(size: 20, weight: .semibold))
-          .foregroundColor(Color.text(colorScheme))
+          .font(.KoddiBold20)
+          .foregroundColor(Color.primaryGrey)
+          .accessibilityLabel("구독 페이지 이름: \(subscription.alias)")
 
         // URL
         Text(subscription.url)
-          .font(.system(size: 13))
-          .foregroundColor(Color.secondaryText(colorScheme))
+          .font(.KoddiRegular16)
+          .foregroundColor(Color.primaryGrey)
           .lineLimit(1)
+          .accessibilityLabel("주소: \(subscription.url)")
 
         // 키워드 배지들
         if !subscription.keywords.isEmpty {
           HStack(spacing: 8) {
             ForEach(subscription.keywords.prefix(3)) { keyword in
               StatusBadge(text: keyword.name, colorScheme: colorScheme)
+                .accessibilityLabel("설정 키워드: \(keyword.name)")
             }
 
             // 더 많은 키워드가 있으면 "+" 표시
@@ -38,6 +41,7 @@ struct SubscriptionCardView: View {
                 text: "+\(subscription.keywords.count - 3)",
                 colorScheme: colorScheme
               )
+              .accessibilityLabel("그외 \(subscription.keywords.count - 3)개")
             }
           }
         }
@@ -47,16 +51,55 @@ struct SubscriptionCardView: View {
 
       // 긴급 알림 아이콘
       Button(action: {}, label: {
-        Image(systemName: subscription.isUrgent ? "bell.fill" : "bell")
-          .font(.system(size: 40))
-          .foregroundColor(subscription.isUrgent ? .red : .green)
+        Image(subscription.isUrgent ? "Bell" : "Bell off")
+          .frame(width: 40, height: 40)
+          .accessibilityLabel(subscription.isUrgent ? "긴급 알림 설정됨" : "긴급 알림 해제됨")
       })
+      .accessibilityHint("탭하여 긴급 알림 설정을 변경합니다")
     }
     .padding(16)
     .background(
-      RoundedRectangle(cornerRadius: 12)
-        .fill(Color.secondaryBackground(colorScheme))
-        .shadow(color: .black5, radius: 4, x: 0, y: 2)
+      RoundedRectangle(cornerRadius: 8)
+        .fill(Color.greyBackground)
+        .overlay(
+          RoundedRectangle(cornerRadius: 8)
+            .stroke(Color.borderGrey, lineWidth: 1)
+        )
     )
+  }
+}
+
+struct SubscriptionCardView_Previews: PreviewProvider {
+  private static let sampleSubscription = SubscriptionItem(
+    id: 1,
+    url: "https://newsroom.apple.com",
+    alias: "애플 뉴스룸",
+    isUrgent: false,
+    keywords: [
+      KeywordItem(id: 1, name: "아이폰"),
+      KeywordItem(id: 2, name: "접근성"),
+      KeywordItem(id: 3, name: "애플워치"),
+      KeywordItem(id: 4, name: "iOS")
+    ]
+  )
+
+  static var previews: some View {
+    Group {
+      SubscriptionCardView(
+        subscription: sampleSubscription,
+        colorScheme: .light
+      )
+      .padding()
+      .previewDisplayName("Light")
+
+      SubscriptionCardView(
+        subscription: sampleSubscription,
+        colorScheme: .dark
+      )
+      .padding()
+      .previewDisplayName("Dark")
+      .background(Color.black)
+    }
+    .previewLayout(.sizeThatFits)
   }
 }

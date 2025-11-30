@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomeView: View {
   @StateObject private var viewModel = MainViewModel()
+  @ObservedObject private var speechService = SpeechService.shared
   @Environment(\.colorScheme) var colorScheme
 
   var body: some View {
@@ -24,24 +25,28 @@ struct HomeView: View {
         Text("오늘의 소리")
           .font(.KoddiBold56)
           .foregroundStyle(Color.text(colorScheme))
-          .shadow(color: .black25, radius: 2, x: 0, y: 4)
-          .padding(.bottom, 60)
+          .padding(.bottom, 30)
 
         Button(
           action: {
-            if let first = viewModel.recentAlerts.first {
-              viewModel.playAlert(first)
+            if speechService.isSpeaking {
+              speechService.stop()
+            } else {
+              if let first = viewModel.recentAlerts.first {
+                viewModel.playAlert(first)
+              }
             }
           },
           label: {
-            Image(systemName: "play.fill")
+            Image(speechService.isSpeaking ? "pause" : "play")
               .resizable()
               .scaledToFit()
-              .frame(width: 120, height: 120)
-              .foregroundColor(Color.primaryGreen90)
-              .padding(40)
+              .frame(width: 180, height: 180)
+              .padding(20)
           }
         )
+        .accessibilityLabel(speechService.isSpeaking ? "재생 중단 버튼" : "재생 시작 버튼")
+        .accessibilityHint(speechService.isSpeaking ? "이중탭하여 재생을 중단합니다" : "이중탭하여 알림을 재생합니다")
         .padding(.bottom, 60)
 
         // 속도 조절
@@ -50,13 +55,13 @@ struct HomeView: View {
             action: { viewModel.decreaseRate() },
             label: {
               Image(systemName: "minus")
-                .font(.system(size: 35, weight: .medium))
-                .foregroundColor(colorScheme == .dark ? .white : Color.primaryGreen90)
+                .font(.KoddiBold48)
+                .foregroundColor(Color.primaryGreen)
             }
           )
 
           Text(String(format: "%.1f x", viewModel.playbackRate))
-            .font(.system(size: 48, weight: .bold))
+            .font(.KoddiBold48)
             .foregroundColor(Color.text(colorScheme))
             .monospacedDigit()
             .frame(minWidth: 100)
@@ -65,32 +70,31 @@ struct HomeView: View {
             action: { viewModel.increaseRate() },
             label: {
               Image(systemName: "plus")
-                .font(.system(size: 35, weight: .medium))
-                .foregroundColor(colorScheme == .dark ? .white : Color.primaryGreen90)
+                .font(.KoddiBold48)
+                .foregroundColor(Color.primaryGreen)
             }
           )
         }
-
-        Spacer()
+        .padding(.bottom, 60)
 
         VStack(spacing: 16) {
           Text("현재 카테고리")
-            .font(.system(size: 28))
-            .foregroundColor(Color.secondaryText(colorScheme))
+            .font(.KoddiBold28)
+            .foregroundColor(Color.text(colorScheme))
 
           Text(viewModel.currentCategoryName)
-            .font(.system(size: 32, weight: .semibold))
-            .foregroundColor(.white)
-            .padding(.horizontal, 24)
-            .padding(.vertical, 12)
-            .frame(width: 340, height: 85)
+            .font(.KoddiExtraBold32)
+            .foregroundColor(colorScheme == .dark ? .black : .white)
+            .padding(.horizontal, 32)
+            .padding(.vertical, 18)
+            .frame(width: 360, height: 84)
             .background(
-              RoundedRectangle(cornerRadius: 16)
-                .fill(Color.primaryGreen90)
+              RoundedRectangle(cornerRadius: 10)
+                .fill(Color.primaryGreen)
             )
             .foregroundColor(.white)
         }
-        .padding(.bottom, 32)
+        .padding(.bottom, 16)
       }
     }
   }
