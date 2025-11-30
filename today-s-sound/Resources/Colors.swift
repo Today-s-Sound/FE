@@ -14,22 +14,22 @@ extension Color {
   static let primaryGreen = Color(red: 0 / 255, green: 223 / 255, blue: 119 / 255)
 
   /// 긴급 알림 핑크 색상 (Urgent Pink)
-    static let urgentPink = Color(red: 255 / 255, green: 76 / 255, blue: 186 / 255)
+  static let urgentPink = Color(red: 255 / 255, green: 76 / 255, blue: 186 / 255)
 
   /// 배지 배경 그린 색상 (Badge Background Green)
   static let badgeGreenBackground = Color(red: 52 / 255, green: 199 / 255, blue: 89 / 255, opacity: 0.16)
-    
-    /// 구독 페이지 목록 배경
-    static let greyBackground = Color(red: 245 / 255, green: 245 / 255, blue: 245 / 255)
-    
-    /// 구독 페이지 목록 폰트
-    static let primaryGrey = Color(red: 51 / 255, green: 51 / 255, blue: 51 / 255)
-        
-    /// 새 페이지 추가 입력
-    static let secondaryGrey = Color(red: 115 / 255, green: 115 / 255, blue: 115 / 255)
-    
-    /// 페이지 목록 테두리
-    static let borderGrey = Color(red: 197 / 255, green: 197 / 255, blue: 197 / 255)
+
+  /// 구독 페이지 목록 배경
+  static let greyBackground = Color(red: 245 / 255, green: 245 / 255, blue: 245 / 255)
+
+  /// 구독 페이지 목록 폰트
+  static let primaryGrey = Color(red: 51 / 255, green: 51 / 255, blue: 51 / 255)
+
+  /// 새 페이지 추가 입력
+  static let secondaryGrey = Color(red: 115 / 255, green: 115 / 255, blue: 115 / 255)
+
+  /// 페이지 목록 테두리
+  static let borderGrey = Color(red: 197 / 255, green: 197 / 255, blue: 197 / 255)
 }
 
 // MARK: - Semantic Colors
@@ -69,7 +69,6 @@ extension Color {
 // MARK: - Opacity Variants
 
 extension Color {
-
   /// Primary Green with 20% opacity
   static let primaryGreen20 = Color.primaryGreen.opacity(0.2)
 

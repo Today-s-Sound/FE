@@ -18,7 +18,7 @@ struct SubscriptionListView: View {
         VStack(spacing: 12) {
           ScreenMainTitle(text: "구독 설정", colorScheme: colorScheme)
           ScreenSubTitle(text: "구독 중인 페이지", colorScheme: colorScheme)
-                .padding(.top, 16)
+            .padding(.top, 16)
 
           // 로딩 상태
           if viewModel.isLoading, viewModel.subscriptions.isEmpty {
@@ -29,7 +29,7 @@ struct SubscriptionListView: View {
               .accessibilityHint("잠시만 기다려주세요")
             Spacer()
           }
-            
+
           // 에러 메시지
           else if let errorMessage = viewModel.errorMessage {
             Spacer()
@@ -54,7 +54,7 @@ struct SubscriptionListView: View {
             }
             Spacer()
           }
-            // 빈 상태
+          // 빈 상태
           else if viewModel.subscriptions.isEmpty {
             Spacer()
             VStack(spacing: 16) {
@@ -65,8 +65,8 @@ struct SubscriptionListView: View {
             }
             Spacer()
           }
-            
-            // 데이터 있을 때(main)
+
+          // 데이터 있을 때(main)
           else {
             List {
               ForEach(viewModel.subscriptions) { subscription in

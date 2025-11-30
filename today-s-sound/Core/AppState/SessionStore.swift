@@ -159,13 +159,13 @@ final class SessionStore: ObservableObject {
 }
 
 #if DEBUG
-extension SessionStore {
-  static var preview: SessionStore {
-    let store = SessionStore()
-    store.userId = "preview-user"
-    store.isRegistered = true
-    store.lastError = nil
-    return store
+  extension SessionStore {
+    static var preview: SessionStore {
+      let store = SessionStore()
+      store.userId = "preview-user"
+      store.isRegistered = true
+      store.lastError = nil
+      return store
+    }
   }
-}
 #endif

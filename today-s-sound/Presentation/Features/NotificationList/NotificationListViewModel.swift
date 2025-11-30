@@ -62,8 +62,8 @@ class NotificationListViewModel: ObservableObject {
     .sink(
       receiveCompletion: { [weak self] completion in
         guard let self else { return }
-        self.isLoading = false
-        self.isLoadingMore = false
+        isLoading = false
+        isLoadingMore = false
 
         switch completion {
         case .finished:
@@ -72,15 +72,15 @@ class NotificationListViewModel: ObservableObject {
         case let .failure(error):
           switch error {
           case let .serverError(statusCode):
-            self.errorMessage = "서버 오류 (상태: \(statusCode))"
+            errorMessage = "서버 오류 (상태: \(statusCode))"
           case .decodingFailed:
-            self.errorMessage = "응답 처리 실패"
+            errorMessage = "응답 처리 실패"
           case let .requestFailed(requestError):
-            self.errorMessage = "요청 실패: \(requestError.localizedDescription)"
+            errorMessage = "요청 실패: \(requestError.localizedDescription)"
           case .invalidURL:
-            self.errorMessage = "잘못된 URL"
+            errorMessage = "잘못된 URL"
           case .unknown:
-            self.errorMessage = "알 수 없는 오류"
+            errorMessage = "알 수 없는 오류"
           }
         }
       },
@@ -88,14 +88,14 @@ class NotificationListViewModel: ObservableObject {
         guard let self else { return }
 
         // 새 데이터 추가
-        self.alarms.append(contentsOf: newItems)
+        alarms.append(contentsOf: newItems)
 
         // 다음 페이지
-        self.currentPage += 1
+        currentPage += 1
 
         // 받은 개수가 pageSize보다 적으면 마지막 페이지
-        if newItems.count < self.pageSize {
-          self.hasMoreData = false
+        if newItems.count < pageSize {
+          hasMoreData = false
         }
       }
     )

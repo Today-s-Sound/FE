@@ -39,7 +39,6 @@ struct MainView: View {
           Text("구독")
         }
         .tag(Tab.subscriptions)
-
     }
     .tint(.primaryGreen)
   }

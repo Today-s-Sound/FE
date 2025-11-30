@@ -47,14 +47,14 @@ struct AlertCardView: View {
       }, label: {
         HStack(spacing: 20) {
           Image(systemName: "speaker.wave.2")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 48, height: 48)
+            .resizable()
+            .scaledToFit()
+            .frame(width: 48, height: 48)
             .foregroundStyle(cardColor)
             .accessibilityHidden(true)
-            
+
           Text("음성으로 듣기")
-                .font(.KoddiExtraBold32)
+            .font(.KoddiExtraBold32)
             .foregroundColor(Color.text(colorScheme))
         }
         .frame(maxWidth: .infinity)

@@ -22,7 +22,7 @@ struct FeedView: View {
 
   @ViewBuilder
   private var content: some View {
-    if viewModel.isLoading && viewModel.items.isEmpty {
+    if viewModel.isLoading, viewModel.items.isEmpty {
       loadingState
     } else if let errorMessage = viewModel.errorMessage {
       errorState(message: errorMessage)
@@ -140,4 +140,3 @@ struct FeedView_Previews: PreviewProvider {
     FeedView()
   }
 }
-

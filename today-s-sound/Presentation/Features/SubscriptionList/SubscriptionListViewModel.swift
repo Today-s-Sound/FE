@@ -191,67 +191,67 @@ class SubscriptionListViewModel: ObservableObject {
 }
 
 #if DEBUG
-extension SubscriptionListViewModel {
-  private static func sampleSubscriptions() -> [SubscriptionItem] {
-    [
-      SubscriptionItem(
-        id: 1,
-        url: "https://newsroom.apple.com",
-        alias: "애플 뉴스룸",
-        isUrgent: false,
-        keywords: [
-          KeywordItem(id: 1, name: "아이폰"),
-          KeywordItem(id: 2, name: "애플워치")
-        ]
-      ),
-      SubscriptionItem(
-        id: 2,
-        url: "https://blog.naver.com/accessibility",
-        alias: "접근성 블로그",
-        isUrgent: true,
-        keywords: [
-          KeywordItem(id: 3, name: "시각"),
-          KeywordItem(id: 4, name: "보이스오버"),
-          KeywordItem(id: 5, name: "스크린리더")
-        ]
-      )
-    ]
-  }
+  extension SubscriptionListViewModel {
+    private static func sampleSubscriptions() -> [SubscriptionItem] {
+      [
+        SubscriptionItem(
+          id: 1,
+          url: "https://newsroom.apple.com",
+          alias: "애플 뉴스룸",
+          isUrgent: false,
+          keywords: [
+            KeywordItem(id: 1, name: "아이폰"),
+            KeywordItem(id: 2, name: "애플워치")
+          ]
+        ),
+        SubscriptionItem(
+          id: 2,
+          url: "https://blog.naver.com/accessibility",
+          alias: "접근성 블로그",
+          isUrgent: true,
+          keywords: [
+            KeywordItem(id: 3, name: "시각"),
+            KeywordItem(id: 4, name: "보이스오버"),
+            KeywordItem(id: 5, name: "스크린리더")
+          ]
+        )
+      ]
+    }
 
-  static var previewLoading: SubscriptionListViewModel {
-    let vm = SubscriptionListViewModel(apiService: APIService())
-    vm.disableAutoLoad = true
-    vm.isLoading = true
-    vm.subscriptions = []
-    vm.errorMessage = nil
-    return vm
-  }
+    static var previewLoading: SubscriptionListViewModel {
+      let vm = SubscriptionListViewModel(apiService: APIService())
+      vm.disableAutoLoad = true
+      vm.isLoading = true
+      vm.subscriptions = []
+      vm.errorMessage = nil
+      return vm
+    }
 
-  static var previewError: SubscriptionListViewModel {
-    let vm = SubscriptionListViewModel(apiService: APIService())
-    vm.disableAutoLoad = true
-    vm.isLoading = false
-    vm.subscriptions = []
-    vm.errorMessage = "서버와 연결할 수 없습니다"
-    return vm
-  }
+    static var previewError: SubscriptionListViewModel {
+      let vm = SubscriptionListViewModel(apiService: APIService())
+      vm.disableAutoLoad = true
+      vm.isLoading = false
+      vm.subscriptions = []
+      vm.errorMessage = "서버와 연결할 수 없습니다"
+      return vm
+    }
 
-  static var previewEmpty: SubscriptionListViewModel {
-    let vm = SubscriptionListViewModel(apiService: APIService())
-    vm.disableAutoLoad = true
-    vm.isLoading = false
-    vm.subscriptions = []
-    vm.errorMessage = nil
-    return vm
-  }
+    static var previewEmpty: SubscriptionListViewModel {
+      let vm = SubscriptionListViewModel(apiService: APIService())
+      vm.disableAutoLoad = true
+      vm.isLoading = false
+      vm.subscriptions = []
+      vm.errorMessage = nil
+      return vm
+    }
 
-  static var previewData: SubscriptionListViewModel {
-    let vm = SubscriptionListViewModel(apiService: APIService())
-    vm.disableAutoLoad = true
-    vm.isLoading = false
-    vm.subscriptions = sampleSubscriptions()
-    vm.errorMessage = nil
-    return vm
+    static var previewData: SubscriptionListViewModel {
+      let vm = SubscriptionListViewModel(apiService: APIService())
+      vm.disableAutoLoad = true
+      vm.isLoading = false
+      vm.subscriptions = sampleSubscriptions()
+      vm.errorMessage = nil
+      return vm
+    }
   }
-}
 #endif

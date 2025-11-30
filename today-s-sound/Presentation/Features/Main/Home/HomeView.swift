@@ -55,7 +55,7 @@ struct HomeView: View {
             action: { viewModel.decreaseRate() },
             label: {
               Image(systemName: "minus")
-                    .font(.KoddiBold48)
+                .font(.KoddiBold48)
                 .foregroundColor(Color.primaryGreen)
             }
           )
@@ -79,9 +79,9 @@ struct HomeView: View {
 
         VStack(spacing: 16) {
           Text("현재 카테고리")
-                .font(.KoddiBold28)
+            .font(.KoddiBold28)
             .foregroundColor(Color.text(colorScheme))
-    
+
           Text(viewModel.currentCategoryName)
             .font(.KoddiExtraBold32)
             .foregroundColor(colorScheme == .dark ? .black : .white)
