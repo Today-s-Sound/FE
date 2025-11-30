@@ -9,112 +9,140 @@ struct AddSubscriptionView: View {
     ZStack {
       Color.background(colorScheme)
         .ignoresSafeArea()
+        .onTapGesture {
+          UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
 
       VStack(spacing: 0) {
-        HeaderBar(colorScheme: colorScheme, onClose: { dismiss() })
+        // 상단 핸들 바 (X 대신)
+        SheetHandleBar(colorScheme: colorScheme)
 
+        // 화면 제목
         ScreenSubTitle(text: "새 웹페이지 추가", colorScheme: colorScheme)
+          .padding(.bottom, 8)
+          .padding(.top, 4)
 
-        ScrollView {
-          VStack(spacing: 24) {
-            InputFieldSection(
-              title: "웹사이트 URL",
-              placeholder: "https://www.example.com",
-              description: "모니터링할 웹페이지의 정확한 URL을 입력하세요.",
-              text: $viewModel.urlText,
-              colorScheme: colorScheme
-            )
+        // 콘텐츠 + 하단 버튼 영역
+        VStack(spacing: 0) {
+          // 스크롤 되는 영역 (입력 필드, 키워드, 토글 등)
+          ScrollView {
+            VStack(spacing: 24) {
 
-            InputFieldSection(
-              title: "웹페이지 별명",
-              placeholder: "동국대학교 공지사항",
-              description: "해당 페이지를 식별할 명칭을 입력하세요.",
-              text: $viewModel.nameText,
-              colorScheme: colorScheme
-            )
+              // 1) 웹사이트 URL (필수)
+              InputFieldSection(
+                title: "웹사이트 URL",
+                placeholder: "https://www.example.com",
+                description: "모니터링할 웹페이지의 정확한 URL을 입력하세요.",
+                isRequired: true,
+                text: $viewModel.urlText,
+                colorScheme: colorScheme
+              )
 
-            VStack(alignment: .leading, spacing: 12) {
-              // 키워드 필터 섹션
-              VStack(alignment: .leading, spacing: 8) {
-                Text("키워드 필터")
-                  .font(.system(size: 14, weight: .semibold))
-                  .foregroundColor(Color.primaryGreen)
+              // 2) 웹페이지 별명 (선택)
+              InputFieldSection(
+                title: "웹페이지 별명",
+                placeholder: "동국대학교 공지사항",
+                description: "해당 페이지를 식별할 명칭을 입력하세요.",
+                isRequired: false,
+                text: $viewModel.nameText,
+                colorScheme: colorScheme
+              )
 
-                // 키워드 추가 버튼
-                Button(action: {
-                  viewModel.showKeywordSelector = true
-                }) {
-                  HStack {
-                    Text("키워드 추가...")
-                      .font(.system(size: 16))
-                      .foregroundColor(Color.secondaryText(colorScheme))
-                    Spacer()
+              // 3) 키워드 필터
+              VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 8) {
+                  Text("키워드 필터")
+                    .font(.KoddiBold20)
+                    .foregroundColor(Color.text(colorScheme))
+
+                  Button(action: {
+                    viewModel.showKeywordSelector = true
+                  }) {
+                    HStack {
+                      Text(viewModel.selectedKeywords.isEmpty ? "키워드 추가..." : "키워드 수정...")
+                        .font(.KoddiRegular16)
+                        .foregroundColor(Color.secondaryText(colorScheme))
+                      Spacer()
+                    }
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 16)
+                    .background(
+                      RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.secondaryBackground(colorScheme))
+                    )
+                    .overlay(
+                      RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.border(colorScheme), lineWidth: 1)
+                    )
                   }
-                  .padding(.horizontal, 16)
-                  .padding(.vertical, 12)
-                  .background(
-                    RoundedRectangle(cornerRadius: 8)
-                      .fill(Color.secondaryBackground(colorScheme))
-                  )
+
+                  Text("관심 키워드가 포함된 글을 알림으로 받아보세요.")
+                    .font(.KoddiRegular16)
+                    .foregroundColor(Color.secondaryText(colorScheme))
+                    .fixedSize(horizontal: false, vertical: true)
                 }
 
-                Text("관심 키워드가 포함된 내용을 걸러낼 필요가 있으면 입력하세요.")
-                  .font(.system(size: 12))
-                  .foregroundColor(Color.secondaryText(colorScheme))
-                  .fixedSize(horizontal: false, vertical: true)
-              }
-
-              // 선택된 키워드 배지들
-              if !viewModel.selectedKeywords.isEmpty {
-                FlowLayout(spacing: 8) {
-                  ForEach(viewModel.selectedKeywords, id: \.self) { keyword in
-                    KeywordBadgeWithDelete(
-                      text: keyword,
-                      colorScheme: colorScheme
-                    ) {
-                      viewModel.removeKeyword(keyword)
+                // 선택된 키워드 배지들
+                if !viewModel.selectedKeywords.isEmpty {
+                  FlowLayout(spacing: 8) {
+                    ForEach(viewModel.selectedKeywords, id: \.self) { keyword in
+                      KeywordBadgeWithDelete(
+                        text: keyword,
+                        colorScheme: colorScheme
+                      ) {
+                        viewModel.removeKeyword(keyword)
+                      }
                     }
                   }
                 }
               }
+
+              // 4) 긴급 알림 토글
+              HStack {
+                Text("긴급 알림으로 설정")
+                  .font(.KoddiBold20)
+                  .foregroundColor(Color.text(colorScheme))
+                Spacer()
+                Toggle("", isOn: $viewModel.isUrgent)
+                  .labelsHidden()
+              }
+              .padding(.vertical)
             }
+            .padding(.horizontal, 16)
+            .padding(.top, 8)
+            .padding(.bottom, 8)
+          }
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            UrgentToggleRow(isOn: $viewModel.isUrgent, colorScheme: colorScheme)
-
-            // 하단 버튼
-            Button(action: {
-              dismiss()
-            }, label: {
-              Text("등록 승인 요청")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 16)
-                .background(
-                  RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.primaryGreen)
-                )
-            })
+          // 하단 고정 "등록 승인 요청" 버튼
+          AddSubscriptionButton(
+            title: "등록 승인 요청",
+            colorScheme: colorScheme,
+            isEnabled: viewModel.isSubmitEnabled
+          ) {
+            let payload = viewModel.makeRequestPayload()
+            // TODO: 나중에 여기서 API 서비스에 payload를 넘겨서 서버로 전송
+            print("📤 New Subscription Request:", payload)
+            dismiss()
           }
           .padding(.horizontal, 16)
-          .padding(.top, 8)
-          .padding(.bottom, 16)
+          .padding(.vertical, 16)
         }
+        .scrollDismissesKeyboard(.interactively)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
       }
     }
+    .ignoresSafeArea(.keyboard, edges: .bottom)
+
+    // 키워드 설정 시트
     .sheet(isPresented: $viewModel.showKeywordSelector) {
       KeywordSelectorSheet(viewModel: viewModel, colorScheme: colorScheme)
-    }
-    .onAppear {
-      // 화면이 나타날 때 키워드 목록 로드
-      if viewModel.availableKeywords.isEmpty {
-        viewModel.loadKeywords()
-      }
     }
   }
 }
 
-// 키워드 선택 시트
+// MARK: - 키워드 선택 시트
+
 struct KeywordSelectorSheet: View {
   @ObservedObject var viewModel: AddSubscriptionViewModel
   let colorScheme: ColorScheme
@@ -124,129 +152,75 @@ struct KeywordSelectorSheet: View {
     ZStack {
       Color.background(colorScheme)
         .ignoresSafeArea()
+        .onTapGesture {
+          UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
 
       VStack(spacing: 0) {
-        // 헤더
-        HStack {
-          Spacer()
-          Text("구독 설정")
-            .font(.custom("KoddiUD OnGothic Bold", size: 24))
-            .foregroundColor(Color.text(colorScheme))
-          Spacer()
-          Button(action: {
-            dismiss()
-          }) {
-            Image(systemName: "xmark")
-              .font(.system(size: 20))
-              .foregroundColor(Color.text(colorScheme))
+        SheetHandleBar(colorScheme: colorScheme)
+          .padding(.top, 20)
+
+        // 키워드 설정 화면 제목
+        ScreenSubTitle(text: "키워드 설정", colorScheme: colorScheme)
+
+        VStack(spacing: 0) {
+          // 스크롤 가능한 키워드 목록
+          ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+              if viewModel.availableKeywords.isEmpty {
+                VStack(spacing: 16) {
+                  Text("등록된 키워드가 없습니다.")
+                    .font(.KoddiBold20)
+                    .foregroundColor(Color.secondaryText(colorScheme))
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 40)
+              } else {
+                VStack(spacing: 0) {
+                  ForEach(Array(viewModel.availableKeywords.enumerated()), id: \.offset) { index, keyword in
+                    KeywordCheckboxRow(
+                      keyword: keyword,
+                      isSelected: viewModel.selectedKeywords.contains(keyword),
+                      colorScheme: colorScheme
+                    ) {
+                      viewModel.toggleKeyword(keyword)
+                    }
+
+                    if index < viewModel.availableKeywords.count - 1 {
+                      Divider()
+                        .background(Color.border(colorScheme))
+                        .padding(.horizontal, 20)
+                    }
+                  }
+                }
+              }
+            }
+            .padding(.top, 8)
+            .padding(.bottom, 8)
           }
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, 20)
-        .padding(.bottom, 32)
+          .scrollDismissesKeyboard(.interactively)
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-        // 키워드 설정 섹션
-        VStack(alignment: .leading, spacing: 16) {
-          HStack {
-            Text("키워드 설정")
-              .font(.custom("KoddiUD OnGothic Bold", size: 20))
-              .foregroundColor(Color.primaryGreen)
-
-            Spacer()
+          // 하단 고정 "저장하기" 버튼
+          AddSubscriptionButton(
+            title: "저장하기",
+            colorScheme: colorScheme,
+            isEnabled: true
+          ) {
+            dismiss()
           }
           .padding(.horizontal, 20)
-
-          // 키워드 체크박스 리스트
-          if viewModel.isLoadingKeywords {
-            VStack(spacing: 16) {
-              ProgressView()
-                .padding(.top, 40)
-              Text("키워드를 불러오는 중...")
-                .font(.system(size: 14))
-                .foregroundColor(Color.secondaryText(colorScheme))
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 40)
-          } else if let errorMessage = viewModel.keywordErrorMessage {
-            VStack(spacing: 16) {
-              Image(systemName: "exclamationmark.triangle")
-                .font(.system(size: 32))
-                .foregroundColor(.red)
-              Text(errorMessage)
-                .font(.system(size: 14))
-                .foregroundColor(Color.secondaryText(colorScheme))
-                .multilineTextAlignment(.center)
-              Button(action: {
-                viewModel.loadKeywords()
-              }) {
-                Text("다시 시도")
-                  .font(.system(size: 14, weight: .semibold))
-                  .foregroundColor(.white)
-                  .padding(.horizontal, 20)
-                  .padding(.vertical, 8)
-                  .background(Color.primaryGreen)
-                  .cornerRadius(8)
-              }
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 40)
-          } else if viewModel.availableKeywords.isEmpty {
-            VStack(spacing: 16) {
-              Text("등록된 키워드가 없습니다")
-                .font(.system(size: 14))
-                .foregroundColor(Color.secondaryText(colorScheme))
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 40)
-          } else {
-            VStack(spacing: 0) {
-              ForEach(Array(viewModel.availableKeywords.enumerated()), id: \.offset) { index, keyword in
-                KeywordCheckboxRow(
-                  keyword: keyword,
-                  isSelected: viewModel.selectedKeywords.contains(keyword),
-                  colorScheme: colorScheme
-                ) {
-                  viewModel.toggleKeyword(keyword)
-                }
-
-                if index < viewModel.availableKeywords.count - 1 {
-                  Divider()
-                    .background(Color.border(colorScheme))
-                    .padding(.horizontal, 20)
-                }
-              }
-            }
-          }
+          .padding(.top, 12)
         }
-
-        Spacer()
-
-        // 저장하기 버튼
-        Button(action: {
-          dismiss()
-        }) {
-          Text("저장하기")
-            .font(.custom("KoddiUD OnGothic Bold", size: 18))
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .frame(height: 56)
-            .background(Color.primaryGreen)
-            .cornerRadius(12)
-        }
-        .padding(.horizontal, 20)
-        .padding(.bottom, 34)
-      }
-    }
-    .onAppear {
-      // 시트가 나타날 때 키워드 목록이 비어있으면 로드
-      if viewModel.availableKeywords.isEmpty, !viewModel.isLoadingKeywords {
-        viewModel.loadKeywords()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
       }
     }
   }
 }
 
-// 삭제 가능한 키워드 배지
+// MARK: - 키워드 배지 + FlowLayout (파일 내부용)
+
+/// 삭제 버튼이 있는 키워드 배지
 struct KeywordBadgeWithDelete: View {
   let text: String
   let colorScheme: ColorScheme
@@ -255,45 +229,48 @@ struct KeywordBadgeWithDelete: View {
   var body: some View {
     HStack(spacing: 6) {
       Text(text)
-        .font(.system(size: 14, weight: .medium))
-        .foregroundColor(.white)
+        .font(.KoddiBold14)
+        .foregroundColor(.primaryGreen)
 
       Button(action: onDelete) {
         Image(systemName: "xmark")
-          .font(.system(size: 10, weight: .bold))
-          .foregroundColor(.white)
+          .font(.KoddiBold14)
+          .foregroundColor(.primaryGreen)
       }
     }
     .padding(.horizontal, 12)
     .padding(.vertical, 8)
     .background(
-      RoundedRectangle(cornerRadius: 16)
-        .fill(Color.primaryGreen)
+      RoundedRectangle(cornerRadius: 20)
+        .fill(Color.badgeGreenBackground)
+    )
+    .overlay(
+      RoundedRectangle(cornerRadius: 20)
+        .stroke(Color.primaryGreen, lineWidth: 1)
     )
   }
 }
 
-// FlowLayout for keywords
+/// 여러 배지를 자동으로 줄바꿈해 배치해주는 레이아웃
 struct FlowLayout: Layout {
   var spacing: CGFloat = 8
 
   func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-    let result = FlowResult(
-      in: proposal.replacingUnspecifiedDimensions().width,
-      subviews: subviews,
-      spacing: spacing
-    )
+    let maxWidth = proposal.replacingUnspecifiedDimensions().width
+    let result = FlowResult(in: maxWidth, subviews: subviews, spacing: spacing)
     return result.size
   }
 
   func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-    let result = FlowResult(
-      in: bounds.width,
-      subviews: subviews,
-      spacing: spacing
-    )
+    let result = FlowResult(in: bounds.width, subviews: subviews, spacing: spacing)
     for (index, subview) in subviews.enumerated() {
-      subview.place(at: CGPoint(x: bounds.minX + result.positions[index].x, y: bounds.minY + result.positions[index].y), proposal: .unspecified)
+      subview.place(
+        at: CGPoint(
+          x: bounds.minX + result.positions[index].x,
+          y: bounds.minY + result.positions[index].y
+        ),
+        proposal: .unspecified
+      )
     }
   }
 

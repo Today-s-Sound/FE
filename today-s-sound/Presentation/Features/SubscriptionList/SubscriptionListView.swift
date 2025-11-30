@@ -106,10 +106,16 @@ struct SubscriptionListView: View {
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
           }
-
-          AddSubscriptionButton(colorScheme: colorScheme) {
-            showAddSubscription = true
-          }
+            AddSubscriptionButton(
+              title: "새 웹페이지 추가",
+              colorScheme: colorScheme,
+              isEnabled: true
+            ) {
+                showAddSubscription = true
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 16)
+            .padding(.top, 12)
         }
       }
       .navigationBarHidden(true)

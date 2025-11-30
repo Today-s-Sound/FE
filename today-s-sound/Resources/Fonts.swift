@@ -58,6 +58,10 @@ extension Font {
     .koddi(type: .regular, size: 16)
   }
 
+    static var KoddiRegular20: Font {
+      .koddi(type: .regular, size: 20)
+    }
+    
   static var KoddiBold14: Font {
     .koddi(type: .bold, size: 14)
   }
