@@ -13,7 +13,7 @@ struct StatusBadge: View {
 
   var body: some View {
     Text(text)
-          .font(.KoddiBold14)
+      .font(.KoddiBold14)
       .foregroundColor(.primaryGreen)
       .padding(.horizontal, 8)
       .padding(.vertical, 4)

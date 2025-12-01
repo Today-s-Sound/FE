@@ -9,7 +9,7 @@ struct FeedView: View {
 
   /// 필터 옵션 목록: ["전체", "교육부 보도자료", "서울시청 뉴스룸", "오늘의 소리 팀", ...]
   private var filterOptions: [String] {
-    let sources = Set(viewModel.items.map { $0.source })
+    let sources = Set(viewModel.items.map(\.source))
     let sorted = Array(sources).sorted()
     return ["전체"] + sorted
   }
@@ -17,9 +17,9 @@ struct FeedView: View {
   /// 선택된 필터에 따라 걸러진 피드 아이템
   private var filteredItems: [FeedItem] {
     if selectedFilter == "전체" {
-      return viewModel.items
+      viewModel.items
     } else {
-      return viewModel.items.filter { $0.source == selectedFilter }
+      viewModel.items.filter { $0.source == selectedFilter }
     }
   }
 
@@ -146,21 +146,21 @@ struct FeedView: View {
                 Capsule()
                   .fill(
                     isSelected
-                    ? Color.primaryGreen
-                    : Color.secondaryBackground(colorScheme)
+                      ? Color.primaryGreen
+                      : Color.secondaryBackground(colorScheme)
                   )
               )
               .foregroundColor(
                 isSelected
-                ? Color.white
-                : Color.text(colorScheme)
+                  ? Color.white
+                  : Color.text(colorScheme)
               )
               .overlay(
                 Capsule()
                   .stroke(
                     isSelected
-                    ? Color.primaryGreen
-                    : Color.border(colorScheme),
+                      ? Color.primaryGreen
+                      : Color.border(colorScheme),
                     lineWidth: 1
                   )
               )

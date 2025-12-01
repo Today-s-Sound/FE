@@ -37,12 +37,12 @@ struct InputFieldSection: View {
       // 타이틀 + 필수(*) 표시
       HStack(spacing: 4) {
         Text(title)
-              .font(.KoddiBold20)
+          .font(.KoddiBold20)
           .foregroundColor(Color.text(colorScheme))
 
         if isRequired {
           Text("*")
-                .font(.KoddiBold20)
+            .font(.KoddiBold20)
             .foregroundColor(.red)
         }
       }

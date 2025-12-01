@@ -27,7 +27,6 @@ struct AddSubscriptionView: View {
           // 스크롤 되는 영역 (입력 필드, 키워드, 토글 등)
           ScrollView {
             VStack(spacing: 24) {
-
               // 1) 웹사이트 URL (필수)
               InputFieldSection(
                 title: "웹사이트 URL",
@@ -133,7 +132,6 @@ struct AddSubscriptionView: View {
       }
     }
     .ignoresSafeArea(.keyboard, edges: .bottom)
-
     // 키워드 설정 시트
     .sheet(isPresented: $viewModel.showKeywordSelector) {
       KeywordSelectorSheet(viewModel: viewModel, colorScheme: colorScheme)
