@@ -119,4 +119,15 @@ class NotificationListViewModel: ObservableObject {
       loadAlarms()
     }
   }
+
+  /// 스와이프 삭제 처리 (추후 API 연동 시 여기에서 호출)
+  func delete(alarm: AlarmItem) {
+    // 1) 로컬 리스트에서 삭제
+    alarms.removeAll { $0.id == alarm.id }
+
+    // 2) TODO: 서버 삭제 API 연동
+    // apiService.deleteAlarm(id: alarm.subscriptionId)
+    //   .sink { ... } receiveValue: { ... }
+    //   .store(in: &cancellables)
+  }
 }
