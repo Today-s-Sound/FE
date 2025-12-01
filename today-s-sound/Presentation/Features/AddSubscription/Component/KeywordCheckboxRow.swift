@@ -2,12 +2,10 @@
 //  KeywordCheckboxRow.swift
 //  today-s-sound
 //
-//  Created by Assistant on 12/19/24.
-//
 
 import SwiftUI
 
-// 키워드 체크박스 Row 컴포넌트
+/// 키워드 한 줄(체크박스 + 텍스트)
 struct KeywordCheckboxRow: View {
   let keyword: String
   let isSelected: Bool
@@ -17,7 +15,6 @@ struct KeywordCheckboxRow: View {
   var body: some View {
     Button(action: action) {
       HStack(spacing: 16) {
-        // 체크박스
         ZStack {
           RoundedRectangle(cornerRadius: 6)
             .stroke(isSelected ? Color.primaryGreen : Color.border(colorScheme), lineWidth: 2)
@@ -34,9 +31,8 @@ struct KeywordCheckboxRow: View {
           }
         }
 
-        // 키워드 텍스트
         Text(keyword)
-          .font(.custom("KoddiUD OnGothic Regular", size: 18))
+          .font(.KoddiBold20)
           .foregroundColor(Color.text(colorScheme))
 
         Spacer()
