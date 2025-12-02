@@ -17,12 +17,11 @@ struct MainView: View {
         .tabItem {
           VStack {
             Image(systemName: "play.house.fill")
-              .accessibilityHidden(true) // 아이콘은 읽지 않도록
-            Text("홈")
+              .accessibilityHidden(true)   // 아이콘은 숨기고
+            Text("홈")                    // 이름만 읽히게
           }
         }
         .tag(Tab.home)
-        .accessibilityLabel("홈 탭")
 
       FeedView()
         .tabItem {
@@ -33,7 +32,6 @@ struct MainView: View {
           }
         }
         .tag(Tab.feed)
-        .accessibilityLabel("피드 탭")
 
       NotificationListView()
         .tabItem {
@@ -44,7 +42,6 @@ struct MainView: View {
           }
         }
         .tag(Tab.notifications)
-        .accessibilityLabel("알림 탭")
 
       SubscriptionListView()
         .tabItem {
@@ -55,7 +52,6 @@ struct MainView: View {
           }
         }
         .tag(Tab.subscriptions)
-        .accessibilityLabel("구독 탭")
 
       SettingsView()
         .tabItem {
@@ -66,7 +62,6 @@ struct MainView: View {
           }
         }
         .tag(Tab.settings)
-        .accessibilityLabel("설정 탭")
     }
     .tint(.primaryGreen)
   }
