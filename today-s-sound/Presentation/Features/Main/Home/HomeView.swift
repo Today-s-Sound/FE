@@ -34,11 +34,9 @@ struct HomeView: View {
             if speechService.isSpeaking {
               speechService.stop()
             } else {
-              // 홈 피드가 있으면 첫 번째 피드 아이템 재생, 없으면 기존 알림 재생
+              // 홈 피드가 있으면 첫 번째 피드 아이템 재생
               if !viewModel.homeFeedItems.isEmpty {
                 viewModel.playFirstFeedItem()
-              } else if let first = viewModel.recentAlerts.first {
-                viewModel.playAlert(first)
               }
             }
           },
@@ -93,18 +91,46 @@ struct HomeView: View {
             .foregroundColor(Color.text(colorScheme))
             .accessibilityLabel("현재 카테고리")
 
-          Text(viewModel.currentCategoryName)
-            .font(.KoddiExtraBold32)
-            .foregroundColor(colorScheme == .dark ? .black : .white)
-            .padding(.horizontal, 32)
-            .padding(.vertical, 18)
-            .frame(width: 360, height: 84)
-            .background(
-              RoundedRectangle(cornerRadius: 10)
-                .fill(Color.primaryGreen)
-            )
-            .foregroundColor(.white)
-            .accessibilityLabel("현재 재생 중인 카테고리: \(viewModel.currentCategoryName)")
+          if viewModel.isLoading {
+            Text("불러오는 중...")
+              .font(.KoddiExtraBold32)
+              .foregroundColor(colorScheme == .dark ? .black : .white)
+              .padding(.horizontal, 32)
+              .padding(.vertical, 18)
+              .frame(width: 360, height: 84)
+              .background(
+                RoundedRectangle(cornerRadius: 10)
+                  .fill(Color.primaryGreen.opacity(0.6))
+              )
+              .foregroundColor(.white)
+              .accessibilityLabel("피드를 불러오는 중입니다")
+          } else if viewModel.currentCategoryName.isEmpty {
+            Text("재생할 피드가 없습니다")
+              .font(.KoddiExtraBold32)
+              .foregroundColor(colorScheme == .dark ? .black : .white)
+              .padding(.horizontal, 32)
+              .padding(.vertical, 18)
+              .frame(width: 360, height: 84)
+              .background(
+                RoundedRectangle(cornerRadius: 10)
+                  .fill(Color.primaryGreen.opacity(0.6))
+              )
+              .foregroundColor(.white)
+              .accessibilityLabel("재생할 피드가 없습니다")
+          } else {
+            Text(viewModel.currentCategoryName)
+              .font(.KoddiExtraBold32)
+              .foregroundColor(colorScheme == .dark ? .black : .white)
+              .padding(.horizontal, 32)
+              .padding(.vertical, 18)
+              .frame(width: 360, height: 84)
+              .background(
+                RoundedRectangle(cornerRadius: 10)
+                  .fill(Color.primaryGreen)
+              )
+              .foregroundColor(.white)
+              .accessibilityLabel("현재 재생 중인 카테고리: \(viewModel.currentCategoryName)")
+          }
         }
         .padding(.bottom, 16)
       }

@@ -10,7 +10,7 @@ import Foundation
 
 class HomeViewModel: ObservableObject {
   @Published var playbackRate: Double = 1.0
-  @Published var currentCategoryName: String = "동국대학교 공지사항"
+  @Published var currentCategoryName: String = ""
   @Published var recentAlerts: [Alert] = []
   @Published var homeFeedItems: [HomeFeedItemResponse] = []
   @Published var isLoading: Bool = false
@@ -21,7 +21,6 @@ class HomeViewModel: ObservableObject {
 
   init(apiService: APIService = APIService()) {
     self.apiService = apiService
-    loadMockAlerts()
   }
 
   func increaseRate() {
@@ -97,10 +96,4 @@ class HomeViewModel: ObservableObject {
     .store(in: &cancellables)
   }
 
-  private func loadMockAlerts() {
-    recentAlerts = [
-      Alert(id: UUID(), title: "일이삼사오육칠팔", content: "공지 내용 예시", date: Date().addingTimeInterval(-7200), isUrgent: true),
-      Alert(id: UUID(), title: "잡코리아 채용 공고", content: "채용 소식", date: Date().addingTimeInterval(-10800), isUrgent: false)
-    ]
-  }
 }
