@@ -6,6 +6,7 @@ struct MainView: View {
     case feed
     case notifications
     case subscriptions
+    case settings
   }
 
   @State private var selectedTab: Tab = .home
@@ -43,6 +44,14 @@ struct MainView: View {
         }
         .tag(Tab.subscriptions)
         .accessibilityLabel("구독 탭")
+
+      SettingsView()
+        .tabItem {
+          Image(systemName: "gearshape.fill")
+          Text("설정")
+        }
+        .tag(Tab.settings)
+        .accessibilityLabel("설정 탭")
     }
     .tint(.primaryGreen)
   }
