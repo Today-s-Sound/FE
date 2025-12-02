@@ -46,7 +46,7 @@ extension FeedListResponse {
 struct FeedItemResponse: Codable, Identifiable {
   let subscriptionId: Int64
   let alias: String
-  let summaryTitle : String
+  let summaryTitle: String
   let summaryContent: String
   let url: String
   let timeAgo: String

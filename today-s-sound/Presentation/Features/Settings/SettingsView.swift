@@ -58,4 +58,3 @@ struct SettingsView_Previews: PreviewProvider {
       .environmentObject(SessionStore.preview)
   }
 }
-
