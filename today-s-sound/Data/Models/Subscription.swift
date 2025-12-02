@@ -23,6 +23,11 @@ struct DeleteSubscriptionResponse: Codable {
   let message: String
 }
 
+/// 알람 차단/해제 응답
+struct AlarmBlockResponse: Codable {
+  let message: String?
+}
+
 extension SubscriptionListResponse {
   // 편의 속성: result를 subscriptions로 접근
   var subscriptions: [SubscriptionItem] {

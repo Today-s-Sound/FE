@@ -70,7 +70,17 @@ struct SubscriptionListView: View {
           else {
             List {
               ForEach(viewModel.subscriptions) { subscription in
-                SubscriptionCardView(subscription: subscription, colorScheme: colorScheme)
+                SubscriptionCardView(
+                  subscription: subscription,
+                  colorScheme: colorScheme,
+                  onToggleAlarm: { sub in
+                    if sub.isUrgent {
+                      viewModel.blockAlarm(sub)
+                    } else {
+                      viewModel.unblockAlarm(sub)
+                    }
+                  }
+                )
                   .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
                   .listRowBackground(Color.clear)
                   .listRowSeparator(.hidden)

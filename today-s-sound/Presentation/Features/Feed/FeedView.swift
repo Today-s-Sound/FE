@@ -33,6 +33,11 @@ struct FeedView: View {
           .frame(maxWidth: .infinity, maxHeight: .infinity)
       }
       .navigationBarHidden(true)
+      .onAppear {
+        if viewModel.items.isEmpty {
+          viewModel.loadFeeds()
+        }
+      }
     }
   }
 
@@ -115,17 +120,30 @@ struct FeedView: View {
         ForEach(filteredItems) { item in
           FeedCard(item: item, colorScheme: colorScheme)
             .padding(.horizontal, 16)
+            .onAppear {
+              viewModel.loadMoreIfNeeded(currentItem: item)
+            }
+        }
+
+        // 더 불러오기 로딩 인디케이터
+        if viewModel.isLoadingMore {
+          HStack {
+            Spacer()
+            ProgressView()
+              .padding()
+            Spacer()
+          }
         }
       }
       .padding(.bottom, 24)
     }
-    .refreshable {
-      await viewModel.refresh()
-      // 새로고침 후 필터 옵션이 바뀔 수 있으니 선택값 보정
-      if !filterOptions.contains(selectedFilter) {
-        selectedFilter = "전체"
+      .refreshable {
+        await viewModel.refresh()
+        // 새로고침 후 필터 옵션이 바뀔 수 있으니 선택값 보정
+        if !filterOptions.contains(selectedFilter) {
+          selectedFilter = "전체"
+        }
       }
-    }
   }
 
   /// 상단 필터 버튼 바 (단일 선택)
@@ -183,21 +201,27 @@ private struct FeedCard: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
+      // 페이지 이름 (작은 회색 텍스트)
       Text(item.source)
         .font(.KoddiRegular16)
         .foregroundColor(Color.secondaryText(colorScheme))
 
-      Text(item.title)
+      // 제목 (큰 볼드 텍스트, 두 줄 가능)
+      Text(item.alias)
         .font(.KoddiBold28)
         .foregroundColor(Color.text(colorScheme))
         .multilineTextAlignment(.leading)
+        .lineLimit(2)
 
+      // 내용 (중간 크기 텍스트, 여러 줄 가능)
       Text(item.summary)
         .font(.KoddiRegular20)
         .foregroundColor(Color.text(colorScheme))
         .multilineTextAlignment(.leading)
+        .lineLimit(nil)
 
-      Text(item.relativeTimeText)
+      // 시간 (작은 초록색 텍스트)
+      Text(item.timeAgo)
         .font(.KoddiRegular16)
         .foregroundColor(.primaryGreen)
     }
@@ -213,7 +237,7 @@ private struct FeedCard: View {
     )
     .accessibilityElement(children: .combine)
     .accessibilityLabel(
-      "\(item.source) 새 글, \(item.title), \(item.summary), \(item.relativeTimeText)"
+      "\(item.source) 새 글, \(item.alias), \(item.summary), \(item.timeAgo)"
     )
   }
 }

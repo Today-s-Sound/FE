@@ -84,8 +84,10 @@ class NotificationListViewModel: ObservableObject {
           }
         }
       },
-      receiveValue: { [weak self] newItems in
+      receiveValue: { [weak self] response in
         guard let self else { return }
+
+        let newItems = response.alarms
 
         // 새 데이터 추가
         alarms.append(contentsOf: newItems)

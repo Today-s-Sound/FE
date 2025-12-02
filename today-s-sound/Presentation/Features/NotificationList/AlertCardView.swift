@@ -60,6 +60,7 @@ struct AlertCardView_Previews: PreviewProvider {
       subscriptionId: 1,
       alias: "동국대 SW 융합교육원",
       summaryContent: "동국대학교 SW 융합교육원에서 새로운 교육 프로그램 공지가 등록되었습니다. 마감 기한을 꼭 확인해주세요.",
+      url: "https://www.dongguk.edu/article/GENERALNOTICES/list",
       timeAgo: "5분 전",
       isUrgent: true
     ),
@@ -67,6 +68,7 @@ struct AlertCardView_Previews: PreviewProvider {
       subscriptionId: 2,
       alias: "오늘의 소리 팀 공지",
       summaryContent: "오늘의 소리 앱이 업데이트되었습니다. 접근성 관련 보이스오버 개선과 버그 수정이 포함되어 있습니다.",
+      url: "https://techblog.woowahan.com/",
       timeAgo: "10분 전",
       isUrgent: false
     )

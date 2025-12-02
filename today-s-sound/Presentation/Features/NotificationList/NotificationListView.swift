@@ -147,6 +147,7 @@ struct NotificationListView: View {
           subscriptionId: 1,
           alias: "동국대 SW 융합교육원",
           summaryContent: "동국대학교 SW 융합교육원에서 신입생 및 재학생을 위한 SW 교육 프로그램 공지가 등록되었습니다. 신청 마감 기한을 꼭 확인해주세요.",
+          url: "exurl",
           timeAgo: "5분 전",
           isUrgent: true
         ),
@@ -154,13 +155,15 @@ struct NotificationListView: View {
           subscriptionId: 2,
           alias: "오늘의 소리 팀 공지",
           summaryContent: "오늘의 소리 앱이 업데이트되었습니다. 보이스오버 지원이 개선되고, 일부 버그가 수정되었습니다.",
+          url: "exurl",
           timeAgo: "12분 전",
           isUrgent: false
         ),
-        AlarmItem(
+        AlarmItem( 
           subscriptionId: 3,
           alias: "장학 공지",
           summaryContent: "2025학년도 1학기 장학금 신청 안내입니다. 신청 자격과 필요 서류를 꼭 확인한 뒤 기한 내 제출해주세요.",
+          url: "exurl",
           timeAgo: "30분 전",
           isUrgent: true
         ),
@@ -168,6 +171,7 @@ struct NotificationListView: View {
           subscriptionId: 4,
           alias: "동국대 일정 안내",
           summaryContent: "이번 주 캠퍼스 주요 일정과 행사를 정리하여 안내드립니다. 관심 있는 프로그램에 미리 신청해보세요.",
+          url: "url",
           timeAgo: "1시간 전",
           isUrgent: false
         )

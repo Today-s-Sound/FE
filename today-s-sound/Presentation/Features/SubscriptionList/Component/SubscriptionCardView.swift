@@ -10,6 +10,7 @@ import SwiftUI
 struct SubscriptionCardView: View {
   let subscription: SubscriptionItem
   let colorScheme: ColorScheme
+  var onToggleAlarm: ((SubscriptionItem) -> Void)?
 
   var body: some View {
     HStack(spacing: 12) {
@@ -50,7 +51,9 @@ struct SubscriptionCardView: View {
       Spacer()
 
       // 긴급 알림 아이콘
-      Button(action: {}, label: {
+      Button(action: {
+        onToggleAlarm?(subscription)
+      }, label: {
         Image(subscription.isUrgent ? "Bell" : "Bell off")
           .frame(width: 40, height: 40)
           .accessibilityLabel(subscription.isUrgent ? "긴급 알림 설정됨" : "긴급 알림 해제됨")

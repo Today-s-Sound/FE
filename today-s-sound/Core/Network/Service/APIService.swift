@@ -12,10 +12,22 @@ protocol APIServiceType {
   func deleteSubscription(
     userId: String, deviceSecret: String, subscriptionId: Int64
   ) -> AnyPublisher<DeleteSubscriptionResponse, NetworkError>
+  func blockAlarm(
+    userId: String, deviceSecret: String, subscriptionId: Int64
+  ) -> AnyPublisher<Void, NetworkError>
+  func unblockAlarm(
+    userId: String, deviceSecret: String, subscriptionId: Int64
+  ) -> AnyPublisher<Void, NetworkError>
   func getAlarms(
     userId: String, deviceSecret: String, page: Int, size: Int
   ) -> AnyPublisher<AlarmListResponse, NetworkError>
   func getKeywords() -> AnyPublisher<KeywordsResponse, NetworkError>
+  func getHomeFeed(
+    userId: String, deviceSecret: String
+  ) -> AnyPublisher<HomeFeedResponse, NetworkError>
+  func getFeeds(
+    userId: String, deviceSecret: String, page: Int, size: Int
+  ) -> AnyPublisher<FeedListResponse, NetworkError>
 }
 
 class APIService: APIServiceType {
@@ -24,6 +36,7 @@ class APIService: APIServiceType {
   private let subscriptionProvider: MoyaProvider<SubscriptionAPI>
   private let alarmProvider: MoyaProvider<AlarmAPI>
   private let keywordProvider: MoyaProvider<KeywordAPI>
+  private let feedProvider: MoyaProvider<FeedAPI>
 
   init(userSession: UserSession = UserSession()) {
     #if DEBUG
@@ -36,12 +49,14 @@ class APIService: APIServiceType {
       subscriptionProvider = NetworkKit.provider(userSession: userSession, plugins: [logger])
       alarmProvider = NetworkKit.provider(userSession: userSession, plugins: [logger])
       keywordProvider = NetworkKit.provider(userSession: userSession, plugins: [logger])
+      feedProvider = NetworkKit.provider(userSession: userSession, plugins: [logger])
     #else
       userProvider = NetworkKit.provider(userSession: userSession)
       authProvider = NetworkKit.provider(userSession: userSession)
       subscriptionProvider = NetworkKit.provider(userSession: userSession)
       alarmProvider = NetworkKit.provider(userSession: userSession)
       keywordProvider = NetworkKit.provider(userSession: userSession)
+      feedProvider = NetworkKit.provider(userSession: userSession)
     #endif
   }
 
@@ -179,6 +194,74 @@ class APIService: APIServiceType {
     .eraseToAnyPublisher()
   }
 
+  // MARK: - Subscription API (Alarm Block/Unblock)
+
+  func blockAlarm(
+    userId: String, deviceSecret: String, subscriptionId: Int64
+  ) -> AnyPublisher<Void, NetworkError> {
+    subscriptionProvider.requestPublisher(.blockAlarm(
+      userId: userId,
+      deviceSecret: deviceSecret,
+      subscriptionId: subscriptionId
+    ))
+    .mapError { moyaError -> NetworkError in
+      .requestFailed(moyaError)
+    }
+    .tryMap { response -> Void in
+      // 상태 코드만 확인 (200-299면 성공)
+      guard (200 ... 299).contains(response.statusCode) else {
+        throw NetworkError.serverError(statusCode: response.statusCode)
+      }
+      
+      #if DEBUG
+        print("✅ 알람 차단 성공: subscriptionId=\(subscriptionId)")
+      #endif
+      
+      return ()
+    }
+    .mapError { error -> NetworkError in
+      if let networkError = error as? NetworkError {
+        return networkError
+      } else {
+        return .requestFailed(error)
+      }
+    }
+    .eraseToAnyPublisher()
+  }
+
+  func unblockAlarm(
+    userId: String, deviceSecret: String, subscriptionId: Int64
+  ) -> AnyPublisher<Void, NetworkError> {
+    subscriptionProvider.requestPublisher(.unblockAlarm(
+      userId: userId,
+      deviceSecret: deviceSecret,
+      subscriptionId: subscriptionId
+    ))
+    .mapError { moyaError -> NetworkError in
+      .requestFailed(moyaError)
+    }
+    .tryMap { response -> Void in
+      // 상태 코드만 확인 (200-299면 성공)
+      guard (200 ... 299).contains(response.statusCode) else {
+        throw NetworkError.serverError(statusCode: response.statusCode)
+      }
+      
+      #if DEBUG
+        print("✅ 알람 차단 해제 성공: subscriptionId=\(subscriptionId)")
+      #endif
+      
+      return ()
+    }
+    .mapError { error -> NetworkError in
+      if let networkError = error as? NetworkError {
+        return networkError
+      } else {
+        return .requestFailed(error)
+      }
+    }
+    .eraseToAnyPublisher()
+  }
+
   // MARK: - Alarm API
 
   func getAlarms(
@@ -218,5 +301,49 @@ class APIService: APIServiceType {
         return handleResponse(response, decodeTo: KeywordsResponse.self, debugLabel: "키워드 목록 응답")
       }
       .eraseToAnyPublisher()
+  }
+
+  // MARK: - Feed API
+
+  func getHomeFeed(
+    userId: String, deviceSecret: String
+  ) -> AnyPublisher<HomeFeedResponse, NetworkError> {
+    feedProvider.requestPublisher(.getHomeFeed(
+      userId: userId,
+      deviceSecret: deviceSecret
+    ))
+    .mapError { moyaError -> NetworkError in
+      .requestFailed(moyaError)
+    }
+    .flatMap { [weak self] response -> AnyPublisher<HomeFeedResponse, NetworkError> in
+      guard let self else {
+        return Fail(error: NetworkError.unknown)
+          .eraseToAnyPublisher()
+      }
+      return handleResponse(response, decodeTo: HomeFeedResponse.self, debugLabel: "홈 피드 응답")
+    }
+    .eraseToAnyPublisher()
+  }
+
+  func getFeeds(
+    userId: String, deviceSecret: String, page: Int = 0, size: Int = 10
+  ) -> AnyPublisher<FeedListResponse, NetworkError> {
+    feedProvider.requestPublisher(.getFeeds(
+      userId: userId,
+      deviceSecret: deviceSecret,
+      page: page,
+      size: size
+    ))
+    .mapError { moyaError -> NetworkError in
+      .requestFailed(moyaError)
+    }
+    .flatMap { [weak self] response -> AnyPublisher<FeedListResponse, NetworkError> in
+      guard let self else {
+        return Fail(error: NetworkError.unknown)
+          .eraseToAnyPublisher()
+      }
+      return handleResponse(response, decodeTo: FeedListResponse.self, debugLabel: "피드 목록 응답")
+    }
+    .eraseToAnyPublisher()
   }
 }

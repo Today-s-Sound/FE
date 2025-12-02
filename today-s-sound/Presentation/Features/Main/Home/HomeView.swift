@@ -32,7 +32,10 @@ struct HomeView: View {
             if speechService.isSpeaking {
               speechService.stop()
             } else {
-              if let first = viewModel.recentAlerts.first {
+              // 홈 피드가 있으면 첫 번째 피드 아이템 재생, 없으면 기존 알림 재생
+              if !viewModel.homeFeedItems.isEmpty {
+                viewModel.playFirstFeedItem()
+              } else if let first = viewModel.recentAlerts.first {
                 viewModel.playAlert(first)
               }
             }
@@ -96,6 +99,9 @@ struct HomeView: View {
         }
         .padding(.bottom, 16)
       }
+    }
+    .onAppear {
+      viewModel.loadHomeFeed()
     }
   }
 }
