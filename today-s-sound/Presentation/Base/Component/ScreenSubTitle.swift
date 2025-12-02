@@ -18,6 +18,8 @@ struct ScreenSubTitle: View {
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(.horizontal, 24)
       .padding(.bottom, 16)
+      .accessibilityAddTraits(.isHeader)
+      .accessibilityLabel(text)
   }
 }
 

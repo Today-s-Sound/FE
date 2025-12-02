@@ -30,6 +30,7 @@ struct KeywordCheckboxRow: View {
               .foregroundColor(.white)
           }
         }
+        .accessibilityHidden(true)
 
         Text(keyword)
           .font(.KoddiBold20)
@@ -41,6 +42,9 @@ struct KeywordCheckboxRow: View {
       .padding(.horizontal, 20)
     }
     .buttonStyle(PlainButtonStyle())
+    .accessibilityLabel("키워드 \(keyword)")
+    .accessibilityValue(isSelected ? "선택됨" : "선택 안 됨")
+    .accessibilityHint("탭하여 이 키워드를 선택하거나 해제합니다")
   }
 }
 

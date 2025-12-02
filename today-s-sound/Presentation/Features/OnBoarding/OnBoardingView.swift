@@ -30,6 +30,8 @@ struct OnBoardingView: View {
 
           if isLoading {
             ProgressView("초기화 중…")
+              .accessibilityLabel("초기화 중입니다")
+              .accessibilityHint("잠시만 기다려주세요")
           }
         }
       }
@@ -45,6 +47,7 @@ struct OnBoardingView: View {
             .multilineTextAlignment(.center)
             .padding(.horizontal, 24)
             .padding(.bottom, 24)
+            .accessibilityLabel("오류: \(err)")
         }
       }
     }

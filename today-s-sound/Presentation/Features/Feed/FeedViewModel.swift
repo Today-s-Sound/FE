@@ -50,8 +50,8 @@ final class FeedViewModel: ObservableObject {
     .sink(
       receiveCompletion: { [weak self] completion in
         guard let self else { return }
-        self.isLoading = false
-        self.isLoadingMore = false
+        isLoading = false
+        isLoadingMore = false
 
         switch completion {
         case .finished:
@@ -60,22 +60,22 @@ final class FeedViewModel: ObservableObject {
         case let .failure(error):
           switch error {
           case let .serverError(statusCode):
-            self.errorMessage = "서버 오류 (상태: \(statusCode))"
+            errorMessage = "서버 오류 (상태: \(statusCode))"
 
           case .decodingFailed:
-            self.errorMessage = "응답 처리 실패"
+            errorMessage = "응답 처리 실패"
 
           case let .requestFailed(requestError):
-            self.errorMessage = "요청 실패: \(requestError.localizedDescription)"
+            errorMessage = "요청 실패: \(requestError.localizedDescription)"
 
           case .invalidURL:
-            self.errorMessage = "잘못된 URL"
+            errorMessage = "잘못된 URL"
 
           case .unknown:
-            self.errorMessage = "알 수 없는 오류"
+            errorMessage = "알 수 없는 오류"
           }
 
-          print("❌ 피드 목록 조회 실패: \(self.errorMessage ?? "")")
+          print("❌ 피드 목록 조회 실패: \(errorMessage ?? "")")
         }
       },
       receiveValue: { [weak self] response in
@@ -96,18 +96,18 @@ final class FeedViewModel: ObservableObject {
           )
         }
 
-        self.items.append(contentsOf: newItems)
-        self.currentPage += 1
+        items.append(contentsOf: newItems)
+        currentPage += 1
 
-        if feedItems.count < self.pageSize {
-          self.hasMoreData = false
-          print("🏁 마지막 페이지 도달: 받은 개수(\(feedItems.count)) < 예상(\(self.pageSize))")
+        if feedItems.count < pageSize {
+          hasMoreData = false
+          print("🏁 마지막 페이지 도달: 받은 개수(\(feedItems.count)) < 예상(\(pageSize))")
         }
 
-        print("✅ 피드 목록 조회 성공: \(feedItems.count)개 추가 (전체: \(self.items.count)개)")
+        print("✅ 피드 목록 조회 성공: \(feedItems.count)개 추가 (전체: \(items.count)개)")
       }
     )
-    .store(in: &self.cancellables)
+    .store(in: &cancellables)
   }
 
   /// 새로고침
@@ -124,21 +124,21 @@ final class FeedViewModel: ObservableObject {
         continuation.resume()
         return
       }
-      
+
       guard let userId = Keychain.getString(for: KeychainKey.userId),
             let deviceSecret = Keychain.getString(for: KeychainKey.deviceSecret)
       else {
-        self.errorMessage = "사용자 정보가 없습니다"
-        self.isLoading = false
+        errorMessage = "사용자 정보가 없습니다"
+        isLoading = false
         continuation.resume()
         return
       }
 
-      self.apiService.getFeeds(
+      apiService.getFeeds(
         userId: userId,
         deviceSecret: deviceSecret,
         page: 0,
-        size: self.pageSize
+        size: pageSize
       )
       .receive(on: DispatchQueue.main)
       .sink(
@@ -147,7 +147,7 @@ final class FeedViewModel: ObservableObject {
             continuation.resume()
             return
           }
-          self.isLoading = false
+          isLoading = false
 
           switch completion {
           case .finished:
@@ -156,22 +156,22 @@ final class FeedViewModel: ObservableObject {
           case let .failure(error):
             switch error {
             case let .serverError(statusCode):
-              self.errorMessage = "서버 오류 (상태: \(statusCode))"
+              errorMessage = "서버 오류 (상태: \(statusCode))"
 
             case .decodingFailed:
-              self.errorMessage = "응답 처리 실패"
+              errorMessage = "응답 처리 실패"
 
             case let .requestFailed(requestError):
-              self.errorMessage = "요청 실패: \(requestError.localizedDescription)"
+              errorMessage = "요청 실패: \(requestError.localizedDescription)"
 
             case .invalidURL:
-              self.errorMessage = "잘못된 URL"
+              errorMessage = "잘못된 URL"
 
             case .unknown:
-              self.errorMessage = "알 수 없는 오류"
+              errorMessage = "알 수 없는 오류"
             }
 
-            print("❌ 피드 새로고침 실패: \(self.errorMessage ?? "")")
+            print("❌ 피드 새로고침 실패: \(errorMessage ?? "")")
           }
 
           continuation.resume()
@@ -193,14 +193,14 @@ final class FeedViewModel: ObservableObject {
             )
           }
 
-          self.items = newItems
-          self.currentPage = 1
-          self.hasMoreData = feedItems.count >= self.pageSize
+          items = newItems
+          currentPage = 1
+          hasMoreData = feedItems.count >= pageSize
 
           print("✅ 피드 새로고침 성공: \(feedItems.count)개")
         }
       )
-      .store(in: &self.cancellables)
+      .store(in: &cancellables)
     }
   }
 

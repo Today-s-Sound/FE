@@ -120,11 +120,11 @@
 				};
 			};
 			buildConfigurationList = 259FC9622E890D7E001152B9 /* Build configuration list for PBXProject "today-s-sound" */;
-			developmentRegion = en;
+			developmentRegion = ko;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				en,
 				Base,
+				ko,
 			);
 			mainGroup = 259FC95E2E890D7E001152B9;
 			minimizedProjectReferenceProxies = 1;

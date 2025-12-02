@@ -63,4 +63,3 @@ struct FeedItemResponse: Codable, Identifiable {
     case isUrgent
   }
 }
-

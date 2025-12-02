@@ -81,24 +81,26 @@ struct SubscriptionListView: View {
                     }
                   }
                 )
-                  .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
-                  .listRowBackground(Color.clear)
-                  .listRowSeparator(.hidden)
-                  .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                    Button(role: .destructive) {
-                      viewModel.deleteSubscription(subscription)
-                    } label: {
-                      Label("삭제", systemImage: "trash")
-                    }
+                .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                  Button(role: .destructive) {
+                    viewModel.deleteSubscription(subscription)
+                  } label: {
+                    Label("삭제", systemImage: "trash")
                   }
-                  .onAppear {
-                    if let lastIndex = viewModel.subscriptions.indices.last,
-                       let currentIndex = viewModel.subscriptions.firstIndex(where: { $0.id == subscription.id }),
-                       currentIndex >= lastIndex - 4
-                    {
-                      viewModel.loadMoreIfNeeded(currentItem: subscription)
-                    }
+                  .accessibilityLabel("구독 삭제")
+                  .accessibilityHint("이 구독을 목록에서 삭제합니다")
+                }
+                .onAppear {
+                  if let lastIndex = viewModel.subscriptions.indices.last,
+                     let currentIndex = viewModel.subscriptions.firstIndex(where: { $0.id == subscription.id }),
+                     currentIndex >= lastIndex - 4
+                  {
+                    viewModel.loadMoreIfNeeded(currentItem: subscription)
                   }
+                }
               }
 
               if viewModel.isLoadingMore {

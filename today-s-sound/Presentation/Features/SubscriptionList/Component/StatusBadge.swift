@@ -21,6 +21,7 @@ struct StatusBadge: View {
         RoundedRectangle(cornerRadius: 20)
           .fill(Color.badgeGreenBackground)
       )
+      .accessibilityLabel("키워드: \(text)")
   }
 }
 

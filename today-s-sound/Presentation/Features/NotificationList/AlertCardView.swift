@@ -31,6 +31,7 @@ struct AlertCardView: View {
           .font(.KoddiExtraBold32)
           .foregroundColor(textColor)
           .multilineTextAlignment(.leading)
+          .accessibilityLabel("구독 페이지: \(alarm.alias)")
 
         Spacer()
       }
@@ -40,17 +41,21 @@ struct AlertCardView: View {
         .font(.KoddiRegular20)
         .foregroundColor(textColor)
         .multilineTextAlignment(.leading)
+        .accessibilityLabel("내용: \(alarm.summaryContent)")
 
       // 하단: 시간
       Text(alarm.timeAgo)
         .font(.KoddiRegular16)
         .foregroundColor(textColor)
+        .accessibilityLabel("작성 시간: \(alarm.timeAgo)")
     }
     .padding(16)
     .background(
       RoundedRectangle(cornerRadius: 10)
         .fill(cardColor)
     )
+    .accessibilityElement(children: .combine)
+    .accessibilityLabel("\(alarm.isUrgent ? "긴급 " : "")알림, \(alarm.alias), \(alarm.summaryContent), \(alarm.timeAgo)")
   }
 }
 

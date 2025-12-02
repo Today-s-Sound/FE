@@ -25,7 +25,7 @@ class SpeechService: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
 
     let utterance = AVSpeechUtterance(string: text)
     utterance.voice = AVSpeechSynthesisVoice(language: language)
-    
+
     // rate가 제공되면 사용, 없으면 기본값 0.5
     // AVSpeechUtterance의 rate는 0.0 ~ 1.0 범위
     // 사용자가 설정한 playbackRate (0.5 ~ 2.0)를 0.0 ~ 1.0 범위로 변환

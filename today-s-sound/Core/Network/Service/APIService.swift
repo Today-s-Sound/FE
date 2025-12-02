@@ -211,16 +211,16 @@ class APIService: APIServiceType {
     .mapError { moyaError -> NetworkError in
       .requestFailed(moyaError)
     }
-    .tryMap { response -> Void in
+    .tryMap { response in
       // 상태 코드만 확인 (200-299면 성공)
       guard (200 ... 299).contains(response.statusCode) else {
         throw NetworkError.serverError(statusCode: response.statusCode)
       }
-      
+
       #if DEBUG
         print("✅ 알람 차단 성공: subscriptionId=\(subscriptionId)")
       #endif
-      
+
       return ()
     }
     .mapError { error -> NetworkError in
@@ -244,16 +244,16 @@ class APIService: APIServiceType {
     .mapError { moyaError -> NetworkError in
       .requestFailed(moyaError)
     }
-    .tryMap { response -> Void in
+    .tryMap { response in
       // 상태 코드만 확인 (200-299면 성공)
       guard (200 ... 299).contains(response.statusCode) else {
         throw NetworkError.serverError(statusCode: response.statusCode)
       }
-      
+
       #if DEBUG
         print("✅ 알람 차단 해제 성공: subscriptionId=\(subscriptionId)")
       #endif
-      
+
       return ()
     }
     .mapError { error -> NetworkError in

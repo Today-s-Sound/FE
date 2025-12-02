@@ -20,6 +20,8 @@ struct ScreenMainTitle: View {
       .multilineTextAlignment(.center)
       .padding(.horizontal, 24)
       .padding(.bottom, 16)
+      .accessibilityAddTraits(.isHeader)
+      .accessibilityLabel(text)
   }
 }
 

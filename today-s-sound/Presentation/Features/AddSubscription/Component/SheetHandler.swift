@@ -17,6 +17,7 @@ struct SheetHandleBar: View {
         .fill(Color.secondaryText(colorScheme).opacity(0.3))
         .frame(width: 80, height: 5)
         .padding(.top, 8)
+        .accessibilityHidden(true)
 
       // 핸들 바와 실제 콘텐츠 사이 살짝 여백
       Spacer()

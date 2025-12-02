@@ -26,6 +26,8 @@ struct HomeView: View {
           .font(.KoddiBold56)
           .foregroundStyle(Color.text(colorScheme))
           .padding(.bottom, 30)
+          .accessibilityAddTraits(.isHeader)
+          .accessibilityLabel("오늘의 소리")
 
         Button(
           action: {
@@ -62,12 +64,15 @@ struct HomeView: View {
                 .foregroundColor(Color.primaryGreen)
             }
           )
+          .accessibilityLabel("재생 속도 감소")
+          .accessibilityHint("탭하여 재생 속도를 느리게 합니다")
 
           Text(String(format: "%.1f x", viewModel.playbackRate))
             .font(.KoddiBold48)
             .foregroundColor(Color.text(colorScheme))
             .monospacedDigit()
             .frame(minWidth: 100)
+            .accessibilityLabel("현재 재생 속도 \(String(format: "%.1f", viewModel.playbackRate))배속")
 
           Button(
             action: { viewModel.increaseRate() },
@@ -77,6 +82,8 @@ struct HomeView: View {
                 .foregroundColor(Color.primaryGreen)
             }
           )
+          .accessibilityLabel("재생 속도 증가")
+          .accessibilityHint("탭하여 재생 속도를 빠르게 합니다")
         }
         .padding(.bottom, 60)
 
@@ -84,6 +91,7 @@ struct HomeView: View {
           Text("현재 카테고리")
             .font(.KoddiBold28)
             .foregroundColor(Color.text(colorScheme))
+            .accessibilityLabel("현재 카테고리")
 
           Text(viewModel.currentCategoryName)
             .font(.KoddiExtraBold32)
@@ -96,6 +104,7 @@ struct HomeView: View {
                 .fill(Color.primaryGreen)
             )
             .foregroundColor(.white)
+            .accessibilityLabel("현재 재생 중인 카테고리: \(viewModel.currentCategoryName)")
         }
         .padding(.bottom, 16)
       }

@@ -18,6 +18,7 @@ struct MainView: View {
           Text("홈")
         }
         .tag(Tab.home)
+        .accessibilityLabel("홈 탭")
 
       FeedView()
         .tabItem {
@@ -25,6 +26,7 @@ struct MainView: View {
           Text("피드")
         }
         .tag(Tab.feed)
+        .accessibilityLabel("피드 탭")
 
       NotificationListView()
         .tabItem {
@@ -32,6 +34,7 @@ struct MainView: View {
           Text("알림")
         }
         .tag(Tab.notifications)
+        .accessibilityLabel("알림 탭")
 
       SubscriptionListView()
         .tabItem {
@@ -39,6 +42,7 @@ struct MainView: View {
           Text("구독")
         }
         .tag(Tab.subscriptions)
+        .accessibilityLabel("구독 탭")
     }
     .tint(.primaryGreen)
   }

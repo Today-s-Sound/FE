@@ -39,11 +39,13 @@ struct InputFieldSection: View {
         Text(title)
           .font(.KoddiBold20)
           .foregroundColor(Color.text(colorScheme))
+          .accessibilityLabel(isRequired ? "\(title) 필수 입력" : title)
 
         if isRequired {
           Text("*")
             .font(.KoddiBold20)
             .foregroundColor(.red)
+            .accessibilityHidden(true)
         }
       }
 
@@ -62,6 +64,9 @@ struct InputFieldSection: View {
           .padding(.vertical, 16)
           .foregroundColor(Color.text(colorScheme))
           .font(.KoddiRegular16)
+          .accessibilityLabel(title)
+          .accessibilityHint(description)
+          .accessibilityValue(text.isEmpty ? placeholder : text)
       }
       .background(
         RoundedRectangle(cornerRadius: 8)
@@ -81,6 +86,7 @@ struct InputFieldSection: View {
       Text(description)
         .font(.KoddiRegular16)
         .foregroundColor(Color.secondaryText(colorScheme))
+        .accessibilityLabel(description)
     }
   }
 }

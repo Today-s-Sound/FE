@@ -74,11 +74,14 @@ struct AddSubscriptionView: View {
                         .stroke(Color.border(colorScheme), lineWidth: 1)
                     )
                   }
+                  .accessibilityLabel(viewModel.selectedKeywords.isEmpty ? "키워드 추가 버튼" : "키워드 수정 버튼")
+                  .accessibilityHint("탭하여 키워드를 선택합니다")
 
                   Text("관심 키워드가 포함된 글을 알림으로 받아보세요.")
                     .font(.KoddiRegular16)
                     .foregroundColor(Color.secondaryText(colorScheme))
                     .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityLabel("관심 키워드가 포함된 글을 알림으로 받아보세요")
                 }
 
                 // 선택된 키워드 배지들
@@ -101,9 +104,13 @@ struct AddSubscriptionView: View {
                 Text("긴급 알림으로 설정")
                   .font(.KoddiBold20)
                   .foregroundColor(Color.text(colorScheme))
+                  .accessibilityLabel("긴급 알림으로 설정")
                 Spacer()
                 Toggle("", isOn: $viewModel.isUrgent)
                   .labelsHidden()
+                  .accessibilityLabel("긴급 알림 토글")
+                  .accessibilityValue(viewModel.isUrgent ? "켜짐" : "꺼짐")
+                  .accessibilityHint("탭하여 긴급 알림 설정을 변경합니다")
               }
               .padding(.vertical)
             }
@@ -235,6 +242,8 @@ struct KeywordBadgeWithDelete: View {
           .font(.KoddiBold14)
           .foregroundColor(.primaryGreen)
       }
+      .accessibilityLabel("\(text) 키워드 삭제")
+      .accessibilityHint("탭하여 이 키워드를 제거합니다")
     }
     .padding(.horizontal, 12)
     .padding(.vertical, 8)
@@ -246,6 +255,8 @@ struct KeywordBadgeWithDelete: View {
       RoundedRectangle(cornerRadius: 20)
         .stroke(Color.primaryGreen, lineWidth: 1)
     )
+    .accessibilityElement(children: .combine)
+    .accessibilityLabel("선택된 키워드: \(text)")
   }
 }
 

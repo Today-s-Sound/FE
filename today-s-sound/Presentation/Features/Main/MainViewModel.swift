@@ -11,7 +11,7 @@ class MainViewModel: ObservableObject {
 
   private let apiService: APIService
   private var cancellables = Set<AnyCancellable>()
-  
+
   // 순차 재생을 위한 큐
   private var playbackQueue: [(category: String, items: [HomeFeedItemResponse])] = []
   private var currentGroupIndex: Int = 0
@@ -23,7 +23,7 @@ class MainViewModel: ObservableObject {
     loadMockAlerts()
     setupSpeechListener()
   }
-  
+
   private func setupSpeechListener() {
     // SpeechService의 재생 완료 이벤트 구독
     speechCancellable = SpeechService.shared.didFinishSpeaking
@@ -99,14 +99,14 @@ class MainViewModel: ObservableObject {
         guard let self else { return }
         let feedItems = response.items
         homeFeedItems = feedItems
-        
+
         // 홈 피드의 첫 번째 아이템이 있으면 카테고리 이름 업데이트
         if let firstItem = feedItems.first {
           currentCategoryName = firstItem.alias
         }
-        
+
         print("✅ 홈 피드 조회 성공: \(feedItems.count)개")
-        
+
         // 그룹화된 결과 출력 (디버깅용)
         let grouped = Dictionary(grouping: feedItems) { $0.alias }
         for (alias, items) in grouped {
@@ -123,27 +123,27 @@ class MainViewModel: ObservableObject {
     return grouped.map { (category: $0.key, items: $0.value) }
       .sorted { $0.category < $1.category } // 정렬 (선택사항)
   }
-  
+
   /// 홈 피드 재생 시작 (그룹별로 순차 재생)
   func playFirstFeedItem() {
     guard !homeFeedItems.isEmpty else { return }
-    
+
     // 기존 재생 중이면 중단
     if SpeechService.shared.isSpeaking {
       SpeechService.shared.stop()
     }
-    
+
     // 피드를 alias로 그룹화
     playbackQueue = groupFeedsByAlias(homeFeedItems)
     currentGroupIndex = 0
     currentItemIndex = 0
-    
+
     print("🎵 재생 시작: \(playbackQueue.count)개 그룹")
-    
+
     // 첫 번째 그룹부터 재생 시작
     playCurrentGroup()
   }
-  
+
   /// 재생 중단 시 큐 초기화
   func stopPlayback() {
     SpeechService.shared.stop()
@@ -151,7 +151,7 @@ class MainViewModel: ObservableObject {
     currentGroupIndex = 0
     currentItemIndex = 0
   }
-  
+
   /// 현재 그룹 재생 (카테고리명 먼저, 그 다음 summary들)
   private func playCurrentGroup() {
     guard currentGroupIndex < playbackQueue.count else {
@@ -159,35 +159,35 @@ class MainViewModel: ObservableObject {
       print("✅ 모든 피드 재생 완료")
       return
     }
-    
+
     let currentGroup = playbackQueue[currentGroupIndex]
-    
+
     // 현재 카테고리 업데이트
     DispatchQueue.main.async { [weak self] in
       self?.currentCategoryName = currentGroup.category
     }
-    
+
     // 카테고리명 먼저 재생
     print("📢 카테고리: \(currentGroup.category)")
     SpeechService.shared.speak(text: currentGroup.category, rate: Float(playbackRate))
-    
+
     // 카테고리명 재생 후 첫 번째 아이템은 playNextItem에서 재생됨
     currentItemIndex = 0
   }
-  
+
   /// 다음 아이템 재생
   private func playNextItem() {
     guard currentGroupIndex < playbackQueue.count else {
       return
     }
-    
+
     let currentGroup = playbackQueue[currentGroupIndex]
-    
+
     // 현재 그룹의 모든 아이템을 재생했으면 다음 그룹으로
     if currentItemIndex >= currentGroup.items.count {
       currentGroupIndex += 1
       currentItemIndex = 0
-      
+
       if currentGroupIndex < playbackQueue.count {
         // 다음 그룹 재생
         playCurrentGroup()
@@ -197,12 +197,12 @@ class MainViewModel: ObservableObject {
       }
       return
     }
-    
+
     // 현재 그룹의 다음 아이템 재생
     let item = currentGroup.items[currentItemIndex]
     print("📢 재생: \(item.summaryContent)")
     SpeechService.shared.speak(text: item.summaryContent, rate: Float(playbackRate))
-    
+
     currentItemIndex += 1
   }
 

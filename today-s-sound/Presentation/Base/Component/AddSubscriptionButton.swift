@@ -42,6 +42,8 @@ struct AddSubscriptionButton: View {
         )
     }
     .disabled(!isEnabled)
+    .accessibilityLabel(title)
+    .accessibilityHint(isEnabled ? "탭하여 \(title)합니다" : "현재 사용할 수 없습니다")
   }
 }
 

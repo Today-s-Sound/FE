@@ -86,6 +86,7 @@ struct FeedView: View {
       .foregroundColor(.white)
       .background(Color.primaryGreen)
       .cornerRadius(10)
+      .accessibilityLabel("다시 시도 버튼")
       .accessibilityHint("탭하여 피드를 다시 불러옵니다")
       Spacer()
     }
@@ -131,19 +132,20 @@ struct FeedView: View {
             Spacer()
             ProgressView()
               .padding()
+              .accessibilityLabel("추가 피드를 불러오는 중입니다")
             Spacer()
           }
         }
       }
       .padding(.bottom, 24)
     }
-      .refreshable {
-        await viewModel.refresh()
-        // 새로고침 후 필터 옵션이 바뀔 수 있으니 선택값 보정
-        if !filterOptions.contains(selectedFilter) {
-          selectedFilter = "전체"
-        }
+    .refreshable {
+      await viewModel.refresh()
+      // 새로고침 후 필터 옵션이 바뀔 수 있으니 선택값 보정
+      if !filterOptions.contains(selectedFilter) {
+        selectedFilter = "전체"
       }
+    }
   }
 
   /// 상단 필터 버튼 바 (단일 선택)

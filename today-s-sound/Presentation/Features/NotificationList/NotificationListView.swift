@@ -159,7 +159,7 @@ struct NotificationListView: View {
           timeAgo: "12분 전",
           isUrgent: false
         ),
-        AlarmItem( 
+        AlarmItem(
           subscriptionId: 3,
           alias: "장학 공지",
           summaryContent: "2025학년도 1학기 장학금 신청 안내입니다. 신청 자격과 필요 서류를 꼭 확인한 뒤 기한 내 제출해주세요.",
