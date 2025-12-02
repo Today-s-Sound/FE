@@ -17,8 +17,8 @@ struct MainView: View {
         .tabItem {
           VStack {
             Image(systemName: "play.house.fill")
-              .accessibilityHidden(true)   // 아이콘은 숨기고
-            Text("홈")                    // 이름만 읽히게
+              .accessibilityHidden(true) // 아이콘은 숨기고
+            Text("홈") // 이름만 읽히게
           }
         }
         .tag(Tab.home)
