@@ -68,7 +68,6 @@ struct MainView: View {
         .tag(Tab.settings)
         .accessibilityLabel("설정 탭")
     }
-    .accessibilityLanguage("ko-KR") // ← 발음 정확도 개선
     .tint(.primaryGreen)
   }
 }
