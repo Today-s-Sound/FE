@@ -1,10 +1,3 @@
-//
-//  HomeView.swift
-//  today-s-sound
-//
-//  Created by 하승연 on 9/28/25.
-//
-
 import SwiftUI
 
 struct HomeView: View {
@@ -26,8 +19,9 @@ struct HomeView: View {
           .font(.KoddiBold56)
           .foregroundStyle(Color.text(colorScheme))
           .padding(.bottom, 30)
-          .accessibilityAddTraits(.isHeader)
-          .accessibilityLabel("오늘의 소리")
+          .accessibilityElement() // 이 텍스트를 독립 요소로
+          .accessibilityLabel("오늘의 소리") // 👉 "오늘의 소리"라고 읽기
+          .accessibilityAddTraits(.isHeader) // 머리말(헤더)로 인식
 
         Button(
           action: {
@@ -65,12 +59,15 @@ struct HomeView: View {
           .accessibilityLabel("재생 속도 감소")
           .accessibilityHint("탭하여 재생 속도를 느리게 합니다")
 
+          // 현재 속도 표시
           Text(String(format: "%.1f x", viewModel.playbackRate))
             .font(.KoddiBold48)
             .foregroundColor(Color.text(colorScheme))
             .monospacedDigit()
             .frame(minWidth: 100)
-            .accessibilityLabel("현재 재생 속도 \(String(format: "%.1f", viewModel.playbackRate))배속")
+            .accessibilityElement() // 독립 요소
+            .accessibilityLabel("현재 속도 \(String(format: "%.1f", viewModel.playbackRate))배속")
+          // 예: "현재 속도 1.0배속"
 
           Button(
             action: { viewModel.increaseRate() },
@@ -86,9 +83,11 @@ struct HomeView: View {
         .padding(.bottom, 60)
 
         VStack(spacing: 16) {
+          // "현재 카테고리" 텍스트
           Text("현재 카테고리")
             .font(.KoddiBold28)
             .foregroundColor(Color.text(colorScheme))
+            .accessibilityElement()
             .accessibilityLabel("현재 카테고리")
 
           if viewModel.isLoading {
@@ -103,6 +102,7 @@ struct HomeView: View {
                   .fill(Color.primaryGreen.opacity(0.6))
               )
               .foregroundColor(.white)
+              .accessibilityElement()
               .accessibilityLabel("피드를 불러오는 중입니다")
           } else if viewModel.currentCategoryName.isEmpty {
             Text("재생할 피드가 없습니다")
@@ -116,8 +116,10 @@ struct HomeView: View {
                   .fill(Color.primaryGreen.opacity(0.6))
               )
               .foregroundColor(.white)
+              .accessibilityElement()
               .accessibilityLabel("재생할 피드가 없습니다")
           } else {
+            // 현재 카테고리 이름 카드
             Text(viewModel.currentCategoryName)
               .font(.KoddiExtraBold32)
               .foregroundColor(colorScheme == .dark ? .black : .white)
@@ -129,7 +131,9 @@ struct HomeView: View {
                   .fill(Color.primaryGreen)
               )
               .foregroundColor(.white)
-              .accessibilityLabel("현재 재생 중인 카테고리: \(viewModel.currentCategoryName)")
+              .accessibilityElement()
+              .accessibilityLabel(viewModel.currentCategoryName) // 👉 카테고리명만 또렷하게
+              .accessibilityHint("현재 재생 중인 카테고리입니다")
           }
         }
         .padding(.bottom, 16)

@@ -15,40 +15,55 @@ struct MainView: View {
     TabView(selection: $selectedTab) {
       HomeView()
         .tabItem {
-          Image(systemName: "play.house.fill")
-          Text("홈")
+          VStack {
+            Image(systemName: "play.house.fill")
+              .accessibilityHidden(true) // 아이콘은 읽지 않도록
+            Text("홈")
+          }
         }
         .tag(Tab.home)
         .accessibilityLabel("홈 탭")
 
       FeedView()
         .tabItem {
-          Image(systemName: "text.bubble.fill")
-          Text("피드")
+          VStack {
+            Image(systemName: "text.bubble.fill")
+              .accessibilityHidden(true)
+            Text("피드")
+          }
         }
         .tag(Tab.feed)
         .accessibilityLabel("피드 탭")
 
       NotificationListView()
         .tabItem {
-          Image(systemName: "bell.fill")
-          Text("알림")
+          VStack {
+            Image(systemName: "bell.fill")
+              .accessibilityHidden(true)
+            Text("알림")
+          }
         }
         .tag(Tab.notifications)
         .accessibilityLabel("알림 탭")
 
       SubscriptionListView()
         .tabItem {
-          Image(systemName: "books.vertical.fill")
-          Text("구독")
+          VStack {
+            Image(systemName: "books.vertical.fill")
+              .accessibilityHidden(true)
+            Text("구독")
+          }
         }
         .tag(Tab.subscriptions)
         .accessibilityLabel("구독 탭")
 
       SettingsView()
         .tabItem {
-          Image(systemName: "gearshape.fill")
-          Text("설정")
+          VStack {
+            Image(systemName: "gearshape.fill")
+              .accessibilityHidden(true)
+            Text("설정")
+          }
         }
         .tag(Tab.settings)
         .accessibilityLabel("설정 탭")

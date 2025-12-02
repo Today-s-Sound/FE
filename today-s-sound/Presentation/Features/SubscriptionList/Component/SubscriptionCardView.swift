@@ -56,9 +56,9 @@ struct SubscriptionCardView: View {
       }, label: {
         Image(subscription.isUrgent ? "Bell" : "Bell off")
           .frame(width: 40, height: 40)
-          .accessibilityLabel(subscription.isUrgent ? "긴급 알림 설정됨" : "긴급 알림 해제됨")
+          .accessibilityLabel(subscription.isUrgent ? "페이지 알림 설정됨" : "페이지 알림 해제됨")
       })
-      .accessibilityHint("탭하여 긴급 알림 설정을 변경합니다")
+      .accessibilityHint("탭하여 이 페이지의 구독 알림 설정을 변경합니다")
     }
     .padding(16)
     .background(

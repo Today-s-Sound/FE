@@ -186,7 +186,7 @@ struct FeedView: View {
               )
           }
           .buttonStyle(.plain)
-          .accessibilityLabel("\(option) 피드 보기")
+          .accessibilityLabel("필터 탭, \(option) 피드 보기")
           .accessibilityHint("이 버튼을 선택하면 \(option) 피드만 볼 수 있습니다")
         }
       }
