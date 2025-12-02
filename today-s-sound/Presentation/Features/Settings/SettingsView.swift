@@ -40,9 +40,13 @@ struct SettingsView: View {
         Button("취소", role: .cancel) {}
         Button("탈퇴하기", role: .destructive) {
           session.logout()
+          // 앱 종료
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            exit(0)
+          }
         }
       } message: {
-        Text("정말 회원탈퇴를 하시겠습니까?\n모든 데이터가 삭제됩니다.")
+        Text("정말 회원탈퇴를 하시겠습니까?\n모든 데이터가 삭제되고 앱이 종료됩니다.")
       }
     }
   }

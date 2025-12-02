@@ -85,12 +85,11 @@ final class FeedViewModel: ObservableObject {
 
         // FeedItemResponse를 FeedItem으로 변환
         let newItems = feedItems.map { response -> FeedItem in
-          // summaryContent를 제목으로 사용 (디자인에 맞춰 제목만 표시)
           FeedItem(
             id: UUID(),
             alias: response.alias,
-            summary: response.summaryContent, // 내용도 동일하게 사용
-            source: response.alias,
+            summary: response.summaryContent,
+            summaryTitle: response.summaryTitle,
             publishedAt: self.parseTimeAgo(response.timeAgo),
             timeAgo: response.timeAgo
           )
@@ -182,12 +181,11 @@ final class FeedViewModel: ObservableObject {
           let feedItems = response.feeds
 
           let newItems = feedItems.map { response -> FeedItem in
-            // summaryContent를 제목으로 사용 (디자인에 맞춰 제목만 표시)
             FeedItem(
               id: UUID(),
               alias: response.alias,
-              summary: response.summaryContent, // 내용도 동일하게 사용
-              source: response.alias,
+              summary: response.summaryContent,
+              summaryTitle: response.summaryTitle,
               publishedAt: self.parseTimeAgo(response.timeAgo),
               timeAgo: response.timeAgo
             )

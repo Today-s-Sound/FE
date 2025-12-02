@@ -9,8 +9,8 @@ struct FeedView: View {
 
   /// 필터 옵션 목록: ["전체", "교육부 보도자료", "서울시청 뉴스룸", "오늘의 소리 팀", ...]
   private var filterOptions: [String] {
-    let sources = Set(viewModel.items.map(\.source))
-    let sorted = Array(sources).sorted()
+    let alias = Set(viewModel.items.map(\.alias))
+    let sorted = Array(alias).sorted()
     return ["전체"] + sorted
   }
 
@@ -19,7 +19,7 @@ struct FeedView: View {
     if selectedFilter == "전체" {
       viewModel.items
     } else {
-      viewModel.items.filter { $0.source == selectedFilter }
+      viewModel.items.filter { $0.alias == selectedFilter }
     }
   }
 
@@ -204,12 +204,12 @@ private struct FeedCard: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       // 페이지 이름 (작은 회색 텍스트)
-      Text(item.source)
+      Text(item.alias)
         .font(.KoddiRegular16)
         .foregroundColor(Color.secondaryText(colorScheme))
 
       // 제목 (큰 볼드 텍스트, 두 줄 가능)
-      Text(item.alias)
+      Text(item.summaryTitle)
         .font(.KoddiBold28)
         .foregroundColor(Color.text(colorScheme))
         .multilineTextAlignment(.leading)
@@ -239,7 +239,7 @@ private struct FeedCard: View {
     )
     .accessibilityElement(children: .combine)
     .accessibilityLabel(
-      "\(item.source) 새 글, \(item.alias), \(item.summary), \(item.timeAgo)"
+      "\(item.summaryTitle) 새 글, \(item.alias), \(item.summary), \(item.timeAgo)"
     )
   }
 }
