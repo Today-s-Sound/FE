@@ -1,8 +1,35 @@
 import Foundation
 
-/// 홈 피드 목록 응답 (페이지네이션 없음)
-/// 서버가 배열을 직접 내려주므로 [FeedItemResponse]로 매핑
-typealias HomeFeedResponse = [FeedItemResponse]
+/// 홈 피드 전용 응답 모델
+struct HomeFeedItemResponse: Codable, Identifiable {
+  let subscriptionId: Int64
+  let alias: String
+  let summaryContent: String
+  let timeAgo: String
+  let isUrgent: Bool
+
+  // SwiftUI ForEach에서 사용할 식별자
+  var id: Int64 { subscriptionId }
+
+  enum CodingKeys: String, CodingKey {
+    case subscriptionId
+    case alias
+    case summaryContent
+    case timeAgo
+    case isUrgent
+  }
+}
+
+/// 홈 피드 목록 응답 (APIResponse 형태)
+/// 서버가 APIResponse<[HomeFeedItemResponse]> 형태로 응답
+typealias HomeFeedResponse = APIResponse<[HomeFeedItemResponse]>
+
+extension HomeFeedResponse {
+  // 편의 속성: result를 items로 접근
+  var items: [HomeFeedItemResponse] {
+    result
+  }
+}
 
 /// 피드 목록 응답 (페이지네이션 지원)
 /// 서버가 APIResponse<[FeedItemResponse]> 형태로 응답

@@ -16,7 +16,7 @@ class SpeechService: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
     synthesizer.delegate = self
   }
 
-  func speak(text: String, language: String = "ko-KR") {
+  func speak(text: String, language: String = "ko-KR", rate: Float? = nil) {
     // 빈 텍스트 체크
     guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
       print("⚠️ SpeechService: 빈 텍스트는 재생할 수 없습니다")
@@ -25,7 +25,18 @@ class SpeechService: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
 
     let utterance = AVSpeechUtterance(string: text)
     utterance.voice = AVSpeechSynthesisVoice(language: language)
-    utterance.rate = 0.5 // 말하는 속도 (0.0 ~ 1.0)
+    
+    // rate가 제공되면 사용, 없으면 기본값 0.5
+    // AVSpeechUtterance의 rate는 0.0 ~ 1.0 범위
+    // 사용자가 설정한 playbackRate (0.5 ~ 2.0)를 0.0 ~ 1.0 범위로 변환
+    if let customRate = rate {
+      // 0.5 ~ 2.0 범위를 0.0 ~ 1.0 범위로 선형 매핑
+      // 예: 0.5 -> 0.25, 1.0 -> 0.5, 2.0 -> 1.0
+      let normalizedRate = Float((customRate - 0.5) / 1.5 * 0.75 + 0.25)
+      utterance.rate = min(1.0, max(0.0, normalizedRate))
+    } else {
+      utterance.rate = 0.5 // 기본값
+    }
 
     // Stop any speaking in progress before starting a new one
     if synthesizer.isSpeaking {

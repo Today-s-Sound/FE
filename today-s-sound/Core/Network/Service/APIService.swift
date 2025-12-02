@@ -107,6 +107,10 @@ class APIService: APIServiceType {
             case let .typeMismatch(type, context):
               print("  - 타입 불일치: \(type)")
               print("  - 경로: \(context.codingPath.map(\.stringValue).joined(separator: " -> "))")
+              print("  - 설명: \(context.debugDescription)")
+              if let underlyingError = context.underlyingError {
+                print("  - 근본 원인: \(underlyingError)")
+              }
             case let .valueNotFound(type, context):
               print("  - 값을 찾을 수 없음: \(type)")
               print("  - 경로: \(context.codingPath.map(\.stringValue).joined(separator: " -> "))")

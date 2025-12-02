@@ -12,7 +12,7 @@ class HomeViewModel: ObservableObject {
   @Published var playbackRate: Double = 1.0
   @Published var currentCategoryName: String = "동국대학교 공지사항"
   @Published var recentAlerts: [Alert] = []
-  @Published var homeFeedItems: [FeedItemResponse] = []
+  @Published var homeFeedItems: [HomeFeedItemResponse] = []
   @Published var isLoading: Bool = false
   @Published var errorMessage: String?
 
@@ -87,8 +87,9 @@ class HomeViewModel: ObservableObject {
           print("❌ 홈 피드 조회 실패: \(errorMessage ?? "")")
         }
       },
-      receiveValue: { [weak self] feedItems in
+      receiveValue: { [weak self] response in
         guard let self else { return }
+        let feedItems = response.items
         homeFeedItems = feedItems
         print("✅ 홈 피드 조회 성공: \(feedItems.count)개")
       }
