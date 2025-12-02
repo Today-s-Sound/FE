@@ -204,5 +204,4 @@ class MainViewModel: ObservableObject {
 
     currentItemIndex += 1
   }
-
 }

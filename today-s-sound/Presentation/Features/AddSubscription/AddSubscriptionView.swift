@@ -10,12 +10,20 @@ struct AddSubscriptionView: View {
       Color.background(colorScheme)
         .ignoresSafeArea()
         .onTapGesture {
+          // 배경 탭하면 키보드만 닫기
           UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
 
       VStack(spacing: 0) {
         // 상단 핸들 바 (X 대신)
         SheetHandleBar(colorScheme: colorScheme)
+          .accessibilityElement()
+          .accessibilityLabel("새 웹페이지 추가 창 닫기")
+          .accessibilityHint("이 영역을 두 번 탭하거나 아래로 스와이프하면 창이 닫힙니다.")
+          .onTapGesture {
+            // 핸들 바를 두 번 탭해서도 창을 닫을 수 있게
+            dismiss()
+          }
 
         // 화면 제목
         ScreenSubTitle(text: "새 웹페이지 추가", colorScheme: colorScheme)
@@ -36,6 +44,15 @@ struct AddSubscriptionView: View {
                 text: $viewModel.urlText,
                 colorScheme: colorScheme
               )
+              // 시각장애인용 안내
+              .accessibilityElement(children: .combine)
+              .accessibilityLabel("웹사이트 URL 입력 칸")
+              .accessibilityValue(
+                viewModel.urlText.isEmpty
+                  ? "입력 예시는 https://www.example.com"
+                  : viewModel.urlText
+              )
+              .accessibilityHint("모니터링할 웹페이지의 정확한 주소를 입력하세요.")
 
               // 2) 웹페이지 별명 (선택)
               InputFieldSection(
@@ -46,6 +63,14 @@ struct AddSubscriptionView: View {
                 text: $viewModel.nameText,
                 colorScheme: colorScheme
               )
+              .accessibilityElement(children: .combine)
+              .accessibilityLabel("웹페이지 별명 입력 칸")
+              .accessibilityValue(
+                viewModel.nameText.isEmpty
+                  ? "입력 예시는 동국대학교 공지사항"
+                  : viewModel.nameText
+              )
+              .accessibilityHint("해당 페이지를 구분하기 쉬운 이름을 입력하세요.")
 
               // 3) 키워드 필터
               VStack(alignment: .leading, spacing: 12) {
@@ -118,6 +143,7 @@ struct AddSubscriptionView: View {
             .padding(.top, 8)
             .padding(.bottom, 8)
           }
+          .scrollDismissesKeyboard(.interactively)
           .frame(maxWidth: .infinity, maxHeight: .infinity)
 
           // 하단 고정 "등록 승인 요청" 버튼
@@ -131,10 +157,16 @@ struct AddSubscriptionView: View {
             print("📤 New Subscription Request:", payload)
             dismiss()
           }
+          // 접근성: 활성/비활성 상태에 따라 안내 문구 변경
+          .accessibilityLabel("등록 승인 요청, 버튼")
+          .accessibilityHint(
+            viewModel.isSubmitEnabled
+              ? "이 웹사이트 등록 승인을 요청합니다."
+              : "웹사이트 URL을 입력해야 활성화됩니다."
+          )
           .padding(.horizontal, 16)
           .padding(.vertical, 16)
         }
-        .scrollDismissesKeyboard(.interactively)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
       }
     }
@@ -142,6 +174,22 @@ struct AddSubscriptionView: View {
     // 키워드 설정 시트
     .sheet(isPresented: $viewModel.showKeywordSelector) {
       KeywordSelectorSheet(viewModel: viewModel, colorScheme: colorScheme)
+    }
+    // 키보드 상단에 항상 "키보드 닫기" 버튼 제공
+    .toolbar {
+      ToolbarItemGroup(placement: .keyboard) {
+        Spacer()
+        Button("키보드 닫기") {
+          UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil,
+            from: nil,
+            for: nil
+          )
+        }
+        .accessibilityLabel("키보드 닫기")
+        .accessibilityHint("탭하여 키보드를 숨깁니다.")
+      }
     }
   }
 }
@@ -164,6 +212,12 @@ struct KeywordSelectorSheet: View {
       VStack(spacing: 0) {
         SheetHandleBar(colorScheme: colorScheme)
           .padding(.top, 20)
+          .accessibilityElement()
+          .accessibilityLabel("키워드 설정 창 닫기")
+          .accessibilityHint("이 영역을 두 번 탭하거나 아래로 스와이프하면 창이 닫힙니다.")
+          .onTapGesture {
+            dismiss()
+          }
 
         // 키워드 설정 화면 제목
         ScreenSubTitle(text: "키워드 설정", colorScheme: colorScheme)

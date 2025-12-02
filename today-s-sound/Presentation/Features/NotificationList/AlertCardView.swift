@@ -55,7 +55,7 @@ struct AlertCardView: View {
         .fill(cardColor)
     )
     .accessibilityElement(children: .combine)
-    .accessibilityLabel("\(alarm.isUrgent ? "긴급 " : "")알림, \(alarm.alias), \(alarm.summaryContent), \(alarm.timeAgo)")
+    .accessibilityLabel("\(alarm.isUrgent ? "긴급 " : "일반 ")알림, \(alarm.alias), \(alarm.summaryContent), \(alarm.timeAgo)")
   }
 }
 
