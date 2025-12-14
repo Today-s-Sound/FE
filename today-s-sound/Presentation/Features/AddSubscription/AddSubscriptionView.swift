@@ -16,7 +16,7 @@ struct AddSubscriptionView: View {
 
       VStack(spacing: 0) {
         // 상단 핸들 바 (X 대신)
-        SheetHandleBar(colorScheme: appTheme.theme)
+        SheetHandleBar(theme: appTheme.theme)
           .accessibilityElement()
           .accessibilityLabel("새 웹페이지 추가 창 닫기")
           .accessibilityHint("이 영역을 두 번 탭하거나 아래로 스와이프하면 창이 닫힙니다.")
@@ -41,7 +41,7 @@ struct AddSubscriptionView: View {
                 description: "모니터링할 웹페이지의 정확한 URL을 입력하세요.",
                 isRequired: true,
                 text: $viewModel.urlText,
-                colorScheme: appTheme.theme
+                theme: appTheme.theme
               )
 
               // 2) 웹페이지 별명 (선택)
@@ -50,7 +50,7 @@ struct AddSubscriptionView: View {
                 description: "해당 페이지를 식별할 명칭을 입력하세요.",
                 isRequired: false,
                 text: $viewModel.nameText,
-                colorScheme: appTheme.theme
+                theme: appTheme.theme
               )
 
               // 3) 키워드 필터
@@ -96,7 +96,7 @@ struct AddSubscriptionView: View {
                     ForEach(viewModel.selectedKeywords, id: \.self) { keyword in
                       KeywordBadgeWithDelete(
                         text: keyword,
-                        colorScheme: appTheme.theme
+                        theme: appTheme.theme
                       ) {
                         viewModel.removeKeyword(keyword)
                       }
@@ -130,7 +130,7 @@ struct AddSubscriptionView: View {
           // 하단 고정 "등록 승인 요청" 버튼
           AddSubscriptionButton(
             title: viewModel.isLoading ? "등록 중..." : "등록 승인 요청",
-            colorScheme: appTheme.theme,
+            theme: appTheme.theme,
             isEnabled: viewModel.isSubmitEnabled && !viewModel.isLoading
           ) {
             viewModel.createSubscription { success in
@@ -167,7 +167,7 @@ struct AddSubscriptionView: View {
     .ignoresSafeArea(.keyboard, edges: .bottom)
     // 키워드 설정 시트
     .sheet(isPresented: $viewModel.showKeywordSelector) {
-      KeywordSelectorSheet(viewModel: viewModel, colorScheme: appTheme.theme)
+      KeywordSelectorSheet(viewModel: viewModel, theme: appTheme.theme)
         .onAppear {
           // 키워드 설정 시트가 열릴 때 키워드 목록 로드
           if viewModel.availableKeywords.isEmpty {
@@ -198,19 +198,19 @@ struct AddSubscriptionView: View {
 
 struct KeywordSelectorSheet: View {
   @ObservedObject var viewModel: AddSubscriptionViewModel
-  let colorScheme: AppTheme
+  let theme: AppTheme
   @Environment(\.dismiss) var dismiss
 
   var body: some View {
     ZStack {
-      Color.background(colorScheme)
+      Color.background(theme)
         .ignoresSafeArea()
         .onTapGesture {
           UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
 
       VStack(spacing: 0) {
-        SheetHandleBar(colorScheme: colorScheme)
+        SheetHandleBar(theme: theme)
           .padding(.top, 20)
           .accessibilityElement()
           .accessibilityLabel("키워드 설정 창 닫기")
@@ -220,7 +220,7 @@ struct KeywordSelectorSheet: View {
           }
 
         // 키워드 설정 화면 제목
-        ScreenSubTitle(text: "키워드 설정", theme: colorScheme)
+        ScreenSubTitle(text: "키워드 설정", theme: theme)
 
         VStack(spacing: 0) {
           // 스크롤 가능한 키워드 목록
@@ -238,7 +238,7 @@ struct KeywordSelectorSheet: View {
                 VStack(spacing: 16) {
                   Text(errorMessage)
                     .font(.KoddiBold20)
-                    .foregroundColor(Color.secondaryText(colorScheme))
+                    .foregroundColor(Color.secondaryText(theme))
                     .accessibilityLabel("오류: \(errorMessage)")
 
                   Button("다시 시도") {
@@ -259,7 +259,7 @@ struct KeywordSelectorSheet: View {
                 VStack(spacing: 16) {
                   Text("등록된 키워드가 없습니다.")
                     .font(.KoddiBold20)
-                    .foregroundColor(Color.secondaryText(colorScheme))
+                    .foregroundColor(Color.secondaryText(theme))
                     .accessibilityLabel("등록된 키워드가 없습니다")
                 }
                 .frame(maxWidth: .infinity)
@@ -270,14 +270,14 @@ struct KeywordSelectorSheet: View {
                     KeywordCheckboxRow(
                       keyword: keyword,
                       isSelected: viewModel.selectedKeywords.contains(keyword),
-                      colorScheme: colorScheme
+                      theme: theme
                     ) {
                       viewModel.toggleKeyword(keyword)
                     }
 
                     if index < viewModel.availableKeywords.count - 1 {
                       Divider()
-                        .background(Color.border(colorScheme))
+                        .background(Color.border(theme))
                         .padding(.horizontal, 20)
                     }
                   }
@@ -293,7 +293,7 @@ struct KeywordSelectorSheet: View {
           // 하단 고정 "저장하기" 버튼
           AddSubscriptionButton(
             title: "저장하기",
-            colorScheme: colorScheme,
+            theme: theme,
             isEnabled: true
           ) {
             dismiss()
@@ -312,8 +312,9 @@ struct KeywordSelectorSheet: View {
 /// 삭제 버튼이 있는 키워드 배지
 struct KeywordBadgeWithDelete: View {
   let text: String
-  let colorScheme: AppTheme
+  let theme: AppTheme
   let onDelete: () -> Void
+  // theme 파라미터는 현재 사용되지 않지만, 향후 테마 적용을 위해 유지
 
   var body: some View {
     HStack(spacing: 6) {

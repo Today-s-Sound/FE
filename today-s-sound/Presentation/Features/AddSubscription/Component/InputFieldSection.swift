@@ -10,7 +10,7 @@ struct InputFieldSection: View {
   let description: String
   let isRequired: Bool
   @Binding var text: String
-  let colorScheme: AppTheme
+  let theme: AppTheme
   let additionalContent: (() -> AnyView)?
 
   init(
@@ -18,14 +18,14 @@ struct InputFieldSection: View {
     description: String,
     isRequired: Bool = false,
     text: Binding<String>,
-    colorScheme: AppTheme,
+    theme: AppTheme,
     additionalContent: (() -> AnyView)? = nil
   ) {
     self.title = title
     self.description = description
     self.isRequired = isRequired
     _text = text
-    self.colorScheme = colorScheme
+    self.theme = theme
     self.additionalContent = additionalContent
   }
 
@@ -35,7 +35,7 @@ struct InputFieldSection: View {
       HStack(spacing: 4) {
         Text(title)
           .font(.KoddiBold20)
-          .foregroundColor(Color.text(colorScheme))
+          .foregroundColor(Color.text(theme))
           .accessibilityLabel(isRequired ? "\(title) 필수 입력" : title)
 
         if isRequired {
@@ -53,16 +53,16 @@ struct InputFieldSection: View {
         .keyboardType(isRequired ? .URL : .default)
         .padding(.horizontal, 18)
         .padding(.vertical, 16)
-        .foregroundColor(Color.text(colorScheme))
+        .foregroundColor(Color.text(theme))
         .font(.KoddiRegular16)
         .contentShape(Rectangle())
         .background(
           RoundedRectangle(cornerRadius: 8)
-            .fill(Color.secondaryBackground(colorScheme))
+            .fill(Color.secondaryBackground(theme))
         )
         .overlay(
           RoundedRectangle(cornerRadius: 8)
-            .stroke(Color.border(colorScheme), lineWidth: 1)
+            .stroke(Color.border(theme), lineWidth: 1)
         )
         .accessibilityLabel("\(title) 편집창")
         .accessibilityHint(description)
@@ -76,7 +76,7 @@ struct InputFieldSection: View {
       // 설명 텍스트
       Text(description)
         .font(.KoddiRegular16)
-        .foregroundColor(Color.secondaryText(colorScheme))
+        .foregroundColor(Color.secondaryText(theme))
         .accessibilityLabel(description)
     }
   }
@@ -93,7 +93,7 @@ struct InputFieldSection_Previews: PreviewProvider {
           description: "모니터링할 웹페이지 URL을 입력하세요.",
           isRequired: true,
           text: .constant(""),
-          colorScheme: .normal
+          theme: .normal
         )
 
         InputFieldSection(
@@ -101,7 +101,7 @@ struct InputFieldSection_Previews: PreviewProvider {
           description: "해당 페이지를 식별할 명칭을 입력하세요. (선택 사항)",
           isRequired: false,
           text: .constant("이미 입력된 값"),
-          colorScheme: .normal
+          theme: .normal
         )
       }
       .padding()
@@ -114,7 +114,7 @@ struct InputFieldSection_Previews: PreviewProvider {
           description: "모니터링할 웹페이지 URL을 입력하세요.",
           isRequired: true,
           text: .constant(""),
-          colorScheme: .highContrast
+          theme: .highContrast
         )
 
         InputFieldSection(
@@ -122,7 +122,7 @@ struct InputFieldSection_Previews: PreviewProvider {
           description: "해당 페이지를 식별할 명칭을 입력하세요. (선택 사항)",
           isRequired: false,
           text: .constant("이미 입력된 값"),
-          colorScheme: .highContrast
+          theme: .highContrast
         )
       }
       .padding()

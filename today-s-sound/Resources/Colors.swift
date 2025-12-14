@@ -66,6 +66,7 @@ extension Color {
   }
 
   // MARK: - 기존 호환성을 위한 ColorScheme 기반 메서드 (deprecated)
+
   // 기존 코드와의 호환성을 위해 유지하되, 내부적으로는 AppThemeManager를 사용하도록 권장
 
   /// 배경색 (다크모드 대응) - deprecated: AppTheme 사용 권장

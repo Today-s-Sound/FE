@@ -12,7 +12,7 @@ struct AddSubscriptionButton: View {
   let title: String
 
   /// 앱 테마 (고대비/일반 모드에 따라 글자색만 바뀜)
-  let colorScheme: AppTheme
+  let theme: AppTheme
 
   /// 버튼 활성/비활성 여부
   let isEnabled: Bool
@@ -55,7 +55,7 @@ struct AddSubscriptionButton_Previews: PreviewProvider {
       // Normal Mode
       AddSubscriptionButton(
         title: "등록 승인 요청",
-        colorScheme: .normal,
+        theme: .normal,
         isEnabled: true,
         action: {}
       )
@@ -67,7 +67,7 @@ struct AddSubscriptionButton_Previews: PreviewProvider {
       // High Contrast Mode
       AddSubscriptionButton(
         title: "등록 승인 요청",
-        colorScheme: .highContrast,
+        theme: .highContrast,
         isEnabled: true,
         action: {}
       )

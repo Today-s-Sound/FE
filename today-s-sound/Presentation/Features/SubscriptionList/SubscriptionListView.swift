@@ -72,7 +72,7 @@ struct SubscriptionListView: View {
             ForEach(viewModel.subscriptions) { subscription in
               SubscriptionCardView(
                 subscription: subscription,
-                colorScheme: appTheme.theme,
+                theme: appTheme.theme,
                 onToggleAlarm: { sub in
                   if sub.isUrgent {
                     viewModel.blockAlarm(sub)
@@ -120,7 +120,7 @@ struct SubscriptionListView: View {
         }
         AddSubscriptionButton(
           title: "새 웹페이지 추가",
-          colorScheme: appTheme.theme,
+          theme: appTheme.theme,
           isEnabled: true
         ) {
           showAddSubscription = true

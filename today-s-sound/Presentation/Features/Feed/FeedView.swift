@@ -119,7 +119,7 @@ struct FeedView: View {
 
         // 필터된 카드 리스트
         ForEach(filteredItems) { item in
-          FeedCard(item: item, colorScheme: appTheme.theme)
+          FeedCard(item: item, theme: appTheme.theme)
             .padding(.horizontal, 16)
             .onAppear {
               viewModel.loadMoreIfNeeded(currentItem: item)
@@ -199,26 +199,26 @@ struct FeedView: View {
 
 private struct FeedCard: View {
   let item: FeedItem
-  let colorScheme: AppTheme
+  let theme: AppTheme
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       // 페이지 이름 (작은 회색 텍스트)
       Text(item.alias)
         .font(.KoddiRegular16)
-        .foregroundColor(Color.secondaryText(colorScheme))
+        .foregroundColor(Color.secondaryText(theme))
 
       // 제목 (큰 볼드 텍스트, 두 줄 가능)
       Text(item.summaryTitle)
         .font(.KoddiBold28)
-        .foregroundColor(Color.text(colorScheme))
+        .foregroundColor(Color.text(theme))
         .multilineTextAlignment(.leading)
         .lineLimit(2)
 
       // 내용 (중간 크기 텍스트, 여러 줄 가능)
       Text(item.summary)
         .font(.KoddiRegular20)
-        .foregroundColor(Color.text(colorScheme))
+        .foregroundColor(Color.text(theme))
         .multilineTextAlignment(.leading)
         .lineLimit(nil)
 
@@ -231,11 +231,11 @@ private struct FeedCard: View {
     .frame(maxWidth: .infinity, alignment: .leading)
     .background(
       RoundedRectangle(cornerRadius: 16)
-        .fill(Color.secondaryBackground(colorScheme))
+        .fill(Color.secondaryBackground(theme))
     )
     .overlay(
       RoundedRectangle(cornerRadius: 16)
-        .stroke(Color.border(colorScheme), lineWidth: 1)
+        .stroke(Color.border(theme), lineWidth: 1)
     )
     .accessibilityElement(children: .combine)
     .accessibilityLabel(
@@ -250,10 +250,14 @@ struct FeedView_Previews: PreviewProvider {
   static var previews: some View {
     Group {
       FeedView()
-        .environment(\.colorScheme, .light)
+        .environmentObject(AppThemeManager())
 
       FeedView()
-        .environment(\.colorScheme, .dark)
+        .environmentObject({
+          let manager = AppThemeManager()
+          manager.theme = .highContrast
+          return manager
+        }())
     }
   }
 }

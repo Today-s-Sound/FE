@@ -9,8 +9,8 @@ import SwiftUI
 
 /// 앱 테마 모드
 enum AppTheme: String, CaseIterable {
-  case normal = "normal"
-  case highContrast = "highContrast"
+  case normal
+  case highContrast
 }
 
 /// 앱 테마 관리자
@@ -26,11 +26,12 @@ final class AppThemeManager: ObservableObject {
   init() {
     // UserDefaults에서 저장된 테마 불러오기
     if let savedTheme = UserDefaults.standard.string(forKey: "appTheme"),
-       let theme = AppTheme(rawValue: savedTheme) {
+       let theme = AppTheme(rawValue: savedTheme)
+    {
       self.theme = theme
     } else {
       // 기본값은 일반 모드
-      self.theme = .normal
+      theme = .normal
     }
   }
 

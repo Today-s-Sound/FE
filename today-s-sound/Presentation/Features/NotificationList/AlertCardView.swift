@@ -7,7 +7,7 @@ import SwiftUI
 
 struct AlertCardView: View {
   let alarm: AlarmItem
-  let colorScheme: AppTheme
+  let theme: AppTheme
 
   private var cardColor: Color {
     alarm.isUrgent ? .urgentPink : .primaryGreen
@@ -82,13 +82,13 @@ struct AlertCardView_Previews: PreviewProvider {
   static var previews: some View {
     Group {
       ForEach(sampleAlarms) { alarm in
-        AlertCardView(alarm: alarm, colorScheme: .normal)
+        AlertCardView(alarm: alarm, theme: .normal)
           .padding()
           .previewDisplayName("Card Normal - \(alarm.alias)")
       }
 
       ForEach(sampleAlarms) { alarm in
-        AlertCardView(alarm: alarm, colorScheme: .highContrast)
+        AlertCardView(alarm: alarm, theme: .highContrast)
           .padding()
           .background(Color.black)
           .previewDisplayName("Card High Contrast - \(alarm.alias)")

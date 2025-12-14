@@ -9,7 +9,8 @@ import SwiftUI
 
 struct StatusBadge: View {
   let text: String
-  // colorScheme 파라미터는 실제로 사용되지 않지만, 호출부와의 호환성을 위해 유지
+  let theme: AppTheme
+  // theme 파라미터는 현재 사용되지 않지만, 향후 테마 적용을 위해 유지
 
   var body: some View {
     Text(text)

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SubscriptionCardView: View {
   let subscription: SubscriptionItem
-  let colorScheme: AppTheme
+  let theme: AppTheme
   var onToggleAlarm: ((SubscriptionItem) -> Void)?
 
   var body: some View {
@@ -32,7 +32,7 @@ struct SubscriptionCardView: View {
         if !subscription.keywords.isEmpty {
           HStack(spacing: 8) {
             ForEach(subscription.keywords.prefix(3)) { keyword in
-              StatusBadge(text: keyword.name, colorScheme: colorScheme)
+              StatusBadge(text: keyword.name, theme: theme)
                 .accessibilityLabel("설정 키워드: \(keyword.name)")
             }
 
@@ -40,7 +40,7 @@ struct SubscriptionCardView: View {
             if subscription.keywords.count > 3 {
               StatusBadge(
                 text: "+\(subscription.keywords.count - 3)",
-                colorScheme: colorScheme
+                theme: theme
               )
               .accessibilityLabel("그외 \(subscription.keywords.count - 3)개")
             }
@@ -90,14 +90,14 @@ struct SubscriptionCardView_Previews: PreviewProvider {
     Group {
       SubscriptionCardView(
         subscription: sampleSubscription,
-        colorScheme: .normal
+        theme: .normal
       )
       .padding()
       .previewDisplayName("Normal")
 
       SubscriptionCardView(
         subscription: sampleSubscription,
-        colorScheme: .highContrast
+        theme: .highContrast
       )
       .padding()
       .previewDisplayName("High Contrast")
