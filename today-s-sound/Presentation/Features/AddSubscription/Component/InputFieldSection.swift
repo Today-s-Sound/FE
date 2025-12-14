@@ -7,7 +7,6 @@ import SwiftUI
 
 struct InputFieldSection: View {
   let title: String
-  let placeholder: String
   let description: String
   let isRequired: Bool
   @Binding var text: String
@@ -16,7 +15,6 @@ struct InputFieldSection: View {
 
   init(
     title: String,
-    placeholder: String,
     description: String,
     isRequired: Bool = false,
     text: Binding<String>,
@@ -24,7 +22,6 @@ struct InputFieldSection: View {
     additionalContent: (() -> AnyView)? = nil
   ) {
     self.title = title
-    self.placeholder = placeholder
     self.description = description
     self.isRequired = isRequired
     _text = text
@@ -49,33 +46,23 @@ struct InputFieldSection: View {
         }
       }
 
-      // 커스텀 플레이스홀더가 있는 TextField
-      ZStack(alignment: .leading) {
-        if text.isEmpty {
-          Text(placeholder)
-            .foregroundColor(Color.secondaryText(colorScheme))
-            .padding(.horizontal, 18)
-            .padding(.vertical, 16)
-            .font(.KoddiRegular16)
-        }
-
-        TextField("", text: $text)
-          .padding(.horizontal, 18)
-          .padding(.vertical, 16)
-          .foregroundColor(Color.text(colorScheme))
-          .font(.KoddiRegular16)
-          .accessibilityLabel(title)
-          .accessibilityHint(description)
-          .accessibilityValue(text.isEmpty ? placeholder : text)
-      }
-      .background(
-        RoundedRectangle(cornerRadius: 8)
-          .fill(Color.secondaryBackground(colorScheme))
-      )
-      .overlay(
-        RoundedRectangle(cornerRadius: 8)
-          .stroke(Color.border(colorScheme), lineWidth: 1)
-      )
+      // TextField
+      TextField("", text: $text)
+        .padding(.horizontal, 18)
+        .padding(.vertical, 16)
+        .foregroundColor(Color.text(colorScheme))
+        .font(.KoddiRegular16)
+        .background(
+          RoundedRectangle(cornerRadius: 8)
+            .fill(Color.secondaryBackground(colorScheme))
+        )
+        .overlay(
+          RoundedRectangle(cornerRadius: 8)
+            .stroke(Color.border(colorScheme), lineWidth: 1)
+        )
+        .accessibilityLabel("\(title) 편집창")
+        .accessibilityHint(description)
+        .accessibilityValue(text.isEmpty ? "" : text)
 
       // 추가 컨텐츠 (예: 추천 키워드 배지 등)
       if let additionalContent {
@@ -99,7 +86,6 @@ struct InputFieldSection_Previews: PreviewProvider {
       VStack(spacing: 24) {
         InputFieldSection(
           title: "웹사이트 URL",
-          placeholder: "https://www.example.com",
           description: "모니터링할 웹페이지 URL을 입력하세요.",
           isRequired: true,
           text: .constant(""),
@@ -108,7 +94,6 @@ struct InputFieldSection_Previews: PreviewProvider {
 
         InputFieldSection(
           title: "웹페이지 별명",
-          placeholder: "동국대학교 공지사항",
           description: "해당 페이지를 식별할 명칭을 입력하세요. (선택 사항)",
           isRequired: false,
           text: .constant("이미 입력된 값"),
@@ -122,7 +107,6 @@ struct InputFieldSection_Previews: PreviewProvider {
       VStack(spacing: 24) {
         InputFieldSection(
           title: "웹사이트 URL",
-          placeholder: "https://www.example.com",
           description: "모니터링할 웹페이지 URL을 입력하세요.",
           isRequired: true,
           text: .constant(""),
@@ -131,7 +115,6 @@ struct InputFieldSection_Previews: PreviewProvider {
 
         InputFieldSection(
           title: "웹페이지 별명",
-          placeholder: "동국대학교 공지사항",
           description: "해당 페이지를 식별할 명칭을 입력하세요. (선택 사항)",
           isRequired: false,
           text: .constant("이미 입력된 값"),

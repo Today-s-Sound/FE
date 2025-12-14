@@ -38,39 +38,20 @@ struct AddSubscriptionView: View {
               // 1) 웹사이트 URL (필수)
               InputFieldSection(
                 title: "웹사이트 URL",
-                placeholder: "https://www.example.com",
                 description: "모니터링할 웹페이지의 정확한 URL을 입력하세요.",
                 isRequired: true,
                 text: $viewModel.urlText,
                 colorScheme: colorScheme
               )
-              // 시각장애인용 안내
-              .accessibilityElement(children: .combine)
-              .accessibilityLabel("웹사이트 URL 입력 칸")
-              .accessibilityValue(
-                viewModel.urlText.isEmpty
-                  ? "입력 예시는 https://www.example.com"
-                  : viewModel.urlText
-              )
-              .accessibilityHint("모니터링할 웹페이지의 정확한 주소를 입력하세요.")
 
               // 2) 웹페이지 별명 (선택)
               InputFieldSection(
                 title: "웹페이지 별명",
-                placeholder: "동국대학교 공지사항",
                 description: "해당 페이지를 식별할 명칭을 입력하세요.",
                 isRequired: false,
                 text: $viewModel.nameText,
                 colorScheme: colorScheme
               )
-              .accessibilityElement(children: .combine)
-              .accessibilityLabel("웹페이지 별명 입력 칸")
-              .accessibilityValue(
-                viewModel.nameText.isEmpty
-                  ? "입력 예시는 동국대학교 공지사항"
-                  : viewModel.nameText
-              )
-              .accessibilityHint("해당 페이지를 구분하기 쉬운 이름을 입력하세요.")
 
               // 3) 키워드 필터
               VStack(alignment: .leading, spacing: 12) {
