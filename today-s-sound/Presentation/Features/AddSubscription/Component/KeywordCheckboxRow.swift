@@ -9,7 +9,7 @@ import SwiftUI
 struct KeywordCheckboxRow: View {
   let keyword: String
   let isSelected: Bool
-  let colorScheme: ColorScheme
+  let colorScheme: AppTheme
   let action: () -> Void
 
   var body: some View {
@@ -54,14 +54,14 @@ struct KeywordCheckboxRow_Previews: PreviewProvider {
       KeywordCheckboxRow(
         keyword: "시각장애",
         isSelected: true,
-        colorScheme: .light,
+        colorScheme: .normal,
         action: {}
       )
 
       KeywordCheckboxRow(
         keyword: "접근성",
         isSelected: false,
-        colorScheme: .dark,
+        colorScheme: .highContrast,
         action: {}
       )
     }

@@ -2,12 +2,12 @@ import SwiftUI
 
 struct AddSubscriptionView: View {
   @StateObject private var viewModel = AddSubscriptionViewModel()
-  @Environment(\.colorScheme) var colorScheme
+  @EnvironmentObject var appTheme: AppThemeManager
   @Environment(\.dismiss) var dismiss
 
   var body: some View {
     ZStack {
-      Color.background(colorScheme)
+      Color.background(appTheme.theme)
         .ignoresSafeArea()
         .onTapGesture {
           // 배경 탭하면 키보드만 닫기
@@ -16,7 +16,7 @@ struct AddSubscriptionView: View {
 
       VStack(spacing: 0) {
         // 상단 핸들 바 (X 대신)
-        SheetHandleBar(colorScheme: colorScheme)
+        SheetHandleBar(colorScheme: appTheme.theme)
           .accessibilityElement()
           .accessibilityLabel("새 웹페이지 추가 창 닫기")
           .accessibilityHint("이 영역을 두 번 탭하거나 아래로 스와이프하면 창이 닫힙니다.")
@@ -26,7 +26,7 @@ struct AddSubscriptionView: View {
           }
 
         // 화면 제목
-        ScreenSubTitle(text: "새 웹페이지 추가", colorScheme: colorScheme)
+        ScreenSubTitle(text: "새 웹페이지 추가", theme: appTheme.theme)
           .padding(.bottom, 8)
           .padding(.top, 4)
 
@@ -41,7 +41,7 @@ struct AddSubscriptionView: View {
                 description: "모니터링할 웹페이지의 정확한 URL을 입력하세요.",
                 isRequired: true,
                 text: $viewModel.urlText,
-                colorScheme: colorScheme
+                colorScheme: appTheme.theme
               )
 
               // 2) 웹페이지 별명 (선택)
@@ -50,7 +50,7 @@ struct AddSubscriptionView: View {
                 description: "해당 페이지를 식별할 명칭을 입력하세요.",
                 isRequired: false,
                 text: $viewModel.nameText,
-                colorScheme: colorScheme
+                colorScheme: appTheme.theme
               )
 
               // 3) 키워드 필터
@@ -58,7 +58,7 @@ struct AddSubscriptionView: View {
                 VStack(alignment: .leading, spacing: 8) {
                   Text("키워드 필터")
                     .font(.KoddiBold20)
-                    .foregroundColor(Color.text(colorScheme))
+                    .foregroundColor(Color.text(appTheme.theme))
 
                   Button(action: {
                     viewModel.showKeywordSelector = true
@@ -66,18 +66,18 @@ struct AddSubscriptionView: View {
                     HStack {
                       Text(viewModel.selectedKeywords.isEmpty ? "키워드 추가..." : "키워드 수정...")
                         .font(.KoddiRegular16)
-                        .foregroundColor(Color.secondaryText(colorScheme))
+                        .foregroundColor(Color.secondaryText(appTheme.theme))
                       Spacer()
                     }
                     .padding(.horizontal, 18)
                     .padding(.vertical, 16)
                     .background(
                       RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.secondaryBackground(colorScheme))
+                        .fill(Color.secondaryBackground(appTheme.theme))
                     )
                     .overlay(
                       RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.border(colorScheme), lineWidth: 1)
+                        .stroke(Color.border(appTheme.theme), lineWidth: 1)
                     )
                   }
                   .accessibilityLabel(viewModel.selectedKeywords.isEmpty ? "키워드 추가 버튼" : "키워드 수정 버튼")
@@ -85,7 +85,7 @@ struct AddSubscriptionView: View {
 
                   Text("관심 키워드가 포함된 글을 알림으로 받아보세요.")
                     .font(.KoddiRegular16)
-                    .foregroundColor(Color.secondaryText(colorScheme))
+                    .foregroundColor(Color.secondaryText(appTheme.theme))
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityLabel("관심 키워드가 포함된 글을 알림으로 받아보세요")
                 }
@@ -96,7 +96,7 @@ struct AddSubscriptionView: View {
                     ForEach(viewModel.selectedKeywords, id: \.self) { keyword in
                       KeywordBadgeWithDelete(
                         text: keyword,
-                        colorScheme: colorScheme
+                        colorScheme: appTheme.theme
                       ) {
                         viewModel.removeKeyword(keyword)
                       }
@@ -109,7 +109,7 @@ struct AddSubscriptionView: View {
               HStack {
                 Text("긴급 알림으로 설정")
                   .font(.KoddiBold20)
-                  .foregroundColor(Color.text(colorScheme))
+                  .foregroundColor(Color.text(appTheme.theme))
                   .accessibilityLabel("긴급 알림으로 설정")
                 Spacer()
                 Toggle("", isOn: $viewModel.isUrgent)
@@ -130,7 +130,7 @@ struct AddSubscriptionView: View {
           // 하단 고정 "등록 승인 요청" 버튼
           AddSubscriptionButton(
             title: viewModel.isLoading ? "등록 중..." : "등록 승인 요청",
-            colorScheme: colorScheme,
+            colorScheme: appTheme.theme,
             isEnabled: viewModel.isSubmitEnabled && !viewModel.isLoading
           ) {
             viewModel.createSubscription { success in
@@ -167,7 +167,7 @@ struct AddSubscriptionView: View {
     .ignoresSafeArea(.keyboard, edges: .bottom)
     // 키워드 설정 시트
     .sheet(isPresented: $viewModel.showKeywordSelector) {
-      KeywordSelectorSheet(viewModel: viewModel, colorScheme: colorScheme)
+      KeywordSelectorSheet(viewModel: viewModel, colorScheme: appTheme.theme)
         .onAppear {
           // 키워드 설정 시트가 열릴 때 키워드 목록 로드
           if viewModel.availableKeywords.isEmpty {
@@ -198,7 +198,7 @@ struct AddSubscriptionView: View {
 
 struct KeywordSelectorSheet: View {
   @ObservedObject var viewModel: AddSubscriptionViewModel
-  let colorScheme: ColorScheme
+  let colorScheme: AppTheme
   @Environment(\.dismiss) var dismiss
 
   var body: some View {
@@ -220,7 +220,7 @@ struct KeywordSelectorSheet: View {
           }
 
         // 키워드 설정 화면 제목
-        ScreenSubTitle(text: "키워드 설정", colorScheme: colorScheme)
+        ScreenSubTitle(text: "키워드 설정", theme: colorScheme)
 
         VStack(spacing: 0) {
           // 스크롤 가능한 키워드 목록
@@ -312,7 +312,7 @@ struct KeywordSelectorSheet: View {
 /// 삭제 버튼이 있는 키워드 배지
 struct KeywordBadgeWithDelete: View {
   let text: String
-  let colorScheme: ColorScheme
+  let colorScheme: AppTheme
   let onDelete: () -> Void
 
   var body: some View {

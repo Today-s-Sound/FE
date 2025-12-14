@@ -9,7 +9,7 @@ import SwiftUI
 
 struct StatusBadge: View {
   let text: String
-  let colorScheme: ColorScheme
+  // colorScheme 파라미터는 실제로 사용되지 않지만, 호출부와의 호환성을 위해 유지
 
   var body: some View {
     Text(text)
@@ -28,8 +28,8 @@ struct StatusBadge: View {
 struct StatusBadge_Previews: PreviewProvider {
   static var previews: some View {
     VStack(spacing: 16) {
-      StatusBadge(text: "등록중", colorScheme: .light)
-      StatusBadge(text: "일이삼사", colorScheme: .dark)
+      StatusBadge(text: "등록중", theme: .normal)
+      StatusBadge(text: "일이삼사", theme: .highContrast)
     }
     .padding()
   }

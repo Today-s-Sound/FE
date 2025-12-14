@@ -10,7 +10,7 @@ struct InputFieldSection: View {
   let description: String
   let isRequired: Bool
   @Binding var text: String
-  let colorScheme: ColorScheme
+  let colorScheme: AppTheme
   let additionalContent: (() -> AnyView)?
 
   init(
@@ -18,7 +18,7 @@ struct InputFieldSection: View {
     description: String,
     isRequired: Bool = false,
     text: Binding<String>,
-    colorScheme: ColorScheme,
+    colorScheme: AppTheme,
     additionalContent: (() -> AnyView)? = nil
   ) {
     self.title = title
@@ -93,7 +93,7 @@ struct InputFieldSection_Previews: PreviewProvider {
           description: "모니터링할 웹페이지 URL을 입력하세요.",
           isRequired: true,
           text: .constant(""),
-          colorScheme: .light
+          colorScheme: .normal
         )
 
         InputFieldSection(
@@ -101,12 +101,12 @@ struct InputFieldSection_Previews: PreviewProvider {
           description: "해당 페이지를 식별할 명칭을 입력하세요. (선택 사항)",
           isRequired: false,
           text: .constant("이미 입력된 값"),
-          colorScheme: .light
+          colorScheme: .normal
         )
       }
       .padding()
-      .background(Color.background(.light))
-      .previewDisplayName("Light Mode")
+      .background(Color.background(.normal))
+      .previewDisplayName("Normal Mode")
 
       VStack(spacing: 24) {
         InputFieldSection(
@@ -114,7 +114,7 @@ struct InputFieldSection_Previews: PreviewProvider {
           description: "모니터링할 웹페이지 URL을 입력하세요.",
           isRequired: true,
           text: .constant(""),
-          colorScheme: .dark
+          colorScheme: .highContrast
         )
 
         InputFieldSection(
@@ -122,13 +122,12 @@ struct InputFieldSection_Previews: PreviewProvider {
           description: "해당 페이지를 식별할 명칭을 입력하세요. (선택 사항)",
           isRequired: false,
           text: .constant("이미 입력된 값"),
-          colorScheme: .dark
+          colorScheme: .highContrast
         )
       }
       .padding()
-      .background(Color.background(.dark))
-      .preferredColorScheme(.dark)
-      .previewDisplayName("Dark Mode")
+      .background(Color.background(.highContrast))
+      .previewDisplayName("High Contrast Mode")
     }
   }
 }

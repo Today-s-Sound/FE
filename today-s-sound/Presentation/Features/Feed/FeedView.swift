@@ -2,7 +2,7 @@ import SwiftUI
 
 struct FeedView: View {
   @StateObject private var viewModel = FeedViewModel()
-  @Environment(\.colorScheme) private var colorScheme
+  @EnvironmentObject var appTheme: AppThemeManager
 
   /// 현재 선택된 필터 (기본값: "전체")
   @State private var selectedFilter: String = "전체"
@@ -26,7 +26,7 @@ struct FeedView: View {
   var body: some View {
     NavigationView {
       ZStack {
-        Color.background(colorScheme)
+        Color.background(appTheme.theme)
           .ignoresSafeArea()
 
         content
@@ -73,7 +73,7 @@ struct FeedView: View {
       Spacer()
       Text(message)
         .font(.KoddiBold20)
-        .foregroundColor(Color.secondaryText(colorScheme))
+        .foregroundColor(Color.secondaryText(appTheme.theme))
         .multilineTextAlignment(.center)
         .padding(.horizontal, 24)
 
@@ -98,7 +98,7 @@ struct FeedView: View {
       Spacer()
       Text("표시할 피드가 없습니다")
         .font(.KoddiBold20)
-        .foregroundColor(Color.secondaryText(colorScheme))
+        .foregroundColor(Color.secondaryText(appTheme.theme))
         .multilineTextAlignment(.center)
         .accessibilityLabel("표시할 피드가 없습니다")
       Spacer()
@@ -119,7 +119,7 @@ struct FeedView: View {
 
         // 필터된 카드 리스트
         ForEach(filteredItems) { item in
-          FeedCard(item: item, colorScheme: colorScheme)
+          FeedCard(item: item, colorScheme: appTheme.theme)
             .padding(.horizontal, 16)
             .onAppear {
               viewModel.loadMoreIfNeeded(currentItem: item)
@@ -167,20 +167,20 @@ struct FeedView: View {
                   .fill(
                     isSelected
                       ? Color.primaryGreen
-                      : Color.secondaryBackground(colorScheme)
+                      : Color.secondaryBackground(appTheme.theme)
                   )
               )
               .foregroundColor(
                 isSelected
                   ? Color.white
-                  : Color.text(colorScheme)
+                  : Color.text(appTheme.theme)
               )
               .overlay(
                 Capsule()
                   .stroke(
                     isSelected
                       ? Color.primaryGreen
-                      : Color.border(colorScheme),
+                      : Color.border(appTheme.theme),
                     lineWidth: 1
                   )
               )
@@ -199,7 +199,7 @@ struct FeedView: View {
 
 private struct FeedCard: View {
   let item: FeedItem
-  let colorScheme: ColorScheme
+  let colorScheme: AppTheme
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {

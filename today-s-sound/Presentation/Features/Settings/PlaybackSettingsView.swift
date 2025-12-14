@@ -2,16 +2,16 @@ import SwiftUI
 
 struct PlaybackSettingsView: View {
   @StateObject private var viewModel = PlaybackSettingsViewModel()
-  @Environment(\.colorScheme) var colorScheme
+  @EnvironmentObject var appTheme: AppThemeManager
   @Environment(\.dismiss) var dismiss
 
   var body: some View {
     ZStack {
-      Color.background(colorScheme)
+      Color.background(appTheme.theme)
         .ignoresSafeArea()
 
       VStack(spacing: 0) {
-        ScreenMainTitle(text: "재생 설정", colorScheme: colorScheme)
+        ScreenMainTitle(text: "재생 설정", theme: appTheme.theme)
           .padding(.top, 16)
 
         // 재생 속도 설정
@@ -37,7 +37,7 @@ struct PlaybackSettingsView: View {
 
             Text(String(format: "%.1f x", viewModel.playbackRate))
               .font(.KoddiBold48)
-              .foregroundColor(Color.text(colorScheme))
+              .foregroundColor(Color.text(appTheme.theme))
               .monospacedDigit()
               .frame(minWidth: 100)
               .accessibilityElement()
@@ -60,7 +60,7 @@ struct PlaybackSettingsView: View {
         }
 
         Divider()
-          .background(Color.border(colorScheme))
+          .background(Color.border(appTheme.theme))
           .padding(.horizontal, 20)
 
         Spacer()
@@ -93,7 +93,7 @@ struct PlaybackSettingsView: View {
         } label: {
           Image(systemName: "chevron.left")
             .font(.KoddiBold20)
-            .foregroundColor(Color.text(colorScheme))
+            .foregroundColor(Color.text(appTheme.theme))
         }
         .accessibilityLabel("뒤로 가기")
         .accessibilityHint("관리 페이지로 돌아갑니다")

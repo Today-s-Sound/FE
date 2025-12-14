@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SubscriptionCardView: View {
   let subscription: SubscriptionItem
-  let colorScheme: ColorScheme
+  let colorScheme: AppTheme
   var onToggleAlarm: ((SubscriptionItem) -> Void)?
 
   var body: some View {
@@ -90,17 +90,17 @@ struct SubscriptionCardView_Previews: PreviewProvider {
     Group {
       SubscriptionCardView(
         subscription: sampleSubscription,
-        colorScheme: .light
+        colorScheme: .normal
       )
       .padding()
-      .previewDisplayName("Light")
+      .previewDisplayName("Normal")
 
       SubscriptionCardView(
         subscription: sampleSubscription,
-        colorScheme: .dark
+        colorScheme: .highContrast
       )
       .padding()
-      .previewDisplayName("Dark")
+      .previewDisplayName("High Contrast")
       .background(Color.black)
     }
     .previewLayout(.sizeThatFits)

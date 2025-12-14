@@ -2,7 +2,7 @@ import SwiftUI
 
 struct SubscriptionListView: View {
   @StateObject private var viewModel: SubscriptionListViewModel
-  @Environment(\.colorScheme) var colorScheme
+  @EnvironmentObject var appTheme: AppThemeManager
   @Environment(\.dismiss) var dismiss
   @State private var showAddSubscription = false
 
@@ -12,12 +12,12 @@ struct SubscriptionListView: View {
 
   var body: some View {
     ZStack {
-      Color.background(colorScheme)
+      Color.background(appTheme.theme)
         .ignoresSafeArea()
 
       VStack(spacing: 12) {
-        ScreenMainTitle(text: "구독 페이지 관리", colorScheme: colorScheme)
-        ScreenSubTitle(text: "구독 중인 페이지", colorScheme: colorScheme)
+        ScreenMainTitle(text: "구독 페이지 관리", theme: appTheme.theme)
+        ScreenSubTitle(text: "구독 중인 페이지", theme: appTheme.theme)
           .padding(.top, 16)
 
         // 로딩 상태
@@ -36,7 +36,7 @@ struct SubscriptionListView: View {
           VStack(spacing: 16) {
             Text(errorMessage)
               .font(.KoddiBold20)
-              .foregroundColor(Color.secondaryText(colorScheme))
+              .foregroundColor(Color.secondaryText(appTheme.theme))
               .accessibilityLabel("오류: \(errorMessage)")
               .padding(.bottom)
 
@@ -60,7 +60,7 @@ struct SubscriptionListView: View {
           VStack(spacing: 16) {
             Text("구독 중인 페이지가 없습니다")
               .font(.KoddiBold20)
-              .foregroundColor(Color.secondaryText(colorScheme))
+              .foregroundColor(Color.secondaryText(appTheme.theme))
               .accessibilityLabel("구독 중인 페이지가 없습니다")
           }
           Spacer()
@@ -72,7 +72,7 @@ struct SubscriptionListView: View {
             ForEach(viewModel.subscriptions) { subscription in
               SubscriptionCardView(
                 subscription: subscription,
-                colorScheme: colorScheme,
+                colorScheme: appTheme.theme,
                 onToggleAlarm: { sub in
                   if sub.isUrgent {
                     viewModel.blockAlarm(sub)
@@ -120,7 +120,7 @@ struct SubscriptionListView: View {
         }
         AddSubscriptionButton(
           title: "새 웹페이지 추가",
-          colorScheme: colorScheme,
+          colorScheme: appTheme.theme,
           isEnabled: true
         ) {
           showAddSubscription = true
@@ -139,7 +139,7 @@ struct SubscriptionListView: View {
         } label: {
           Image(systemName: "chevron.left")
             .font(.KoddiBold20)
-            .foregroundColor(Color.text(colorScheme))
+            .foregroundColor(Color.text(appTheme.theme))
         }
         .accessibilityLabel("뒤로 가기")
         .accessibilityHint("관리 페이지로 돌아갑니다")

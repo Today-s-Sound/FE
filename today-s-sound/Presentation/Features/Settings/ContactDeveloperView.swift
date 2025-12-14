@@ -1,18 +1,18 @@
 import SwiftUI
 
 struct ContactDeveloperView: View {
-  @Environment(\.colorScheme) var colorScheme
+  @EnvironmentObject var appTheme: AppThemeManager
   @Environment(\.dismiss) var dismiss
   @State private var emailSubject = ""
   @State private var emailBody = ""
 
   var body: some View {
     ZStack {
-      Color.background(colorScheme)
+      Color.background(appTheme.theme)
         .ignoresSafeArea()
 
       VStack(spacing: 0) {
-        ScreenMainTitle(text: "개발자 문의", colorScheme: colorScheme)
+        ScreenMainTitle(text: "개발자 문의", theme: appTheme.theme)
           .padding(.top, 16)
 
         Spacer()
@@ -22,12 +22,12 @@ struct ContactDeveloperView: View {
           VStack(spacing: 12) {
             Text("문의사항이 있으신가요?")
               .font(.KoddiBold20)
-              .foregroundColor(Color.text(colorScheme))
+              .foregroundColor(Color.text(appTheme.theme))
               .accessibilityLabel("문의사항이 있으신가요?")
 
             Text("아래 이메일로 문의해주세요.")
               .font(.KoddiRegular16)
-              .foregroundColor(Color.secondaryText(colorScheme))
+              .foregroundColor(Color.secondaryText(appTheme.theme))
               .accessibilityLabel("아래 이메일로 문의해주세요.")
           }
 
@@ -71,7 +71,7 @@ struct ContactDeveloperView: View {
         } label: {
           Image(systemName: "chevron.left")
             .font(.KoddiBold20)
-            .foregroundColor(Color.text(colorScheme))
+            .foregroundColor(Color.text(appTheme.theme))
         }
         .accessibilityLabel("뒤로 가기")
         .accessibilityHint("관리 페이지로 돌아갑니다")

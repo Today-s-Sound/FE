@@ -3,19 +3,19 @@ import SwiftUI
 struct HomeView: View {
   @StateObject private var viewModel = MainViewModel()
   @ObservedObject private var speechService = SpeechService.shared
-  @Environment(\.colorScheme) var colorScheme
+  @EnvironmentObject var appTheme: AppThemeManager
 
   var body: some View {
     ZStack {
-      // 다크모드에 따라 배경색 변경
-      Color.background(colorScheme)
+      // 앱 테마에 따라 배경색 변경
+      Color.background(appTheme.theme)
         .ignoresSafeArea()
 
       VStack(spacing: 0) {
         // 오늘의 소리 타이틀
         Text("오늘의 소리")
           .font(.KoddiBold56)
-          .foregroundStyle(Color.text(colorScheme))
+          .foregroundStyle(Color.text(appTheme.theme))
           .padding(.top, 60)
           .padding(.bottom, 30)
           .accessibilityElement() // 이 텍스트를 독립 요소로
@@ -51,14 +51,14 @@ struct HomeView: View {
           // "현재 카테고리" 텍스트
           Text("현재 카테고리")
             .font(.KoddiBold28)
-            .foregroundColor(Color.text(colorScheme))
+            .foregroundColor(Color.text(appTheme.theme))
             .accessibilityElement()
             .accessibilityLabel("현재 카테고리")
 
           if viewModel.isLoading {
             Text("불러오는 중...")
               .font(.KoddiExtraBold32)
-              .foregroundColor(colorScheme == .dark ? .black : .white)
+              .foregroundColor(.white)
               .padding(.horizontal, 32)
               .padding(.vertical, 18)
               .frame(width: 360, height: 84)
@@ -72,7 +72,7 @@ struct HomeView: View {
           } else if viewModel.currentCategoryName.isEmpty {
             Text("등록된 페이지 없음")
               .font(.KoddiExtraBold32)
-              .foregroundColor(colorScheme == .dark ? .black : .white)
+              .foregroundColor(.white)
               .padding(.horizontal, 32)
               .padding(.vertical, 18)
               .frame(width: 360, height: 84)
@@ -87,7 +87,7 @@ struct HomeView: View {
             // 현재 카테고리 이름 카드
             Text(viewModel.currentCategoryName)
               .font(.KoddiExtraBold32)
-              .foregroundColor(colorScheme == .dark ? .black : .white)
+              .foregroundColor(.white)
               .padding(.horizontal, 32)
               .padding(.vertical, 18)
               .frame(width: 360, height: 84)

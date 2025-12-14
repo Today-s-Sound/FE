@@ -2,18 +2,17 @@ import SwiftUI
 
 struct SettingsView: View {
   @EnvironmentObject var session: SessionStore
-  @Environment(\.colorScheme) var colorScheme
+  @EnvironmentObject var appTheme: AppThemeManager
   @State private var showDeleteAlert = false
-  @AppStorage("highContrastMode") private var highContrastMode = false
 
   var body: some View {
     NavigationView {
       ZStack {
-        Color.background(colorScheme)
+        Color.background(appTheme.theme)
           .ignoresSafeArea()
 
         VStack(spacing: 0) {
-          ScreenMainTitle(text: "관리", colorScheme: colorScheme)
+          ScreenMainTitle(text: "관리", theme: appTheme.theme)
             .padding(.top, 16)
 
           Spacer()
@@ -21,48 +20,51 @@ struct SettingsView: View {
           // 관리 항목 리스트
           VStack(spacing: 0) {
             NavigationLink(destination: SubscriptionListView()) {
-              SettingsRow(title: "구독 페이지 관리", colorScheme: colorScheme)
+              SettingsRow(title: "구독 페이지 관리", theme: appTheme.theme)
             }
             .buttonStyle(PlainButtonStyle())
 
             Divider()
-              .background(Color.border(colorScheme))
+              .background(Color.border(appTheme.theme))
               .padding(.horizontal, 20)
 
             NavigationLink(destination: PlaybackSettingsView()) {
-              SettingsRow(title: "재생 설정", colorScheme: colorScheme)
+              SettingsRow(title: "재생 설정", theme: appTheme.theme)
             }
             .buttonStyle(PlainButtonStyle())
 
             Divider()
-              .background(Color.border(colorScheme))
+              .background(Color.border(appTheme.theme))
               .padding(.horizontal, 20)
 
             NavigationLink(destination: ContactDeveloperView()) {
-              SettingsRow(title: "개발자에게 문의", colorScheme: colorScheme)
+              SettingsRow(title: "개발자에게 문의", theme: appTheme.theme)
             }
             .buttonStyle(PlainButtonStyle())
 
             Divider()
-              .background(Color.border(colorScheme))
+              .background(Color.border(appTheme.theme))
               .padding(.horizontal, 20)
 
             HStack {
               Text("고대비 모드 설정")
                 .font(.KoddiBold24)
-                .foregroundColor(Color.text(colorScheme))
+                .foregroundColor(Color.text(appTheme.theme))
               Spacer()
-              Toggle("", isOn: $highContrastMode)
-                .labelsHidden()
+              Toggle("", isOn: Binding(
+                get: { appTheme.isHighContrast },
+                set: { _ in appTheme.toggleTheme() }
+              ))
+              .labelsHidden()
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
             .accessibilityElement(children: .combine)
             .accessibilityLabel("고대비 모드 설정")
-            .accessibilityValue(highContrastMode ? "켜짐" : "꺼짐")
+            .accessibilityValue(appTheme.isHighContrast ? "켜짐" : "꺼짐")
             .accessibilityHint("탭하여 고대비 모드 설정을 변경합니다")
           }
-          .background(Color.background(colorScheme))
+          .background(Color.background(appTheme.theme))
           .cornerRadius(12)
           .padding(.horizontal, 20)
           .padding(.bottom, 40)
@@ -108,13 +110,13 @@ struct SettingsView: View {
 
 struct SettingsRow: View {
   let title: String
-  let colorScheme: ColorScheme
+  let theme: AppTheme
 
   var body: some View {
     HStack {
       Text(title)
         .font(.KoddiBold24)
-        .foregroundColor(Color.text(colorScheme))
+        .foregroundColor(Color.text(theme))
       Spacer()
     }
     .padding(.horizontal, 20)

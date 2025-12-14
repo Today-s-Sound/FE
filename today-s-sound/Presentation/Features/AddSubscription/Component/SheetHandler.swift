@@ -9,7 +9,7 @@ import SwiftUI
 
 /// 시트 상단에 보이는 작은 핸들 바
 struct SheetHandleBar: View {
-  let colorScheme: ColorScheme
+  let colorScheme: AppTheme
 
   var body: some View {
     VStack(spacing: 8) {
@@ -29,9 +29,9 @@ struct SheetHandleBar: View {
 struct SheetHandleBar_Previews: PreviewProvider {
   static var previews: some View {
     VStack {
-      SheetHandleBar(colorScheme: .light)
-      SheetHandleBar(colorScheme: .dark)
+      SheetHandleBar(colorScheme: .normal)
+      SheetHandleBar(colorScheme: .highContrast)
     }
-    .background(Color.background(.light))
+    .background(Color.background(.normal))
   }
 }
