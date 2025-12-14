@@ -3,6 +3,7 @@ import SwiftUI
 struct SubscriptionListView: View {
   @StateObject private var viewModel: SubscriptionListViewModel
   @Environment(\.colorScheme) var colorScheme
+  @Environment(\.dismiss) var dismiss
   @State private var showAddSubscription = false
 
   init(viewModel: SubscriptionListViewModel = SubscriptionListViewModel()) {
@@ -10,15 +11,14 @@ struct SubscriptionListView: View {
   }
 
   var body: some View {
-    NavigationView {
-      ZStack {
-        Color.background(colorScheme)
-          .ignoresSafeArea()
+    ZStack {
+      Color.background(colorScheme)
+        .ignoresSafeArea()
 
-        VStack(spacing: 12) {
-          ScreenMainTitle(text: "구독 설정", colorScheme: colorScheme)
-          ScreenSubTitle(text: "구독 중인 페이지", colorScheme: colorScheme)
-            .padding(.top, 16)
+      VStack(spacing: 12) {
+        ScreenMainTitle(text: "구독 관리", colorScheme: colorScheme)
+        ScreenSubTitle(text: "구독 중인 페이지", colorScheme: colorScheme)
+          .padding(.top, 16)
 
           // 로딩 상태
           if viewModel.isLoading, viewModel.subscriptions.isEmpty {
@@ -130,7 +130,21 @@ struct SubscriptionListView: View {
           .padding(.top, 12)
         }
       }
-      .navigationBarHidden(true)
+      .navigationBarTitleDisplayMode(.inline)
+      .navigationBarBackButtonHidden(true)
+      .toolbar {
+        ToolbarItem(placement: .navigationBarLeading) {
+          Button {
+            dismiss()
+          } label: {
+            Image(systemName: "chevron.left")
+              .font(.KoddiBold20)
+              .foregroundColor(Color.text(colorScheme))
+          }
+          .accessibilityLabel("뒤로 가기")
+          .accessibilityHint("관리 페이지로 돌아갑니다")
+        }
+      }
       .onAppear {
         // 처음 로드
         if viewModel.subscriptions.isEmpty, !viewModel.disableAutoLoad {
@@ -141,12 +155,11 @@ struct SubscriptionListView: View {
         // Pull to refresh
         viewModel.refresh()
       }
-    }
-    .sheet(isPresented: $showAddSubscription) {
-      AddSubscriptionView()
+      .sheet(isPresented: $showAddSubscription) {
+        AddSubscriptionView()
+      }
     }
   }
-}
 
 struct SubscriptionListView_Previews: PreviewProvider {
   static var previews: some View {

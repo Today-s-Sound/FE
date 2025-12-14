@@ -5,7 +5,6 @@ struct MainView: View {
     case home
     case feed
     case notifications
-    case subscriptions
     case settings
   }
 
@@ -43,22 +42,12 @@ struct MainView: View {
         }
         .tag(Tab.notifications)
 
-      SubscriptionListView()
-        .tabItem {
-          VStack {
-            Image(systemName: "books.vertical.fill")
-              .accessibilityHidden(true)
-            Text("구독")
-          }
-        }
-        .tag(Tab.subscriptions)
-
       SettingsView()
         .tabItem {
           VStack {
             Image(systemName: "gearshape.fill")
               .accessibilityHidden(true)
-            Text("설정")
+            Text("관리")
           }
         }
         .tag(Tab.settings)
