@@ -7,28 +7,25 @@ import SwiftUI
 
 struct InputFieldSection: View {
   let title: String
-  let placeholder: String
   let description: String
   let isRequired: Bool
   @Binding var text: String
-  let colorScheme: ColorScheme
+  let theme: AppTheme
   let additionalContent: (() -> AnyView)?
 
   init(
     title: String,
-    placeholder: String,
     description: String,
     isRequired: Bool = false,
     text: Binding<String>,
-    colorScheme: ColorScheme,
+    theme: AppTheme,
     additionalContent: (() -> AnyView)? = nil
   ) {
     self.title = title
-    self.placeholder = placeholder
     self.description = description
     self.isRequired = isRequired
     _text = text
-    self.colorScheme = colorScheme
+    self.theme = theme
     self.additionalContent = additionalContent
   }
 
@@ -38,7 +35,7 @@ struct InputFieldSection: View {
       HStack(spacing: 4) {
         Text(title)
           .font(.KoddiBold20)
-          .foregroundColor(Color.text(colorScheme))
+          .foregroundColor(Color.text(theme))
           .accessibilityLabel(isRequired ? "\(title) 필수 입력" : title)
 
         if isRequired {
@@ -49,33 +46,27 @@ struct InputFieldSection: View {
         }
       }
 
-      // 커스텀 플레이스홀더가 있는 TextField
-      ZStack(alignment: .leading) {
-        if text.isEmpty {
-          Text(placeholder)
-            .foregroundColor(Color.secondaryText(colorScheme))
-            .padding(.horizontal, 18)
-            .padding(.vertical, 16)
-            .font(.KoddiRegular16)
-        }
-
-        TextField("", text: $text)
-          .padding(.horizontal, 18)
-          .padding(.vertical, 16)
-          .foregroundColor(Color.text(colorScheme))
-          .font(.KoddiRegular16)
-          .accessibilityLabel(title)
-          .accessibilityHint(description)
-          .accessibilityValue(text.isEmpty ? placeholder : text)
-      }
-      .background(
-        RoundedRectangle(cornerRadius: 8)
-          .fill(Color.secondaryBackground(colorScheme))
-      )
-      .overlay(
-        RoundedRectangle(cornerRadius: 8)
-          .stroke(Color.border(colorScheme), lineWidth: 1)
-      )
+      // TextField
+      TextField("", text: $text)
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled()
+        .keyboardType(isRequired ? .URL : .default)
+        .padding(.horizontal, 18)
+        .padding(.vertical, 16)
+        .foregroundColor(Color.text(theme))
+        .font(.KoddiRegular16)
+        .contentShape(Rectangle())
+        .background(
+          RoundedRectangle(cornerRadius: 8)
+            .fill(Color.secondaryBackground(theme))
+        )
+        .overlay(
+          RoundedRectangle(cornerRadius: 8)
+            .stroke(Color.border(theme), lineWidth: 1)
+        )
+        .accessibilityLabel("\(title) 편집창")
+        .accessibilityHint(description)
+        .accessibilityValue(text.isEmpty ? "" : text)
 
       // 추가 컨텐츠 (예: 추천 키워드 배지 등)
       if let additionalContent {
@@ -85,7 +76,7 @@ struct InputFieldSection: View {
       // 설명 텍스트
       Text(description)
         .font(.KoddiRegular16)
-        .foregroundColor(Color.secondaryText(colorScheme))
+        .foregroundColor(Color.secondaryText(theme))
         .accessibilityLabel(description)
     }
   }
@@ -99,49 +90,44 @@ struct InputFieldSection_Previews: PreviewProvider {
       VStack(spacing: 24) {
         InputFieldSection(
           title: "웹사이트 URL",
-          placeholder: "https://www.example.com",
           description: "모니터링할 웹페이지 URL을 입력하세요.",
           isRequired: true,
           text: .constant(""),
-          colorScheme: .light
+          theme: .normal
         )
 
         InputFieldSection(
           title: "웹페이지 별명",
-          placeholder: "동국대학교 공지사항",
           description: "해당 페이지를 식별할 명칭을 입력하세요. (선택 사항)",
           isRequired: false,
           text: .constant("이미 입력된 값"),
-          colorScheme: .light
+          theme: .normal
         )
       }
       .padding()
-      .background(Color.background(.light))
-      .previewDisplayName("Light Mode")
+      .background(Color.background(.normal))
+      .previewDisplayName("Normal Mode")
 
       VStack(spacing: 24) {
         InputFieldSection(
           title: "웹사이트 URL",
-          placeholder: "https://www.example.com",
           description: "모니터링할 웹페이지 URL을 입력하세요.",
           isRequired: true,
           text: .constant(""),
-          colorScheme: .dark
+          theme: .highContrast
         )
 
         InputFieldSection(
           title: "웹페이지 별명",
-          placeholder: "동국대학교 공지사항",
           description: "해당 페이지를 식별할 명칭을 입력하세요. (선택 사항)",
           isRequired: false,
           text: .constant("이미 입력된 값"),
-          colorScheme: .dark
+          theme: .highContrast
         )
       }
       .padding()
-      .background(Color.background(.dark))
-      .preferredColorScheme(.dark)
-      .previewDisplayName("Dark Mode")
+      .background(Color.background(.highContrast))
+      .previewDisplayName("High Contrast Mode")
     }
   }
 }

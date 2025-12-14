@@ -11,8 +11,8 @@ struct AddSubscriptionButton: View {
   /// 버튼에 표시할 텍스트 (예: "등록 승인 요청", "저장하기")
   let title: String
 
-  /// 컬러 스킴 (라이트/다크에 따라 글자색만 바뀜)
-  let colorScheme: ColorScheme
+  /// 앱 테마 (고대비/일반 모드에 따라 글자색만 바뀜)
+  let theme: AppTheme
 
   /// 버튼 활성/비활성 여부
   let isEnabled: Bool
@@ -21,8 +21,8 @@ struct AddSubscriptionButton: View {
   let action: () -> Void
 
   private var textColor: Color {
-    // 배경색은 그대로 두고, 글자색만 모드에 따라 변경
-    colorScheme == .dark ? .black : .white
+    // 배경색은 그대로 두고, 글자색은 항상 흰색
+    .white
   }
 
   var body: some View {
@@ -52,30 +52,29 @@ struct AddSubscriptionButton: View {
 struct AddSubscriptionButton_Previews: PreviewProvider {
   static var previews: some View {
     Group {
-      // Light Mode
+      // Normal Mode
       AddSubscriptionButton(
         title: "등록 승인 요청",
-        colorScheme: .light,
+        theme: .normal,
         isEnabled: true,
         action: {}
       )
-      .previewDisplayName("Light Mode")
+      .previewDisplayName("Normal Mode")
       .previewLayout(.sizeThatFits)
       .padding()
-      .background(Color.background(.light))
+      .background(Color.background(.normal))
 
-      // Dark Mode (배경색은 동일, 글자색만 검정)
+      // High Contrast Mode
       AddSubscriptionButton(
         title: "등록 승인 요청",
-        colorScheme: .dark,
+        theme: .highContrast,
         isEnabled: true,
         action: {}
       )
-      .previewDisplayName("Dark Mode")
+      .previewDisplayName("High Contrast Mode")
       .previewLayout(.sizeThatFits)
       .padding()
-      .background(Color.background(.light))
-      .preferredColorScheme(.dark)
+      .background(Color.background(.highContrast))
     }
   }
 }

@@ -2,7 +2,7 @@ import SwiftUI
 
 struct NotificationListView: View {
   @StateObject private var viewModel: NotificationListViewModel
-  @Environment(\.colorScheme) var colorScheme
+  @EnvironmentObject var appTheme: AppThemeManager
 
   init(viewModel: NotificationListViewModel = NotificationListViewModel()) {
     _viewModel = StateObject(wrappedValue: viewModel)
@@ -11,11 +11,11 @@ struct NotificationListView: View {
   var body: some View {
     NavigationView {
       ZStack {
-        Color.background(colorScheme)
+        Color.background(appTheme.theme)
           .ignoresSafeArea()
 
         VStack(alignment: .leading, spacing: 4) {
-          ScreenMainTitle(text: "최근 알림", colorScheme: colorScheme)
+          ScreenMainTitle(text: "최근 알림", theme: appTheme.theme)
             .padding(.horizontal, 20)
 
           content
@@ -46,7 +46,7 @@ struct NotificationListView: View {
       VStack(spacing: 16) {
         Text(errorMessage)
           .font(.KoddiBold20)
-          .foregroundColor(Color.secondaryText(colorScheme))
+          .foregroundColor(Color.secondaryText(appTheme.theme))
           .accessibilityLabel("오류: \(errorMessage)")
           .padding(.bottom)
 
@@ -70,7 +70,7 @@ struct NotificationListView: View {
       VStack(spacing: 16) {
         Text("새로운 알림이 없습니다")
           .font(.KoddiBold20)
-          .foregroundColor(Color.secondaryText(colorScheme))
+          .foregroundColor(Color.secondaryText(appTheme.theme))
           .accessibilityLabel("새로운 알림이 없습니다")
       }
       Spacer()
@@ -79,7 +79,7 @@ struct NotificationListView: View {
     else {
       List {
         ForEach(viewModel.alarms) { alarm in
-          AlertCardView(alarm: alarm, colorScheme: colorScheme)
+          AlertCardView(alarm: alarm, theme: appTheme.theme)
             .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 12, trailing: 20))
             .listRowSeparator(.hidden)
             .listRowBackground(Color.clear)
@@ -162,7 +162,7 @@ struct NotificationListView: View {
         AlarmItem(
           subscriptionId: 3,
           alias: "장학 공지",
-          summaryContent: "2025학년도 1학기 장학금 신청 안내입니다. 신청 자격과 필요 서류를 꼭 확인한 뒤 기한 내 제출해주세요.",
+          summaryContent: "2025학년도 1학기 장학금 신청 안내입니다. 신N청 자격과 필요 서류를 꼭 확인한 뒤 기한 내 제출해주세요.",
           url: "exurl",
           timeAgo: "30분 전",
           isUrgent: true

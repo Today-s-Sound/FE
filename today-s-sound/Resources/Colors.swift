@@ -35,34 +35,74 @@ extension Color {
 // MARK: - Semantic Colors
 
 extension Color {
-  /// 배경색 (다크모드 대응)
+  /// 배경색 (앱 테마 기반)
+  static func background(_ theme: AppTheme) -> Color {
+    theme == .highContrast ? .black : .white
+  }
+
+  /// 보조 배경색 (앱 테마 기반)
+  static func secondaryBackground(_ theme: AppTheme) -> Color {
+    theme == .highContrast ? Color(white: 0.15) : Color(white: 0.95)
+  }
+
+  /// 텍스트 색상 (앱 테마 기반)
+  static func text(_ theme: AppTheme) -> Color {
+    theme == .highContrast ? .white : .black
+  }
+
+  /// 보조 텍스트 색상 (앱 테마 기반)
+  static func secondaryText(_ theme: AppTheme) -> Color {
+    theme == .highContrast ? .white.opacity(0.6) : .black.opacity(0.6)
+  }
+
+  /// 테두리 색상 (앱 테마 기반)
+  static func border(_ theme: AppTheme) -> Color {
+    theme == .highContrast ? .white.opacity(0.2) : .gray.opacity(0.3)
+  }
+
+  /// 버튼 배경색 (앱 테마 기반)
+  static func buttonBackground(_ theme: AppTheme) -> Color {
+    theme == .highContrast ? .black : .white
+  }
+
+  // MARK: - 기존 호환성을 위한 ColorScheme 기반 메서드 (deprecated)
+
+  // 기존 코드와의 호환성을 위해 유지하되, 내부적으로는 AppThemeManager를 사용하도록 권장
+
+  /// 배경색 (다크모드 대응) - deprecated: AppTheme 사용 권장
+  @available(*, deprecated, message: "Use background(_ theme: AppTheme) instead")
   static func background(_ colorScheme: ColorScheme) -> Color {
-    colorScheme == .dark ? .black : .white
+    .white
   }
 
-  /// 보조 배경색 (다크모드 대응)
+  /// 보조 배경색 (다크모드 대응) - deprecated: AppTheme 사용 권장
+  @available(*, deprecated, message: "Use secondaryBackground(_ theme: AppTheme) instead")
   static func secondaryBackground(_ colorScheme: ColorScheme) -> Color {
-    colorScheme == .dark ? Color(white: 0.15) : Color(white: 0.95)
+    Color(white: 0.95)
   }
 
-  /// 텍스트 색상 (다크모드 대응)
+  /// 텍스트 색상 (다크모드 대응) - deprecated: AppTheme 사용 권장
+  @available(*, deprecated, message: "Use text(_ theme: AppTheme) instead")
   static func text(_ colorScheme: ColorScheme) -> Color {
-    colorScheme == .dark ? .white : .black
+    .black
   }
 
-  /// 보조 텍스트 색상 (다크모드 대응)
+  /// 보조 텍스트 색상 (다크모드 대응) - deprecated: AppTheme 사용 권장
+  @available(*, deprecated, message: "Use secondaryText(_ theme: AppTheme) instead")
   static func secondaryText(_ colorScheme: ColorScheme) -> Color {
-    colorScheme == .dark ? .white.opacity(0.6) : .black.opacity(0.6)
+    .black.opacity(0.6)
   }
 
-  /// 테두리 색상 (다크모드 대응)
+  /// 테두리 색상 (다크모드 대응) - deprecated: AppTheme 사용 권장
+  @available(*, deprecated, message: "Use border(_ theme: AppTheme) instead")
   static func border(_ colorScheme: ColorScheme) -> Color {
-    colorScheme == .dark ? .white.opacity(0.2) : .gray.opacity(0.3)
+    .gray.opacity(0.3)
   }
 
-  /// 버튼 배경색 (다크모드 대응)
+  /// 버튼 배경색 (다크모드 대응) - deprecated: AppTheme 사용 권장
+  @available(*, deprecated, message: "Use buttonBackground(_ theme: AppTheme) instead")
   static func buttonBackground(_ colorScheme: ColorScheme) -> Color {
-    colorScheme == .dark ? .black : .white
+    .white
   }
 }
 

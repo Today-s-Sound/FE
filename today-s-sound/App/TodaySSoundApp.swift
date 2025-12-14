@@ -65,6 +65,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 @main
 struct TodaySSoundApp: App {
   @StateObject private var session = SessionStore()
+  @StateObject private var appTheme = AppThemeManager()
 
   @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
@@ -78,6 +79,7 @@ struct TodaySSoundApp: App {
         }
       }
       .environmentObject(session)
+      .environmentObject(appTheme)
     }
   }
 }

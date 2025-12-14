@@ -10,6 +10,7 @@ import Moya
 
 enum SubscriptionAPI {
   case getSubscriptions(userId: String, deviceSecret: String, page: Int, size: Int)
+  case createSubscription(userId: String, deviceSecret: String, request: CreateSubscriptionRequest)
   case deleteSubscription(userId: String, deviceSecret: String, subscriptionId: Int64)
   case blockAlarm(userId: String, deviceSecret: String, subscriptionId: Int64)
   case unblockAlarm(userId: String, deviceSecret: String, subscriptionId: Int64)
@@ -19,6 +20,8 @@ extension SubscriptionAPI: APITargetType {
   var path: String {
     switch self {
     case .getSubscriptions:
+      "/api/subscriptions"
+    case .createSubscription:
       "/api/subscriptions"
     case let .deleteSubscription(_, _, subscriptionId):
       "/api/subscriptions/\(subscriptionId)"
@@ -33,6 +36,8 @@ extension SubscriptionAPI: APITargetType {
     switch self {
     case .getSubscriptions:
       .get
+    case .createSubscription:
+      .post
     case .deleteSubscription:
       .delete
     case .blockAlarm, .unblockAlarm:
@@ -50,6 +55,8 @@ extension SubscriptionAPI: APITargetType {
         ],
         encoding: URLEncoding.queryString
       )
+    case let .createSubscription(_, _, request):
+      .requestJSONEncodable(request)
     case .deleteSubscription, .blockAlarm, .unblockAlarm:
       .requestPlain
     }
@@ -58,6 +65,13 @@ extension SubscriptionAPI: APITargetType {
   var headers: [String: String]? {
     switch self {
     case let .getSubscriptions(userId, deviceSecret, _, _):
+      [
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-User-ID": userId,
+        "X-Device-Secret": deviceSecret
+      ]
+    case let .createSubscription(userId, deviceSecret, _):
       [
         "Content-Type": "application/json",
         "Accept": "application/json",

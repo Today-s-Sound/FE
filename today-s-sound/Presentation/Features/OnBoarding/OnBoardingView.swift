@@ -9,7 +9,7 @@ import SwiftUI
 
 struct OnBoardingView: View {
   @EnvironmentObject var session: SessionStore
-  @Environment(\.colorScheme) private var colorScheme
+  @EnvironmentObject var appTheme: AppThemeManager
   @State private var isLoading = false
   @State private var didStartRegistration = false
 
@@ -18,7 +18,7 @@ struct OnBoardingView: View {
       VStack(spacing: 100) {
         Text("오늘의 소리")
           .font(.KoddiBold56)
-          .foregroundColor(colorScheme == .dark ? .white : .black)
+          .foregroundColor(Color.text(appTheme.theme))
           .accessibilityAddTraits(.isHeader)
 
         VStack(spacing: 20) {
@@ -52,7 +52,7 @@ struct OnBoardingView: View {
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .background(colorScheme == .dark ? Color.black : Color.white)
+    .background(Color.background(appTheme.theme))
     .task {
       guard !didStartRegistration else { return }
       didStartRegistration = true
@@ -68,11 +68,15 @@ struct OnBoardingView_Previews: PreviewProvider {
     Group {
       OnBoardingView()
         .environmentObject(SessionStore.preview)
-        .preferredColorScheme(.light)
+        .environmentObject(AppThemeManager())
 
       OnBoardingView()
         .environmentObject(SessionStore.preview)
-        .preferredColorScheme(.dark)
+        .environmentObject({
+          let manager = AppThemeManager()
+          manager.theme = .highContrast
+          return manager
+        }())
     }
   }
 }
