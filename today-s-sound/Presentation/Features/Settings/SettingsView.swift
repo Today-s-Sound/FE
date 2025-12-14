@@ -21,7 +21,7 @@ struct SettingsView: View {
           // 관리 항목 리스트
           VStack(spacing: 0) {
             NavigationLink(destination: SubscriptionListView()) {
-              SettingsRow(title: "구독 관리", colorScheme: colorScheme)
+              SettingsRow(title: "구독 페이지 관리", colorScheme: colorScheme)
             }
             .buttonStyle(PlainButtonStyle())
 

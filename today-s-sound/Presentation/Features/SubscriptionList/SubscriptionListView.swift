@@ -16,7 +16,7 @@ struct SubscriptionListView: View {
         .ignoresSafeArea()
 
       VStack(spacing: 12) {
-        ScreenMainTitle(text: "구독 관리", colorScheme: colorScheme)
+        ScreenMainTitle(text: "구독 페이지 관리", colorScheme: colorScheme)
         ScreenSubTitle(text: "구독 중인 페이지", colorScheme: colorScheme)
           .padding(.top, 16)
 
