@@ -48,10 +48,14 @@ struct InputFieldSection: View {
 
       // TextField
       TextField("", text: $text)
+        .textInputAutocapitalization(.never)
+        .autocorrectionDisabled()
+        .keyboardType(isRequired ? .URL : .default)
         .padding(.horizontal, 18)
         .padding(.vertical, 16)
         .foregroundColor(Color.text(colorScheme))
         .font(.KoddiRegular16)
+        .contentShape(Rectangle())
         .background(
           RoundedRectangle(cornerRadius: 8)
             .fill(Color.secondaryBackground(colorScheme))

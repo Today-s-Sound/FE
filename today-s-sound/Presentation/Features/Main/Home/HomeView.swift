@@ -44,7 +44,7 @@ struct HomeView: View {
         .accessibilityLabel(speechService.isSpeaking ? "재생 중단 버튼" : "재생 시작 버튼")
         .accessibilityHint(speechService.isSpeaking ? "이중탭하여 재생을 중단합니다" : "이중탭하여 알림을 재생합니다")
         .padding(.bottom, 60)
-        
+
         Spacer()
 
         VStack(spacing: 16) {

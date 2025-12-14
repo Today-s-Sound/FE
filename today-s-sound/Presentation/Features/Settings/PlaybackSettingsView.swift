@@ -137,4 +137,3 @@ struct PlaybackSettingsView_Previews: PreviewProvider {
     }
   }
 }
-

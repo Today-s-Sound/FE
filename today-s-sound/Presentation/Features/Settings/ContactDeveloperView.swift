@@ -18,7 +18,6 @@ struct ContactDeveloperView: View {
         Spacer()
 
         VStack(spacing: 24) {
-
           // 문의 안내 텍스트
           VStack(spacing: 12) {
             Text("문의사항이 있으신가요?")
@@ -88,4 +87,3 @@ struct ContactDeveloperView_Previews: PreviewProvider {
     }
   }
 }
-
