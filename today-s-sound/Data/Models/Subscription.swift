@@ -6,6 +6,8 @@ import Foundation
 struct CreateSubscriptionRequest: Codable {
   let url: String
   let keywords: [String]
+  let alias: String?
+  let isUrgent: Bool
 }
 
 // MARK: - Subscription Response Models
@@ -13,9 +15,19 @@ struct CreateSubscriptionRequest: Codable {
 /// 구독 목록 응답
 typealias SubscriptionListResponse = APIResponse<[SubscriptionItem]>
 
-/// 구독 생성 응답
-struct CreateSubscriptionResponse: Codable {
+/// 구독 생성 결과
+struct CreateSubscriptionResult: Codable {
   let subscriptionId: Int64
+}
+
+/// 구독 생성 응답
+typealias CreateSubscriptionResponse = APIResponse<CreateSubscriptionResult>
+
+extension CreateSubscriptionResponse {
+  // 편의 속성: result의 subscriptionId에 직접 접근
+  var subscriptionId: Int64 {
+    result.subscriptionId
+  }
 }
 
 /// 구독 삭제 응답

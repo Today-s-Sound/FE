@@ -129,24 +129,37 @@ struct AddSubscriptionView: View {
 
           // 하단 고정 "등록 승인 요청" 버튼
           AddSubscriptionButton(
-            title: "등록 승인 요청",
+            title: viewModel.isLoading ? "등록 중..." : "등록 승인 요청",
             colorScheme: colorScheme,
-            isEnabled: viewModel.isSubmitEnabled
+            isEnabled: viewModel.isSubmitEnabled && !viewModel.isLoading
           ) {
-            let payload = viewModel.makeRequestPayload()
-            // TODO: 나중에 여기서 API 서비스에 payload를 넘겨서 서버로 전송
-            print("📤 New Subscription Request:", payload)
-            dismiss()
+            viewModel.createSubscription { success in
+              if success {
+                dismiss()
+              }
+            }
           }
           // 접근성: 활성/비활성 상태에 따라 안내 문구 변경
-          .accessibilityLabel("등록 승인 요청, 버튼")
+          .accessibilityLabel(viewModel.isLoading ? "등록 중, 버튼" : "등록 승인 요청, 버튼")
           .accessibilityHint(
-            viewModel.isSubmitEnabled
+            viewModel.isLoading
+              ? "구독을 등록하는 중입니다"
+              : viewModel.isSubmitEnabled
               ? "이 웹사이트 등록 승인을 요청합니다."
               : "웹사이트 URL을 입력해야 활성화됩니다."
           )
           .padding(.horizontal, 16)
           .padding(.vertical, 16)
+
+          // 에러 메시지 표시
+          if let errorMessage = viewModel.errorMessage {
+            Text(errorMessage)
+              .font(.KoddiBold16)
+              .foregroundColor(.red)
+              .padding(.horizontal, 16)
+              .padding(.bottom, 8)
+              .accessibilityLabel("오류: \(errorMessage)")
+          }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
       }
@@ -155,6 +168,12 @@ struct AddSubscriptionView: View {
     // 키워드 설정 시트
     .sheet(isPresented: $viewModel.showKeywordSelector) {
       KeywordSelectorSheet(viewModel: viewModel, colorScheme: colorScheme)
+        .onAppear {
+          // 키워드 설정 시트가 열릴 때 키워드 목록 로드
+          if viewModel.availableKeywords.isEmpty {
+            viewModel.loadKeywords()
+          }
+        }
     }
     // 키보드 상단에 항상 "키보드 닫기" 버튼 제공
     .toolbar {
@@ -207,11 +226,41 @@ struct KeywordSelectorSheet: View {
           // 스크롤 가능한 키워드 목록
           ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-              if viewModel.availableKeywords.isEmpty {
+              if viewModel.isLoadingKeywords {
+                VStack(spacing: 16) {
+                  ProgressView("불러오는 중...")
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .accessibilityLabel("키워드 목록을 불러오는 중입니다")
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 40)
+              } else if let errorMessage = viewModel.keywordErrorMessage {
+                VStack(spacing: 16) {
+                  Text(errorMessage)
+                    .font(.KoddiBold20)
+                    .foregroundColor(Color.secondaryText(colorScheme))
+                    .accessibilityLabel("오류: \(errorMessage)")
+
+                  Button("다시 시도") {
+                    viewModel.loadKeywords()
+                  }
+                  .padding(.horizontal, 24)
+                  .padding(.vertical, 12)
+                  .font(.KoddiBold20)
+                  .foregroundColor(.white)
+                  .background(Color.primaryGreen)
+                  .cornerRadius(8)
+                  .accessibilityLabel("다시 시도 버튼")
+                  .accessibilityHint("탭하여 키워드 목록을 다시 불러옵니다")
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 40)
+              } else if viewModel.availableKeywords.isEmpty {
                 VStack(spacing: 16) {
                   Text("등록된 키워드가 없습니다.")
                     .font(.KoddiBold20)
                     .foregroundColor(Color.secondaryText(colorScheme))
+                    .accessibilityLabel("등록된 키워드가 없습니다")
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 40)
