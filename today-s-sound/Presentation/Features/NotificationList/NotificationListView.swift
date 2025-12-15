@@ -79,7 +79,7 @@ struct NotificationListView: View {
     else {
       List {
         ForEach(viewModel.alarms) { alarm in
-          AlertCardView(alarm: alarm, theme: appTheme.theme)
+            AlertCardView(alarm: alarm, theme: appTheme.theme)
             .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 12, trailing: 20))
             .listRowSeparator(.hidden)
             .listRowBackground(Color.clear)

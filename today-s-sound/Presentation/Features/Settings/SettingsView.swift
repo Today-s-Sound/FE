@@ -56,6 +56,7 @@ struct SettingsView: View {
                 set: { _ in appTheme.toggleTheme() }
               ))
               .labelsHidden()
+              .tint(Color.primaryGreen)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)

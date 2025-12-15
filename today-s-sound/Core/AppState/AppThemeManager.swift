@@ -19,6 +19,7 @@ enum AppTheme: String, CaseIterable {
 final class AppThemeManager: ObservableObject {
   @Published var theme: AppTheme {
     didSet {
+      print("AppThemeManager - theme 변경됨: \(oldValue) -> \(theme)")
       UserDefaults.standard.set(theme.rawValue, forKey: "appTheme")
     }
   }
@@ -42,6 +43,8 @@ final class AppThemeManager: ObservableObject {
 
   /// 테마 토글
   func toggleTheme() {
+    print("AppThemeManager - toggleTheme 호출됨, 현재 테마: \(theme)")
     theme = theme == .normal ? .highContrast : .normal
+    print("AppThemeManager - toggleTheme 완료, 새 테마: \(theme)")
   }
 }
