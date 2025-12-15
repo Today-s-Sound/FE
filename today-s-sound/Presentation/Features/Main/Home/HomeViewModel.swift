@@ -17,10 +17,15 @@ class HomeViewModel: ObservableObject {
   @Published var errorMessage: String?
 
   private let apiService: APIService
+  private let credentialsProvider: UserCredentialsProvider
   private var cancellables = Set<AnyCancellable>()
 
-  init(apiService: APIService = APIService()) {
+  init(
+    apiService: APIService = APIService(),
+    credentialsProvider: UserCredentialsProvider = KeychainCredentialsProvider()
+  ) {
     self.apiService = apiService
+    self.credentialsProvider = credentialsProvider
   }
 
   func increaseRate() {
@@ -39,9 +44,7 @@ class HomeViewModel: ObservableObject {
   func loadHomeFeed() {
     guard !isLoading else { return }
 
-    guard let userId = Keychain.getString(for: KeychainKey.userId),
-          let deviceSecret = Keychain.getString(for: KeychainKey.deviceSecret)
-    else {
+    guard let (userId, deviceSecret) = credentialsProvider.getCredentials() else {
       errorMessage = "사용자 정보가 없습니다"
       return
     }
@@ -66,24 +69,7 @@ class HomeViewModel: ObservableObject {
           break
 
         case let .failure(error):
-          switch error {
-          case let .serverError(statusCode):
-            errorMessage = "서버 오류 (상태: \(statusCode))"
-
-          case .decodingFailed:
-            errorMessage = "응답 처리 실패"
-
-          case let .requestFailed(requestError):
-            errorMessage = "요청 실패: \(requestError.localizedDescription)"
-
-          case .invalidURL:
-            errorMessage = "잘못된 URL"
-
-          case .unknown:
-            errorMessage = "알 수 없는 오류"
-          }
-
-          print("❌ 홈 피드 조회 실패: \(errorMessage ?? "")")
+          errorMessage = ErrorHandler.handleError(error, context: "홈 피드 조회 실패")
         }
       },
       receiveValue: { [weak self] response in
