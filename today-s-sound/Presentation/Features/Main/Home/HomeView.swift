@@ -16,8 +16,8 @@ struct HomeView: View {
         Text("오늘의 소리")
           .font(.KoddiBold56)
           .foregroundStyle(Color.text(appTheme.theme))
-          .padding(.top, 60)
-          .padding(.bottom, 30)
+          .padding(.top, 120)
+          .padding(.bottom, 60)
           .accessibilityElement() // 이 텍스트를 독립 요소로
           .accessibilityLabel("오늘의 소리") // 👉 "오늘의 소리"라고 읽기
           .accessibilityAddTraits(.isHeader) // 머리말(헤더)로 인식
@@ -112,4 +112,5 @@ struct HomeView: View {
 
 #Preview {
   HomeView()
+    .environmentObject(AppThemeManager())
 }

@@ -1,63 +1,91 @@
 import SwiftUI
 
+private struct TabBarForegroundUpdater: UIViewControllerRepresentable {
+  let theme: AppTheme
+
+  func makeUIViewController(context: Context) -> UIViewController {
+    let vc = UIViewController()
+    vc.view.backgroundColor = .clear
+    return vc
+  }
+
+  func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+    guard let tabBar = uiViewController.tabBarController?.tabBar else { return }
+
+    let selectedColor = UIColor(Color.primaryGreen)
+
+    let unselectedColor: UIColor = (theme == .highContrast)
+      ? UIColor(white: 1.0, alpha: 0.85)
+      : UIColor(Color.primaryGrey)
+
+    tabBar.tintColor = selectedColor
+    tabBar.unselectedItemTintColor = unselectedColor
+
+    tabBar.items?.forEach { item in
+      item.setTitleTextAttributes([.foregroundColor: unselectedColor], for: .normal)
+      item.setTitleTextAttributes([.foregroundColor: selectedColor], for: .selected)
+
+      item.image = item.image?.withRenderingMode(.alwaysTemplate)
+      item.selectedImage = item.selectedImage?.withRenderingMode(.alwaysTemplate)
+    }
+  }
+}
+
 struct MainView: View {
   private enum Tab: Hashable {
-    case home
-    case feed
-    case notifications
-    case settings
+    case home, feed, notifications, settings
   }
 
   @State private var selectedTab: Tab = .home
+  @EnvironmentObject private var appTheme: AppThemeManager
 
   var body: some View {
+    let theme = appTheme.theme
+
     TabView(selection: $selectedTab) {
       HomeView()
-        .tabItem {
-          VStack {
-            Image(systemName: "play.house.fill")
-              .accessibilityHidden(true) // 아이콘은 숨기고
-            Text("홈") // 이름만 읽히게
-          }
-        }
+        .tabItem { Label("홈", systemImage: "play.house.fill") }
         .tag(Tab.home)
 
       FeedView()
-        .tabItem {
-          VStack {
-            Image(systemName: "text.bubble.fill")
-              .accessibilityHidden(true)
-            Text("피드")
-          }
-        }
+        .tabItem { Label("피드", systemImage: "text.bubble.fill") }
         .tag(Tab.feed)
 
       NotificationListView()
-        .tabItem {
-          VStack {
-            Image(systemName: "bell.fill")
-              .accessibilityHidden(true)
-            Text("알림")
-          }
-        }
+        .tabItem { Label("알림", systemImage: "bell.fill") }
         .tag(Tab.notifications)
 
       SettingsView()
-        .tabItem {
-          VStack {
-            Image(systemName: "gearshape.fill")
-              .accessibilityHidden(true)
-            Text("관리")
-          }
-        }
+        .tabItem { Label("관리", systemImage: "gearshape.fill") }
         .tag(Tab.settings)
     }
-    .tint(.primaryGreen)
+    .tint(Color.primaryGreen)
+    .background(TabBarForegroundUpdater(theme: theme).frame(width: 0, height: 0))
   }
 }
 
 struct MainView_Previews: PreviewProvider {
+  private static var normalThemeManager: AppThemeManager {
+    let m = AppThemeManager()
+    m.theme = .normal
+    return m
+  }
+
+  private static var highContrastThemeManager: AppThemeManager {
+    let m = AppThemeManager()
+    m.theme = .highContrast
+    return m
+  }
+
   static var previews: some View {
-    MainView()
+    Group {
+      MainView()
+        .environmentObject(normalThemeManager)
+        .previewDisplayName("Theme: Normal")
+
+      MainView()
+        .environmentObject(highContrastThemeManager)
+        .previewDisplayName("Theme: HighContrast")
+    }
   }
 }

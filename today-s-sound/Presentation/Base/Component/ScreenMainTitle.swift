@@ -14,7 +14,7 @@ struct ScreenMainTitle: View {
 
   var body: some View {
     Text(text)
-      .font(.KoddiBold48)
+      .font(.KoddiBold56)
       .foregroundColor(Color.text(theme))
       .frame(maxWidth: .infinity, alignment: .center)
       .multilineTextAlignment(.center)
