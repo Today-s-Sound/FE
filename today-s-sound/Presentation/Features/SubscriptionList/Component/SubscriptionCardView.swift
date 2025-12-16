@@ -11,6 +11,17 @@ struct SubscriptionCardView: View {
   let subscription: SubscriptionItem
   let theme: AppTheme
   var onToggleAlarm: ((SubscriptionItem) -> Void)?
+  private var resolvedTextColor: Color {
+    theme == .highContrast ? .white : Color.primaryGrey
+  }
+
+  private var resolvedCardBackgroundColor: Color {
+    theme == .highContrast ? Color(white: 0.12) : Color.greyBackground
+  }
+
+  private var resolvedBorderColor: Color {
+    theme == .highContrast ? Color(white: 0.25) : Color.borderGrey
+  }
 
   var body: some View {
     HStack(spacing: 12) {
@@ -18,13 +29,13 @@ struct SubscriptionCardView: View {
         // 구독 이름 (alias)
         Text(subscription.alias)
           .font(.KoddiBold20)
-          .foregroundColor(Color.primaryGrey)
+          .foregroundColor(resolvedTextColor)
           .accessibilityLabel("구독 페이지 이름: \(subscription.alias)")
 
         // URL
         Text(subscription.url)
           .font(.KoddiRegular16)
-          .foregroundColor(Color.primaryGrey)
+          .foregroundColor(resolvedTextColor)
           .lineLimit(1)
           .accessibilityLabel("주소: \(subscription.url)")
 
@@ -63,10 +74,10 @@ struct SubscriptionCardView: View {
     .padding(16)
     .background(
       RoundedRectangle(cornerRadius: 8)
-        .fill(Color.greyBackground)
+        .fill(resolvedCardBackgroundColor)
         .overlay(
           RoundedRectangle(cornerRadius: 8)
-            .stroke(Color.borderGrey, lineWidth: 1)
+            .stroke(resolvedBorderColor, lineWidth: 1)
         )
     )
   }
@@ -94,6 +105,7 @@ struct SubscriptionCardView_Previews: PreviewProvider {
       )
       .padding()
       .previewDisplayName("Normal")
+      .environmentObject(AppThemeManager())
 
       SubscriptionCardView(
         subscription: sampleSubscription,
@@ -102,6 +114,7 @@ struct SubscriptionCardView_Previews: PreviewProvider {
       .padding()
       .previewDisplayName("High Contrast")
       .background(Color.black)
+      .environmentObject(AppThemeManager())
     }
     .previewLayout(.sizeThatFits)
   }

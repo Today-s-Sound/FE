@@ -67,19 +67,20 @@ struct NotificationListView: View {
     // 알림 없음
     else if viewModel.alarms.isEmpty {
       Spacer()
-      VStack(spacing: 16) {
+      VStack(spacing: 0) {
         Text("새로운 알림이 없습니다")
           .font(.KoddiBold20)
           .foregroundColor(Color.secondaryText(appTheme.theme))
           .accessibilityLabel("새로운 알림이 없습니다")
       }
+      .padding(.top, 28)
       Spacer()
     }
     // 알림 목록
     else {
       List {
         ForEach(viewModel.alarms) { alarm in
-            AlertCardView(alarm: alarm, theme: appTheme.theme)
+          AlertCardView(alarm: alarm, theme: appTheme.theme)
             .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 12, trailing: 20))
             .listRowSeparator(.hidden)
             .listRowBackground(Color.clear)
@@ -119,23 +120,19 @@ struct NotificationListView: View {
       Group {
         // 데이터 있는 상태 - 라이트 모드
         NotificationListView(viewModel: .previewData)
-          .environment(\.colorScheme, .light)
-          .previewDisplayName("알림 목록 - Light")
+          .environmentObject(AppThemeManager()).previewDisplayName("알림 목록 - Light")
 
         // 데이터 있는 상태 - 다크 모드
         NotificationListView(viewModel: .previewData)
-          .environment(\.colorScheme, .dark)
-          .previewDisplayName("알림 목록 - Dark")
+          .environmentObject(AppThemeManager()).previewDisplayName("알림 목록 - Dark")
 
         // 빈 상태
         NotificationListView(viewModel: .previewEmpty)
-          .environment(\.colorScheme, .light)
-          .previewDisplayName("알림 없음")
+          .environmentObject(AppThemeManager()).previewDisplayName("알림 없음")
 
         // 에러 상태
         NotificationListView(viewModel: .previewError)
-          .environment(\.colorScheme, .light)
-          .previewDisplayName("에러 상태")
+          .environmentObject(AppThemeManager()).previewDisplayName("에러 상태")
       }
     }
   }

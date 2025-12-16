@@ -31,8 +31,8 @@ final class AppThemeManager: ObservableObject {
     {
       self.theme = theme
     } else {
-      // 기본값은 일반 모드
-      theme = .normal
+      // 기본값은 고대비 모드
+      theme = .highContrast
     }
   }
 

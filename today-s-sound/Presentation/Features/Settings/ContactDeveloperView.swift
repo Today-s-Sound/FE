@@ -12,9 +12,6 @@ struct ContactDeveloperView: View {
         .ignoresSafeArea()
 
       VStack(spacing: 0) {
-        ScreenMainTitle(text: "개발자 문의", theme: appTheme.theme)
-          .padding(.top, 16)
-
         Spacer()
 
         VStack(spacing: 24) {
@@ -33,7 +30,7 @@ struct ContactDeveloperView: View {
 
           // 이메일 주소 버튼
           Button {
-            if let url = URL(string: "mailto:support@todayssound.com?subject=문의사항") {
+            if let url = URL(string: "mailto:todaysound.official@gmail.com?subject=문의사항") {
               UIApplication.shared.open(url)
             }
           } label: {
@@ -41,12 +38,12 @@ struct ContactDeveloperView: View {
               Image(systemName: "envelope")
                 .font(.KoddiBold20)
                 .foregroundColor(Color.primaryGreen)
-              Text("support@todayssound.com")
+              Text("todaysound.official@gmail.com")
                 .font(.KoddiBold20)
                 .foregroundColor(Color.primaryGreen)
             }
             .frame(maxWidth: .infinity)
-            .padding(.horizontal, 24)
+            .padding(.horizontal, 8)
             .padding(.vertical, 16)
             .overlay(
               RoundedRectangle(cornerRadius: 8)
@@ -84,6 +81,7 @@ struct ContactDeveloperView_Previews: PreviewProvider {
   static var previews: some View {
     NavigationView {
       ContactDeveloperView()
+        .environmentObject(AppThemeManager())
     }
   }
 }

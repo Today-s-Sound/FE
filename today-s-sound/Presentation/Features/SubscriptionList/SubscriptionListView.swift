@@ -15,8 +15,7 @@ struct SubscriptionListView: View {
       Color.background(appTheme.theme)
         .ignoresSafeArea()
 
-      VStack(spacing: 12) {
-        ScreenMainTitle(text: "구독 페이지 관리", theme: appTheme.theme)
+      VStack {
         ScreenSubTitle(text: "구독 중인 페이지", theme: appTheme.theme)
           .padding(.top, 16)
 
@@ -33,7 +32,7 @@ struct SubscriptionListView: View {
         // 에러 메시지
         else if let errorMessage = viewModel.errorMessage {
           Spacer()
-          VStack(spacing: 16) {
+          VStack {
             Text(errorMessage)
               .font(.KoddiBold20)
               .foregroundColor(Color.secondaryText(appTheme.theme))
@@ -157,6 +156,7 @@ struct SubscriptionListView: View {
     }
     .sheet(isPresented: $showAddSubscription) {
       AddSubscriptionView()
+        .environmentObject(AppThemeManager())
     }
   }
 }
@@ -166,15 +166,19 @@ struct SubscriptionListView_Previews: PreviewProvider {
     Group {
       SubscriptionListView(viewModel: .previewLoading)
         .previewDisplayName("Loading")
+        .environmentObject(AppThemeManager())
 
       SubscriptionListView(viewModel: .previewError)
         .previewDisplayName("Error")
+        .environmentObject(AppThemeManager())
 
       SubscriptionListView(viewModel: .previewEmpty)
         .previewDisplayName("Empty")
+        .environmentObject(AppThemeManager())
 
       SubscriptionListView(viewModel: .previewData)
         .previewDisplayName("With Data")
+        .environmentObject(AppThemeManager())
     }
   }
 }

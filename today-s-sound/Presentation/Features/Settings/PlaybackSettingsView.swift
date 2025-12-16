@@ -11,9 +11,6 @@ struct PlaybackSettingsView: View {
         .ignoresSafeArea()
 
       VStack(spacing: 0) {
-        ScreenMainTitle(text: "재생 설정", theme: appTheme.theme)
-          .padding(.top, 16)
-
         // 재생 속도 설정
         VStack(alignment: .leading, spacing: 16) {
           Text("재생 속도 설정")
@@ -134,6 +131,7 @@ struct PlaybackSettingsView_Previews: PreviewProvider {
   static var previews: some View {
     NavigationView {
       PlaybackSettingsView()
+        .environmentObject(AppThemeManager())
     }
   }
 }
