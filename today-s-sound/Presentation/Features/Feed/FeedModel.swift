@@ -5,6 +5,7 @@ struct FeedItem: Identifiable, Hashable {
   let alias: String
   let summary: String
   let summaryTitle: String
+  let postUrl: String
   let publishedAt: Date
   let timeAgo: String // 서버에서 받은 시간 문자열 ("2시간 전" 등)
 
@@ -21,6 +22,7 @@ struct FeedItem: Identifiable, Hashable {
     alias: String,
     summary: String,
     summaryTitle: String,
+    postUrl: String,
     publishedAt: Date,
     timeAgo: String = ""
   ) {
@@ -28,6 +30,7 @@ struct FeedItem: Identifiable, Hashable {
     self.alias = alias
     self.summary = summary
     self.summaryTitle = summaryTitle
+    self.postUrl = postUrl
     self.publishedAt = publishedAt
     self.timeAgo = timeAgo
   }

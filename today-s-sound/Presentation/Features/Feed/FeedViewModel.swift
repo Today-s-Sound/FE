@@ -90,6 +90,7 @@ final class FeedViewModel: ObservableObject {
             alias: response.alias,
             summary: response.summaryContent,
             summaryTitle: response.summaryTitle,
+            postUrl: response.postUrl,
             publishedAt: self.parseTimeAgo(response.timeAgo),
             timeAgo: response.timeAgo
           )
@@ -186,6 +187,7 @@ final class FeedViewModel: ObservableObject {
               alias: response.alias,
               summary: response.summaryContent,
               summaryTitle: response.summaryTitle,
+              postUrl: response.postUrl,
               publishedAt: self.parseTimeAgo(response.timeAgo),
               timeAgo: response.timeAgo
             )
