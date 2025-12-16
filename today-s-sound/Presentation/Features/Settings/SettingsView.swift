@@ -129,6 +129,7 @@ struct SettingsView: View {
 }
 
 // MARK: - 목적지 화면용 커스텀 헤더 래퍼
+
 private struct BackHeaderContainer<Content: View>: View {
   @Environment(\.dismiss) private var dismiss
 
@@ -191,6 +192,7 @@ private struct BackHeaderContainer<Content: View>: View {
 }
 
 // MARK: - Settings Row Component
+
 struct SettingsRow: View {
   let title: String
   let theme: AppTheme

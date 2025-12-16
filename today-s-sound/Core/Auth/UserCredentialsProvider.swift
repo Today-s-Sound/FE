@@ -12,10 +12,10 @@ import Foundation
 protocol UserCredentialsProvider {
   /// 사용자 ID를 반환
   func getUserId() -> String?
-  
+
   /// 디바이스 시크릿을 반환
   func getDeviceSecret() -> String?
-  
+
   /// 사용자 ID와 디바이스 시크릿을 튜플로 반환
   /// 둘 다 존재할 때만 반환, 없으면 nil
   func getCredentials() -> (userId: String, deviceSecret: String)?
@@ -26,11 +26,11 @@ final class KeychainCredentialsProvider: UserCredentialsProvider {
   func getUserId() -> String? {
     Keychain.getString(for: KeychainKey.userId)
   }
-  
+
   func getDeviceSecret() -> String? {
     Keychain.getString(for: KeychainKey.deviceSecret)
   }
-  
+
   func getCredentials() -> (userId: String, deviceSecret: String)? {
     guard let userId = Keychain.getString(for: KeychainKey.userId),
           let deviceSecret = Keychain.getString(for: KeychainKey.deviceSecret)
@@ -46,22 +46,22 @@ final class KeychainCredentialsProvider: UserCredentialsProvider {
   final class MockCredentialsProvider: UserCredentialsProvider {
     var userId: String?
     var deviceSecret: String?
-    
+
     init(userId: String? = "test-user-id", deviceSecret: String? = "test-device-secret") {
       self.userId = userId
       self.deviceSecret = deviceSecret
     }
-    
+
     func getUserId() -> String? {
       userId
     }
-    
+
     func getDeviceSecret() -> String? {
       deviceSecret
     }
-    
+
     func getCredentials() -> (userId: String, deviceSecret: String)? {
-      guard let userId = userId, let deviceSecret = deviceSecret else {
+      guard let userId, let deviceSecret else {
         return nil
       }
       return (userId, deviceSecret)

@@ -81,8 +81,7 @@ struct ContactDeveloperView_Previews: PreviewProvider {
   static var previews: some View {
     NavigationView {
       ContactDeveloperView()
-            .environmentObject(AppThemeManager())
-
+        .environmentObject(AppThemeManager())
     }
   }
 }

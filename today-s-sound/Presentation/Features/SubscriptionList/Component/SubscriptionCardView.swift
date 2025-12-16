@@ -11,17 +11,17 @@ struct SubscriptionCardView: View {
   let subscription: SubscriptionItem
   let theme: AppTheme
   var onToggleAlarm: ((SubscriptionItem) -> Void)?
-    private var resolvedTextColor: Color {
-      theme == .highContrast ? .white : Color.primaryGrey
-    }
+  private var resolvedTextColor: Color {
+    theme == .highContrast ? .white : Color.primaryGrey
+  }
 
-    private var resolvedCardBackgroundColor: Color {
-      theme == .highContrast ? Color(white: 0.12) : Color.greyBackground
-    }
+  private var resolvedCardBackgroundColor: Color {
+    theme == .highContrast ? Color(white: 0.12) : Color.greyBackground
+  }
 
-    private var resolvedBorderColor: Color {
-      theme == .highContrast ? Color(white: 0.25) : Color.borderGrey
-    }
+  private var resolvedBorderColor: Color {
+    theme == .highContrast ? Color(white: 0.25) : Color.borderGrey
+  }
 
   var body: some View {
     HStack(spacing: 12) {

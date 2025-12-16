@@ -399,6 +399,6 @@ struct FlowLayout: Layout {
 struct AddSubscriptionView_Previews: PreviewProvider {
   static var previews: some View {
     AddSubscriptionView()
-          .environmentObject(AppThemeManager())
+      .environmentObject(AppThemeManager())
   }
 }
