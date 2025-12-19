@@ -35,14 +35,82 @@ struct AddSubscriptionView: View {
           // 스크롤 되는 영역 (입력 필드, 키워드, 토글 등)
           ScrollView {
             VStack(spacing: 24) {
-              // 1) 웹사이트 URL (필수)
-              InputFieldSection(
-                title: "웹사이트 URL",
-                description: "모니터링할 웹페이지의 정확한 URL을 입력하세요.",
-                isRequired: true,
-                text: $viewModel.urlText,
-                theme: appTheme.theme
-              )
+              // 1) 웹사이트 URL 선택 (필수)
+              VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: 8) {
+                  HStack(spacing: 4) {
+                    Text("웹사이트 URL")
+                      .font(.KoddiBold20)
+                      .foregroundColor(Color.text(appTheme.theme))
+                      .accessibilityLabel("웹사이트 URL 필수 선택")
+
+                    Text("*")
+                      .font(.KoddiBold20)
+                      .foregroundColor(.red)
+                      .accessibilityHidden(true)
+                  }
+
+                  Button(action: {
+                    viewModel.showURLSelector = true
+                  }) {
+                    HStack {
+                      Text(viewModel.selectedURL?.title ?? "URL 선택...")
+                        .font(.KoddiRegular16)
+                        .foregroundColor(
+                          viewModel.selectedURL == nil
+                            ? Color.secondaryText(appTheme.theme)
+                            : Color.text(appTheme.theme)
+                        )
+                      Spacer()
+                    }
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 16)
+                    .background(
+                      RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.secondaryBackground(appTheme.theme))
+                    )
+                    .overlay(
+                      RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.border(appTheme.theme), lineWidth: 1)
+                    )
+                  }
+                  .accessibilityLabel(viewModel.selectedURL == nil ? "URL 선택 버튼" : "URL 수정 버튼")
+                  .accessibilityHint("탭하여 URL을 선택합니다")
+                  .accessibilityValue(viewModel.selectedURL?.title ?? "")
+
+                  Text("모니터링할 웹페이지를 선택하세요.")
+                    .font(.KoddiRegular16)
+                    .foregroundColor(Color.secondaryText(appTheme.theme))
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibilityLabel("모니터링할 웹페이지를 선택하세요")
+                }
+
+                // 선택된 URL 표시
+                if let selectedURL = viewModel.selectedURL {
+                  HStack {
+                    Text(selectedURL.link)
+                      .font(.KoddiRegular16)
+                      .foregroundColor(Color.secondaryText(appTheme.theme))
+                      .lineLimit(1)
+                    Spacer()
+                    Button(action: {
+                      viewModel.clearURL()
+                    }) {
+                      Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 16))
+                        .foregroundColor(Color.secondaryText(appTheme.theme))
+                    }
+                    .accessibilityLabel("선택된 URL 삭제")
+                    .accessibilityHint("탭하여 선택된 URL을 제거합니다")
+                  }
+                  .padding(.horizontal, 12)
+                  .padding(.vertical, 8)
+                  .background(
+                    RoundedRectangle(cornerRadius: 6)
+                      .fill(Color.secondaryBackground(appTheme.theme).opacity(0.5))
+                  )
+                }
+              }
 
               // 2) 웹페이지 별명 (선택)
               InputFieldSection(
@@ -64,7 +132,7 @@ struct AddSubscriptionView: View {
                     viewModel.showKeywordSelector = true
                   }) {
                     HStack {
-                      Text(viewModel.selectedKeywords.isEmpty ? "키워드 추가..." : "키워드 수정...")
+                      Text(viewModel.selectedKeywordNames.isEmpty ? "키워드 추가..." : "키워드 수정...")
                         .font(.KoddiRegular16)
                         .foregroundColor(Color.secondaryText(appTheme.theme))
                       Spacer()
@@ -80,7 +148,7 @@ struct AddSubscriptionView: View {
                         .stroke(Color.border(appTheme.theme), lineWidth: 1)
                     )
                   }
-                  .accessibilityLabel(viewModel.selectedKeywords.isEmpty ? "키워드 추가 버튼" : "키워드 수정 버튼")
+                  .accessibilityLabel(viewModel.selectedKeywordNames.isEmpty ? "키워드 추가 버튼" : "키워드 수정 버튼")
                   .accessibilityHint("탭하여 키워드를 선택합니다")
 
                   Text("관심 키워드가 포함된 글을 알림으로 받아보세요.")
@@ -91,14 +159,17 @@ struct AddSubscriptionView: View {
                 }
 
                 // 선택된 키워드 배지들
-                if !viewModel.selectedKeywords.isEmpty {
+                if !viewModel.selectedKeywordNames.isEmpty {
                   FlowLayout(spacing: 8) {
-                    ForEach(viewModel.selectedKeywords, id: \.self) { keyword in
+                    ForEach(viewModel.selectedKeywordNames, id: \.self) { keywordName in
                       KeywordBadgeWithDelete(
-                        text: keyword,
+                        text: keywordName,
                         theme: appTheme.theme
                       ) {
-                        viewModel.removeKeyword(keyword)
+                        // 키워드 이름으로 ID 찾기
+                        if let keyword = viewModel.availableKeywords.first(where: { $0.name == keywordName }) {
+                          viewModel.removeKeyword(keyword.id)
+                        }
                       }
                     }
                   }
@@ -146,7 +217,7 @@ struct AddSubscriptionView: View {
               ? "구독을 등록하는 중입니다"
               : viewModel.isSubmitEnabled
               ? "이 웹사이트 등록 승인을 요청합니다."
-              : "웹사이트 URL을 입력해야 활성화됩니다."
+              : "웹사이트 URL을 선택해야 활성화됩니다."
           )
           .padding(.horizontal, 16)
           .padding(.vertical, 16)
@@ -165,6 +236,16 @@ struct AddSubscriptionView: View {
       }
     }
     .ignoresSafeArea(.keyboard, edges: .bottom)
+    // URL 선택 시트
+    .sheet(isPresented: $viewModel.showURLSelector) {
+      URLSelectorSheet(viewModel: viewModel, theme: appTheme.theme)
+        .onAppear {
+          // URL 설정 시트가 열릴 때 URL 목록 로드
+          if viewModel.availableURLs.isEmpty {
+            viewModel.loadURLs()
+          }
+        }
+    }
     // 키워드 설정 시트
     .sheet(isPresented: $viewModel.showKeywordSelector) {
       KeywordSelectorSheet(viewModel: viewModel, theme: appTheme.theme)
@@ -191,6 +272,153 @@ struct AddSubscriptionView: View {
         .accessibilityHint("탭하여 키보드를 숨깁니다.")
       }
     }
+  }
+}
+
+// MARK: - URL 선택 시트
+
+struct URLSelectorSheet: View {
+  @ObservedObject var viewModel: AddSubscriptionViewModel
+  let theme: AppTheme
+  @Environment(\.dismiss) var dismiss
+
+  var body: some View {
+    ZStack {
+      Color.background(theme)
+        .ignoresSafeArea()
+        .onTapGesture {
+          UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
+
+      VStack(spacing: 0) {
+        SheetHandleBar(theme: theme)
+          .padding(.top, 20)
+          .accessibilityElement()
+          .accessibilityLabel("URL 설정 창 닫기")
+          .accessibilityHint("이 영역을 두 번 탭하거나 아래로 스와이프하면 창이 닫힙니다.")
+          .onTapGesture {
+            dismiss()
+          }
+
+        // URL 설정 화면 제목
+        ScreenSubTitle(text: "URL 선택", theme: theme)
+
+        VStack(spacing: 0) {
+          // 스크롤 가능한 URL 목록
+          ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+              if viewModel.isLoadingURLs {
+                VStack(spacing: 16) {
+                  ProgressView("불러오는 중...")
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .accessibilityLabel("URL 목록을 불러오는 중입니다")
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 40)
+              } else if let errorMessage = viewModel.urlErrorMessage {
+                VStack(spacing: 16) {
+                  Text(errorMessage)
+                    .font(.KoddiBold20)
+                    .foregroundColor(Color.secondaryText(theme))
+                    .accessibilityLabel("오류: \(errorMessage)")
+
+                  Button("다시 시도") {
+                    viewModel.loadURLs()
+                  }
+                  .padding(.horizontal, 24)
+                  .padding(.vertical, 12)
+                  .font(.KoddiBold20)
+                  .foregroundColor(.white)
+                  .background(Color.primaryGreen)
+                  .cornerRadius(8)
+                  .accessibilityLabel("다시 시도 버튼")
+                  .accessibilityHint("탭하여 URL 목록을 다시 불러옵니다")
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 40)
+              } else if viewModel.availableURLs.isEmpty {
+                VStack(spacing: 16) {
+                  Text("등록된 URL이 없습니다.")
+                    .font(.KoddiBold20)
+                    .foregroundColor(Color.secondaryText(theme))
+                    .accessibilityLabel("등록된 URL이 없습니다")
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 40)
+              } else {
+                VStack(spacing: 0) {
+                  ForEach(Array(viewModel.availableURLs.enumerated()), id: \.element.id) { index, url in
+                    URLRow(
+                      url: url,
+                      isSelected: viewModel.selectedURL?.id == url.id,
+                      theme: theme
+                    ) {
+                      viewModel.selectURL(url)
+                      dismiss()
+                    }
+
+                    if index < viewModel.availableURLs.count - 1 {
+                      Divider()
+                        .background(Color.border(theme))
+                        .padding(.horizontal, 20)
+                    }
+                  }
+                }
+              }
+            }
+            .padding(.top, 8)
+            .padding(.bottom, 8)
+          }
+          .scrollDismissesKeyboard(.interactively)
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+      }
+    }
+  }
+}
+
+// MARK: - URL 행 컴포넌트
+
+struct URLRow: View {
+  let url: URLItem
+  let isSelected: Bool
+  let theme: AppTheme
+  let action: () -> Void
+
+  var body: some View {
+    Button(action: action) {
+      HStack(spacing: 16) {
+        VStack(alignment: .leading, spacing: 4) {
+          Text(url.title)
+            .font(.KoddiBold20)
+            .foregroundColor(Color.text(theme))
+
+          Text(url.link)
+            .font(.KoddiRegular16)
+            .foregroundColor(Color.secondaryText(theme))
+            .lineLimit(1)
+        }
+
+        Spacer()
+
+        if isSelected {
+          Image(systemName: "checkmark.circle.fill")
+            .font(.system(size: 24))
+            .foregroundColor(Color.primaryGreen)
+        } else {
+          Image(systemName: "circle")
+            .font(.system(size: 24))
+            .foregroundColor(Color.border(theme))
+        }
+      }
+      .padding(.vertical, 16)
+      .padding(.horizontal, 20)
+    }
+    .buttonStyle(PlainButtonStyle())
+    .accessibilityLabel("URL \(url.title)")
+    .accessibilityValue(isSelected ? "선택됨" : "선택 안 됨")
+    .accessibilityHint("탭하여 이 URL을 선택합니다")
   }
 }
 
@@ -266,13 +494,13 @@ struct KeywordSelectorSheet: View {
                 .padding(.vertical, 40)
               } else {
                 VStack(spacing: 0) {
-                  ForEach(Array(viewModel.availableKeywords.enumerated()), id: \.offset) { index, keyword in
+                  ForEach(Array(viewModel.availableKeywords.enumerated()), id: \.element.id) { index, keyword in
                     KeywordCheckboxRow(
-                      keyword: keyword,
-                      isSelected: viewModel.selectedKeywords.contains(keyword),
+                      keyword: keyword.name,
+                      isSelected: viewModel.selectedKeywordIds.contains(keyword.id),
                       theme: theme
                     ) {
-                      viewModel.toggleKeyword(keyword)
+                      viewModel.toggleKeyword(keyword.id)
                     }
 
                     if index < viewModel.availableKeywords.count - 1 {

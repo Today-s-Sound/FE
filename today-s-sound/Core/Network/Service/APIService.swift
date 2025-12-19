@@ -25,6 +25,7 @@ protocol APIServiceType {
     userId: String, deviceSecret: String, page: Int, size: Int
   ) -> AnyPublisher<AlarmListResponse, NetworkError>
   func getKeywords() -> AnyPublisher<KeywordsResponse, NetworkError>
+  func getURLs() -> AnyPublisher<URLsResponse, NetworkError>
   func getHomeFeed(
     userId: String, deviceSecret: String
   ) -> AnyPublisher<HomeFeedResponse, NetworkError>
@@ -39,6 +40,7 @@ class APIService: APIServiceType {
   private let subscriptionProvider: MoyaProvider<SubscriptionAPI>
   private let alarmProvider: MoyaProvider<AlarmAPI>
   private let keywordProvider: MoyaProvider<KeywordAPI>
+  private let urlProvider: MoyaProvider<URLAPI>
   private let feedProvider: MoyaProvider<FeedAPI>
 
   init(userSession: UserSession = UserSession()) {
@@ -52,6 +54,7 @@ class APIService: APIServiceType {
       subscriptionProvider = NetworkKit.provider(userSession: userSession, plugins: [logger])
       alarmProvider = NetworkKit.provider(userSession: userSession, plugins: [logger])
       keywordProvider = NetworkKit.provider(userSession: userSession, plugins: [logger])
+      urlProvider = NetworkKit.provider(userSession: userSession, plugins: [logger])
       feedProvider = NetworkKit.provider(userSession: userSession, plugins: [logger])
     #else
       userProvider = NetworkKit.provider(userSession: userSession)
@@ -59,6 +62,7 @@ class APIService: APIServiceType {
       subscriptionProvider = NetworkKit.provider(userSession: userSession)
       alarmProvider = NetworkKit.provider(userSession: userSession)
       keywordProvider = NetworkKit.provider(userSession: userSession)
+      urlProvider = NetworkKit.provider(userSession: userSession)
       feedProvider = NetworkKit.provider(userSession: userSession)
     #endif
   }
@@ -327,6 +331,23 @@ class APIService: APIServiceType {
             .eraseToAnyPublisher()
         }
         return handleResponse(response, decodeTo: KeywordsResponse.self, debugLabel: "키워드 목록 응답")
+      }
+      .eraseToAnyPublisher()
+  }
+
+  // MARK: - URL API
+
+  func getURLs() -> AnyPublisher<URLsResponse, NetworkError> {
+    urlProvider.requestPublisher(.getURLs)
+      .mapError { moyaError -> NetworkError in
+        .requestFailed(moyaError)
+      }
+      .flatMap { [weak self] response -> AnyPublisher<URLsResponse, NetworkError> in
+        guard let self else {
+          return Fail(error: NetworkError.unknown)
+            .eraseToAnyPublisher()
+        }
+        return handleResponse(response, decodeTo: URLsResponse.self, debugLabel: "URL 목록 응답")
       }
       .eraseToAnyPublisher()
   }
