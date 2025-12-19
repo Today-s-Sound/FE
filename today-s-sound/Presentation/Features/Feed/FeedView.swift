@@ -200,6 +200,7 @@ struct FeedView: View {
 private struct FeedCard: View {
   let item: FeedItem
   let theme: AppTheme
+  @Environment(\.openURL) private var openURL
 
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
@@ -237,10 +238,15 @@ private struct FeedCard: View {
       RoundedRectangle(cornerRadius: 16)
         .stroke(Color.border(theme), lineWidth: 1)
     )
+    .onTapGesture(count: 2) {
+      guard let url = URL(string: item.postUrl) else { return }
+      openURL(url)
+    }
     .accessibilityElement(children: .combine)
     .accessibilityLabel(
       "\(item.summaryTitle) 새 글, \(item.alias), \(item.summary), \(item.timeAgo)"
     )
+    .accessibilityHint("두 번 탭하면 Safari에서 원문 링크를 엽니다")
   }
 }
 

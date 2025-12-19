@@ -5,6 +5,7 @@ struct HomeFeedItemResponse: Codable, Identifiable {
   let subscriptionId: Int64
   let alias: String
   let summaryContent: String
+  let postUrl: String
   let timeAgo: String
   let isUrgent: Bool
 
@@ -15,6 +16,7 @@ struct HomeFeedItemResponse: Codable, Identifiable {
     case subscriptionId
     case alias
     case summaryContent
+    case postUrl
     case timeAgo
     case isUrgent
   }
@@ -48,7 +50,7 @@ struct FeedItemResponse: Codable, Identifiable {
   let alias: String
   let summaryTitle: String
   let summaryContent: String
-  let url: String
+  let postUrl: String
   let timeAgo: String
   let isUrgent: Bool
 
@@ -60,7 +62,7 @@ struct FeedItemResponse: Codable, Identifiable {
     case alias
     case summaryTitle
     case summaryContent
-    case url
+    case postUrl
     case timeAgo
     case isUrgent
   }
