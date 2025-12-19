@@ -4,8 +4,8 @@ import Foundation
 
 /// 구독 생성 요청
 struct CreateSubscriptionRequest: Codable {
-  let url: String
-  let keywords: [String]
+  let urlId: Int64
+  let keywordIds: [Int64]
   let alias: String?
   let isUrgent: Bool
 }
