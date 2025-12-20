@@ -80,20 +80,20 @@ struct OnBoardingView: View {
   }
 }
 
-struct OnBoardingView_Previews: PreviewProvider {
-  static var previews: some View {
-    Group {
-      OnBoardingView()
-        .environmentObject(SessionStore.preview)
-        .environmentObject(AppThemeManager())
-
-      OnBoardingView()
-        .environmentObject(SessionStore.preview)
-        .environmentObject({
-          let manager = AppThemeManager()
-          manager.theme = .highContrast
-          return manager
-        }())
-    }
-  }
-}
+//struct OnBoardingView_Previews: PreviewProvider {
+//  static var previews: some View {
+//    Group {
+//      OnBoardingView()
+//        .environmentObject(SessionStore.preview)
+//        .environmentObject(AppThemeManager())
+//
+//      OnBoardingView()
+//        .environmentObject(SessionStore.preview)
+//        .environmentObject({
+//          let manager = AppThemeManager()
+//          manager.theme = .highContrast
+//          return manager
+//        }())
+//    }
+//  }
+//}

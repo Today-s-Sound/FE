@@ -211,10 +211,10 @@ struct SettingsRow: View {
   }
 }
 
-struct SettingsView_Previews: PreviewProvider {
-  static var previews: some View {
-    SettingsView()
-      .environmentObject(SessionStore.preview)
-      .environmentObject(AppThemeManager())
-  }
-}
+//struct SettingsView_Previews: PreviewProvider {
+//  static var previews: some View {
+//    SettingsView()
+//      .environmentObject(SessionStore.preview)
+//      .environmentObject(AppThemeManager())
+//  }
+//}
