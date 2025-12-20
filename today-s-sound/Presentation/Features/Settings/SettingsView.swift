@@ -91,6 +91,7 @@ struct SettingsView: View {
           .padding(.bottom, 40)
           .accessibilityElement(children: .contain)
 
+          // 앱 초기화 버튼
           Button {
             showDeleteAlert = true
           } label: {
@@ -116,13 +117,13 @@ struct SettingsView: View {
           .accessibilityLabel("취소")
 
         Button("초기화하기", role: .destructive) {
-          session.logout()
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { exit(0) }
+          session.withdraw()
+          DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { exit(0) }
         }
         .accessibilityLabel("초기화하기")
         .accessibilityHint("모든 데이터를 삭제하고 앱을 종료합니다")
       } message: {
-        Text("정말 앱을 초기화하시겠습니까? 모든 데이터가 삭제되고 앱이 종료됩니다.")
+        Text("정말 앱을 초기화하시겠습니까? 서버의 모든 데이터가 삭제되고 앱이 종료됩니다.")
       }
     }
   }

@@ -22,10 +22,11 @@ struct ContactDeveloperView: View {
               .foregroundColor(Color.text(appTheme.theme))
               .accessibilityLabel("문의사항이 있으신가요?")
 
-            Text("아래 이메일로 문의해주세요.")
+            Text("추가 키워드나 URL이 필요하시면\n아래 이메일로 문의해주세요.")
               .font(.KoddiRegular16)
               .foregroundColor(Color.secondaryText(appTheme.theme))
-              .accessibilityLabel("아래 이메일로 문의해주세요.")
+              .multilineTextAlignment(.center)
+              .accessibilityLabel("추가 키워드나 URL이 필요하시면 아래 이메일로 문의해주세요.")
           }
 
           // 이메일 주소 버튼

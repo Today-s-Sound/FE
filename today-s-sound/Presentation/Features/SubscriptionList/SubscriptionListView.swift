@@ -15,7 +15,7 @@ struct SubscriptionListView: View {
       Color.background(appTheme.theme)
         .ignoresSafeArea()
 
-      VStack {
+      VStack(spacing: 12) {
         ScreenSubTitle(text: "구독 중인 페이지", theme: appTheme.theme)
           .padding(.top, 16)
 
@@ -32,7 +32,7 @@ struct SubscriptionListView: View {
         // 에러 메시지
         else if let errorMessage = viewModel.errorMessage {
           Spacer()
-          VStack {
+          VStack(spacing: 16) {
             Text(errorMessage)
               .font(.KoddiBold20)
               .foregroundColor(Color.secondaryText(appTheme.theme))
@@ -154,9 +154,11 @@ struct SubscriptionListView: View {
       // Pull to refresh
       viewModel.refresh()
     }
-    .sheet(isPresented: $showAddSubscription) {
+    .sheet(isPresented: $showAddSubscription, onDismiss: {
+      // 구독 등록 후 시트가 닫히면 목록 새로고침
+      viewModel.refresh()
+    }) {
       AddSubscriptionView()
-        .environmentObject(AppThemeManager())
     }
   }
 }
@@ -166,19 +168,15 @@ struct SubscriptionListView_Previews: PreviewProvider {
     Group {
       SubscriptionListView(viewModel: .previewLoading)
         .previewDisplayName("Loading")
-        .environmentObject(AppThemeManager())
 
       SubscriptionListView(viewModel: .previewError)
         .previewDisplayName("Error")
-        .environmentObject(AppThemeManager())
 
       SubscriptionListView(viewModel: .previewEmpty)
         .previewDisplayName("Empty")
-        .environmentObject(AppThemeManager())
 
       SubscriptionListView(viewModel: .previewData)
         .previewDisplayName("With Data")
-        .environmentObject(AppThemeManager())
     }
   }
 }

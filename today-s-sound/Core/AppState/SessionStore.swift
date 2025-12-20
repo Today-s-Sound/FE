@@ -48,12 +48,11 @@ final class SessionStore: ObservableObject {
       print("⚠️ RELEASE 모드로 실행 중 - DEBUG 로그 비활성화")
     #endif
 
-    // deviceSecret, userId, fcmToken 모두 있어야 등록된 것으로 간주
+    // deviceSecret, userId가 있으면 등록된 것으로 간주 (FCM 토큰은 나중에 업데이트 가능)
     let hasDeviceSecret = Keychain.getString(for: KeychainKey.deviceSecret) != nil
     let hasUserId = Keychain.getString(for: KeychainKey.userId) != nil
-    let hasFcmToken = Keychain.getString(for: KeychainKey.fcmToken) != nil
 
-    if hasDeviceSecret, hasUserId, hasFcmToken {
+    if hasDeviceSecret, hasUserId {
       userId = Keychain.getString(for: KeychainKey.userId)
       isRegistered = true
     } else {
@@ -155,6 +154,39 @@ final class SessionStore: ObservableObject {
     userId = nil
     isRegistered = false
     lastError = nil
+  }
+
+  /// 앱 초기화 (키체인 초기화 후 서버에 탈퇴 요청)
+  func withdraw() {
+    // 1) deviceSecret을 미리 저장 (키체인 초기화 전에)
+    let deviceSecret = Keychain.getString(for: KeychainKey.deviceSecret)
+
+    // 2) 키체인 먼저 초기화
+    logout()
+    print("🗑️ 키체인 초기화 완료")
+
+    // 3) 서버에 탈퇴 요청 (Fire and forget - 실패해도 로컬은 이미 정리됨)
+    guard let deviceSecret else {
+      print("⚠️ deviceSecret이 없어서 서버 요청 생략")
+      return
+    }
+
+    apiService.withdrawUser(deviceSecret: deviceSecret)
+      .sink(
+        receiveCompletion: { completion in
+          switch completion {
+          case .finished:
+            print("✅ 서버 탈퇴 요청 완료")
+
+          case let .failure(error):
+            print("⚠️ 서버 탈퇴 요청 실패 (로컬은 이미 정리됨): \(error)")
+          }
+        },
+        receiveValue: { _ in
+          // Void 응답이므로 처리할 내용 없음
+        }
+      )
+      .store(in: &cancellables)
   }
 }
 

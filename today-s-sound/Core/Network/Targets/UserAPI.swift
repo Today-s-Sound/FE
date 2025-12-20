@@ -10,9 +10,7 @@ import Moya
 
 enum UserAPI {
   case registerAnonymous(request: RegisterAnonymousRequest)
-  // 향후 추가 가능:
-  // case getUserProfile(userId: String)
-  // case updateProfile(userId: String, name: String)
+  case withdraw(deviceSecret: String)
 }
 
 extension UserAPI: APITargetType {
@@ -20,6 +18,8 @@ extension UserAPI: APITargetType {
     switch self {
     case .registerAnonymous:
       "/api/users/anonymous"
+    case let .withdraw(deviceSecret):
+      "/api/users/withdraw/\(deviceSecret)"
     }
   }
 
@@ -27,6 +27,8 @@ extension UserAPI: APITargetType {
     switch self {
     case .registerAnonymous:
       .post
+    case .withdraw:
+      .delete
     }
   }
 
@@ -34,6 +36,8 @@ extension UserAPI: APITargetType {
     switch self {
     case let .registerAnonymous(request):
       .requestJSONEncodable(request)
+    case .withdraw:
+      .requestPlain
     }
   }
 

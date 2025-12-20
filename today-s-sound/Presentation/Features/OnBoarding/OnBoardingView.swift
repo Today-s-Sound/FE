@@ -11,7 +11,6 @@ struct OnBoardingView: View {
   @EnvironmentObject var session: SessionStore
   @EnvironmentObject var appTheme: AppThemeManager
   @State private var isLoading = false
-  @State private var didStartRegistration = false
 
   var body: some View {
     ZStack {
@@ -41,25 +40,43 @@ struct OnBoardingView: View {
 
       VStack {
         Spacer()
+
+        // 시작하기 버튼
+        if !isLoading {
+          Button(action: {
+            Task {
+              isLoading = true
+              defer { isLoading = false }
+              await session.registerIfNeeded()
+            }
+          }) {
+            Text("시작하기")
+              .font(.KoddiExtraBold32)
+              .foregroundColor(.white)
+              .frame(maxWidth: .infinity)
+              .padding(.vertical, 16)
+              .background(Color.primaryGreen)
+              .cornerRadius(8)
+          }
+          .padding(.horizontal, 32)
+          .padding(.bottom, 40)
+          .accessibilityLabel("시작하기 버튼")
+          .accessibilityHint("탭하면 앱을 시작합니다")
+        }
+
+        // 에러 메시지
         if let err = session.lastError {
           Text(err)
             .foregroundStyle(.red)
             .multilineTextAlignment(.center)
             .padding(.horizontal, 24)
-            .padding(.bottom, 24)
+            .padding(.bottom, isLoading ? 24 : 0)
             .accessibilityLabel("오류: \(err)")
         }
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background(Color.background(appTheme.theme))
-    .task {
-      guard !didStartRegistration else { return }
-      didStartRegistration = true
-      isLoading = true
-      defer { isLoading = false }
-      await session.registerIfNeeded()
-    }
   }
 }
 

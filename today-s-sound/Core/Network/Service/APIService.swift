@@ -6,6 +6,7 @@ import Moya
 protocol APIServiceType {
   func request<T: Decodable>(_ target: some TargetType) -> AnyPublisher<T, NetworkError>
   func registerAnonymous(request: RegisterAnonymousRequest) -> AnyPublisher<RegisterAnonymousResponse, NetworkError>
+  func withdrawUser(deviceSecret: String) -> AnyPublisher<Void, NetworkError>
   func getSubscriptions(
     userId: String, deviceSecret: String, page: Int, size: Int
   ) -> AnyPublisher<SubscriptionListResponse, NetworkError>
@@ -154,6 +155,33 @@ class APIService: APIServiceType {
             .eraseToAnyPublisher()
         }
         return handleResponse(response, decodeTo: RegisterAnonymousResponse.self, debugLabel: "익명 사용자 등록 응답")
+      }
+      .eraseToAnyPublisher()
+  }
+
+  func withdrawUser(deviceSecret: String) -> AnyPublisher<Void, NetworkError> {
+    userProvider.requestPublisher(.withdraw(deviceSecret: deviceSecret))
+      .mapError { moyaError -> NetworkError in
+        .requestFailed(moyaError)
+      }
+      .tryMap { response in
+        // 상태 코드만 확인 (200-299면 성공)
+        guard (200 ... 299).contains(response.statusCode) else {
+          throw NetworkError.serverError(statusCode: response.statusCode)
+        }
+
+        #if DEBUG
+          print("✅ 사용자 탈퇴 성공")
+        #endif
+
+        return ()
+      }
+      .mapError { error -> NetworkError in
+        if let networkError = error as? NetworkError {
+          return networkError
+        } else {
+          return .requestFailed(error)
+        }
       }
       .eraseToAnyPublisher()
   }
