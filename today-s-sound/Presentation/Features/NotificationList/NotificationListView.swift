@@ -80,22 +80,27 @@ struct NotificationListView: View {
     else {
       List {
         ForEach(viewModel.alarms) { alarm in
-          AlertCardView(alarm: alarm, theme: appTheme.theme)
-            .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 12, trailing: 20))
-            .listRowSeparator(.hidden)
-            .listRowBackground(Color.clear)
-            .onAppear {
-              viewModel.loadMoreIfNeeded(currentItem: alarm)
+          AlertCardView(
+            alarm: alarm,
+            theme: appTheme.theme,
+            isRead: viewModel.isRead(alarm),
+            onMarkAsRead: { viewModel.markAsRead($0) }
+          )
+          .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 12, trailing: 20))
+          .listRowSeparator(.hidden)
+          .listRowBackground(Color.clear)
+          .onAppear {
+            viewModel.loadMoreIfNeeded(currentItem: alarm)
+          }
+          .swipeActions {
+            Button(role: .destructive) {
+              viewModel.delete(alarm: alarm)
+            } label: {
+              Label("삭제", systemImage: "trash")
             }
-            .swipeActions {
-              Button(role: .destructive) {
-                viewModel.delete(alarm: alarm)
-              } label: {
-                Label("삭제", systemImage: "trash")
-              }
-              .accessibilityLabel("알림 삭제")
-              .accessibilityHint("이 알림을 목록에서 삭제합니다")
-            }
+            .accessibilityLabel("알림 삭제")
+            .accessibilityHint("이 알림을 목록에서 삭제합니다")
+          }
         }
 
         if viewModel.isLoadingMore {
@@ -110,6 +115,9 @@ struct NotificationListView: View {
       }
       .listStyle(.plain)
       .scrollContentBackground(.hidden)
+      .refreshable {
+        viewModel.refresh()
+      }
     }
   }
 }
@@ -142,33 +150,37 @@ struct NotificationListView: View {
       [
         AlarmItem(
           subscriptionId: 1,
+          summaryId: 101,
           alias: "동국대 SW 융합교육원",
           summaryContent: "동국대학교 SW 융합교육원에서 신입생 및 재학생을 위한 SW 교육 프로그램 공지가 등록되었습니다. 신청 마감 기한을 꼭 확인해주세요.",
-          url: "exurl",
+          postUrl: "exurl",
           timeAgo: "5분 전",
           isUrgent: true
         ),
         AlarmItem(
           subscriptionId: 2,
+          summaryId: 102,
           alias: "오늘의 소리 팀 공지",
           summaryContent: "오늘의 소리 앱이 업데이트되었습니다. 보이스오버 지원이 개선되고, 일부 버그가 수정되었습니다.",
-          url: "exurl",
+          postUrl: "exurl",
           timeAgo: "12분 전",
           isUrgent: false
         ),
         AlarmItem(
           subscriptionId: 3,
+          summaryId: 103,
           alias: "장학 공지",
           summaryContent: "2025학년도 1학기 장학금 신청 안내입니다. 신N청 자격과 필요 서류를 꼭 확인한 뒤 기한 내 제출해주세요.",
-          url: "exurl",
+          postUrl: "exurl",
           timeAgo: "30분 전",
           isUrgent: true
         ),
         AlarmItem(
           subscriptionId: 4,
+          summaryId: 104,
           alias: "동국대 일정 안내",
           summaryContent: "이번 주 캠퍼스 주요 일정과 행사를 정리하여 안내드립니다. 관심 있는 프로그램에 미리 신청해보세요.",
-          url: "url",
+          postUrl: "url",
           timeAgo: "1시간 전",
           isUrgent: false
         )

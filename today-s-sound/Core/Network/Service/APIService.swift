@@ -6,7 +6,7 @@ import Moya
 protocol APIServiceType {
   func request<T: Decodable>(_ target: some TargetType) -> AnyPublisher<T, NetworkError>
   func registerAnonymous(request: RegisterAnonymousRequest) -> AnyPublisher<RegisterAnonymousResponse, NetworkError>
-  func withdrawUser(deviceSecret: String) -> AnyPublisher<Void, NetworkError>
+  func withdrawUser(userId: String, deviceSecret: String) -> AnyPublisher<Void, NetworkError>
   func getSubscriptions(
     userId: String, deviceSecret: String, page: Int, size: Int
   ) -> AnyPublisher<SubscriptionListResponse, NetworkError>
@@ -159,8 +159,8 @@ class APIService: APIServiceType {
       .eraseToAnyPublisher()
   }
 
-  func withdrawUser(deviceSecret: String) -> AnyPublisher<Void, NetworkError> {
-    userProvider.requestPublisher(.withdraw(deviceSecret: deviceSecret))
+  func withdrawUser(userId: String, deviceSecret: String) -> AnyPublisher<Void, NetworkError> {
+    userProvider.requestPublisher(.withdraw(userId: userId, deviceSecret: deviceSecret))
       .mapError { moyaError -> NetworkError in
         .requestFailed(moyaError)
       }
@@ -344,6 +344,64 @@ class APIService: APIServiceType {
       return handleResponse(response, decodeTo: AlarmListResponse.self, debugLabel: "알림 목록 응답")
     }
     .eraseToAnyPublisher()
+  }
+
+  func markAlarmsAsRead(
+    userId: String, deviceSecret: String, summaryIds: [Int64]
+  ) -> AnyPublisher<Void, NetworkError> {
+    alarmProvider.requestPublisher(.markAsRead(
+      userId: userId,
+      deviceSecret: deviceSecret,
+      summaryIds: summaryIds
+    ))
+    .mapError { moyaError -> NetworkError in
+      .requestFailed(moyaError)
+    }
+    .tryMap { response in
+      guard (200 ... 299).contains(response.statusCode) else {
+        throw NetworkError.serverError(statusCode: response.statusCode)
+      }
+
+      #if DEBUG
+        print("✅ 알림 읽음 처리 성공: \(summaryIds.count)개")
+      #endif
+
+      return ()
+    }
+    .mapError { error -> NetworkError in
+      if let networkError = error as? NetworkError {
+        return networkError
+      } else {
+        return .requestFailed(error)
+      }
+    }
+    .eraseToAnyPublisher()
+  }
+
+  func deleteSummary(userId: String, deviceSecret: String, summaryId: Int64) -> AnyPublisher<Void, NetworkError> {
+    alarmProvider.requestPublisher(.deleteSummary(userId: userId, deviceSecret: deviceSecret, summaryId: summaryId))
+      .mapError { moyaError -> NetworkError in
+        .requestFailed(moyaError)
+      }
+      .tryMap { response in
+        guard (200 ... 299).contains(response.statusCode) else {
+          throw NetworkError.serverError(statusCode: response.statusCode)
+        }
+
+        #if DEBUG
+          print("✅ 알림 삭제 성공: summaryId=\(summaryId)")
+        #endif
+
+        return ()
+      }
+      .mapError { error -> NetworkError in
+        if let networkError = error as? NetworkError {
+          return networkError
+        } else {
+          return .requestFailed(error)
+        }
+      }
+      .eraseToAnyPublisher()
   }
 
   // MARK: - Keyword API

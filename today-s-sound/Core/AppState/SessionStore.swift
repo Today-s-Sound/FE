@@ -158,7 +158,8 @@ final class SessionStore: ObservableObject {
 
   /// 앱 초기화 (키체인 초기화 후 서버에 탈퇴 요청)
   func withdraw() {
-    // 1) deviceSecret을 미리 저장 (키체인 초기화 전에)
+    // 1) userId, deviceSecret을 미리 저장 (키체인 초기화 전에)
+    let userId = Keychain.getString(for: KeychainKey.userId)
     let deviceSecret = Keychain.getString(for: KeychainKey.deviceSecret)
 
     // 2) 키체인 먼저 초기화
@@ -166,12 +167,12 @@ final class SessionStore: ObservableObject {
     print("🗑️ 키체인 초기화 완료")
 
     // 3) 서버에 탈퇴 요청 (Fire and forget - 실패해도 로컬은 이미 정리됨)
-    guard let deviceSecret else {
-      print("⚠️ deviceSecret이 없어서 서버 요청 생략")
+    guard let userId, let deviceSecret else {
+      print("⚠️ userId 또는 deviceSecret이 없어서 서버 요청 생략")
       return
     }
 
-    apiService.withdrawUser(deviceSecret: deviceSecret)
+    apiService.withdrawUser(userId: userId, deviceSecret: deviceSecret)
       .sink(
         receiveCompletion: { completion in
           switch completion {

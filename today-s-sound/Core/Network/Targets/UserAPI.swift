@@ -10,7 +10,7 @@ import Moya
 
 enum UserAPI {
   case registerAnonymous(request: RegisterAnonymousRequest)
-  case withdraw(deviceSecret: String)
+  case withdraw(userId: String, deviceSecret: String)
 }
 
 extension UserAPI: APITargetType {
@@ -18,8 +18,8 @@ extension UserAPI: APITargetType {
     switch self {
     case .registerAnonymous:
       "/api/users/anonymous"
-    case let .withdraw(deviceSecret):
-      "/api/users/withdraw/\(deviceSecret)"
+    case .withdraw:
+      "/api/users/withdraw"
     }
   }
 
@@ -42,9 +42,19 @@ extension UserAPI: APITargetType {
   }
 
   var headers: [String: String]? {
-    [
-      "Content-Type": "application/json",
-      "Accept": "application/json"
-    ]
+    switch self {
+    case .registerAnonymous:
+      [
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      ]
+    case let .withdraw(userId, deviceSecret):
+      [
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-User-ID": userId,
+        "X-Device-Secret": deviceSecret
+      ]
+    }
   }
 }

@@ -223,10 +223,37 @@ private struct FeedCard: View {
         .multilineTextAlignment(.leading)
         .lineLimit(nil)
 
-      // 시간 (작은 초록색 텍스트)
-      Text(item.timeAgo)
-        .font(.KoddiRegular16)
-        .foregroundColor(.primaryGreen)
+      // 하단: 시간 + 원문 보기 버튼
+      HStack {
+        Text(item.timeAgo)
+          .font(.KoddiRegular16)
+          .foregroundColor(.primaryGreen)
+
+        Spacer()
+
+        // 원문 보기 버튼
+        Button {
+          guard let url = URL(string: item.postUrl) else { return }
+          openURL(url)
+        } label: {
+          HStack(spacing: 4) {
+            Text("원문 보기")
+              .font(.KoddiBold14)
+            Image(systemName: "arrow.up.right")
+              .font(.system(size: 12, weight: .bold))
+          }
+          .foregroundColor(.primaryGreen)
+          .padding(.horizontal, 12)
+          .padding(.vertical, 6)
+          .background(
+            Capsule()
+              .stroke(Color.primaryGreen, lineWidth: 1)
+          )
+        }
+        .buttonStyle(.borderless)
+        .accessibilityLabel("원문 보기 버튼")
+        .accessibilityHint("탭하면 Safari에서 원문 페이지를 엽니다")
+      }
     }
     .padding(20)
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -238,15 +265,7 @@ private struct FeedCard: View {
       RoundedRectangle(cornerRadius: 16)
         .stroke(Color.border(theme), lineWidth: 1)
     )
-    .onTapGesture(count: 2) {
-      guard let url = URL(string: item.postUrl) else { return }
-      openURL(url)
-    }
-    .accessibilityElement(children: .combine)
-    .accessibilityLabel(
-      "\(item.summaryTitle) 새 글, \(item.alias), \(item.summary), \(item.timeAgo)"
-    )
-    .accessibilityHint("두 번 탭하면 Safari에서 원문 링크를 엽니다")
+    .accessibilityElement(children: .contain)
   }
 }
 
