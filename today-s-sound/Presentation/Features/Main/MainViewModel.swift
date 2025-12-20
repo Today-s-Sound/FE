@@ -20,7 +20,15 @@ class MainViewModel: ObservableObject {
 
   init(apiService: APIService = APIService()) {
     self.apiService = apiService
+    
+    // UserDefaults에서 저장된 재생 속도 불러오기
+    let savedRate = UserDefaults.standard.double(forKey: "playbackRate")
+    if savedRate > 0 {
+      playbackRate = savedRate
+    }
+    
     setupSpeechListener()
+    setupPlaybackRateListener()
   }
 
   private func setupSpeechListener() {
@@ -29,6 +37,18 @@ class MainViewModel: ObservableObject {
       .sink { [weak self] _ in
         self?.playNextItem()
       }
+  }
+  
+  private func setupPlaybackRateListener() {
+    // PlaybackSettingsView에서 재생 속도 변경 시 동기화
+    NotificationCenter.default.publisher(for: Notification.Name("PlaybackRateChanged"))
+      .compactMap { $0.userInfo?["rate"] as? Double }
+      .receive(on: DispatchQueue.main)
+      .sink { [weak self] newRate in
+        self?.playbackRate = newRate
+        print("🎚️ 재생 속도 변경됨: \(newRate)x")
+      }
+      .store(in: &cancellables)
   }
 
   func increaseRate() {
@@ -40,7 +60,7 @@ class MainViewModel: ObservableObject {
   }
 
   func playAlert(_ alert: Alert) {
-    SpeechService.shared.speak(text: alert.title)
+    SpeechService.shared.speak(text: alert.title, rate: Float(playbackRate))
   }
 
   /// 홈 피드 불러오기
