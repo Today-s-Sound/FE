@@ -80,7 +80,7 @@ struct OnBoardingView: View {
   }
 }
 
-//struct OnBoardingView_Previews: PreviewProvider {
+// struct OnBoardingView_Previews: PreviewProvider {
 //  static var previews: some View {
 //    Group {
 //      OnBoardingView()
@@ -96,4 +96,4 @@ struct OnBoardingView: View {
 //        }())
 //    }
 //  }
-//}
+// }

@@ -163,7 +163,7 @@ struct SubscriptionListView: View {
   }
 }
 
-//struct SubscriptionListView_Previews: PreviewProvider {
+// struct SubscriptionListView_Previews: PreviewProvider {
 //  static var previews: some View {
 //    Group {
 //      SubscriptionListView(viewModel: .previewLoading)
@@ -179,4 +179,4 @@ struct SubscriptionListView: View {
 //        .previewDisplayName("With Data")
 //    }
 //  }
-//}
+// }

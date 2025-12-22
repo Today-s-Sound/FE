@@ -20,13 +20,13 @@ class MainViewModel: ObservableObject {
 
   init(apiService: APIService = APIService()) {
     self.apiService = apiService
-    
+
     // UserDefaults에서 저장된 재생 속도 불러오기
     let savedRate = UserDefaults.standard.double(forKey: "playbackRate")
     if savedRate > 0 {
       playbackRate = savedRate
     }
-    
+
     setupSpeechListener()
     setupPlaybackRateListener()
   }
@@ -38,7 +38,7 @@ class MainViewModel: ObservableObject {
         self?.playNextItem()
       }
   }
-  
+
   private func setupPlaybackRateListener() {
     // PlaybackSettingsView에서 재생 속도 변경 시 동기화
     NotificationCenter.default.publisher(for: Notification.Name("PlaybackRateChanged"))
