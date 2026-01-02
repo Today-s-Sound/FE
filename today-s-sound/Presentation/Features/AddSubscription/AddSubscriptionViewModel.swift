@@ -130,10 +130,6 @@ final class AddSubscriptionViewModel: ObservableObject {
     urlText = url.link
   }
 
-  func clearURL() {
-    selectedURL = nil
-    urlText = ""
-  }
 
   // MARK: - 키워드 선택 로직
 

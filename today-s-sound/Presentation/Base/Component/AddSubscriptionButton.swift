@@ -46,35 +46,3 @@ struct AddSubscriptionButton: View {
     .accessibilityHint(isEnabled ? "탭하여 \(title)합니다" : "현재 사용할 수 없습니다")
   }
 }
-
-// MARK: - Preview
-
-struct AddSubscriptionButton_Previews: PreviewProvider {
-  static var previews: some View {
-    Group {
-      // Normal Mode
-      AddSubscriptionButton(
-        title: "등록 승인 요청",
-        theme: .normal,
-        isEnabled: true,
-        action: {}
-      )
-      .previewDisplayName("Normal Mode")
-      .previewLayout(.sizeThatFits)
-      .padding()
-      .background(Color.background(.normal))
-
-      // High Contrast Mode
-      AddSubscriptionButton(
-        title: "등록 승인 요청",
-        theme: .highContrast,
-        isEnabled: true,
-        action: {}
-      )
-      .previewDisplayName("High Contrast Mode")
-      .previewLayout(.sizeThatFits)
-      .padding()
-      .background(Color.background(.highContrast))
-    }
-  }
-}
