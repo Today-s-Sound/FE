@@ -12,10 +12,10 @@ import SwiftUI
 import UserNotifications
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate { // 3. Delegate 프로토콜 3개 추가
-  
+
   // APNs 등록 상태 추적
   private var hasRegisteredForRemoteNotifications = false
-  
+
   // FCM 토큰 업데이트를 위한 API 서비스
   private let apiService = APIService()
   private var cancellables = Set<AnyCancellable>()
@@ -39,7 +39,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     // FCM 토큰이 있으면 = 이미 APNs 등록 완료 + FCM 토큰 생성 완료
     // 따라서 APNs를 다시 등록할 필요 없음
     let hasFCMToken = Keychain.getString(for: KeychainKey.fcmToken) != nil
-    
+
     if hasFCMToken {
       // FCM 토큰이 있으면 이미 APNs도 등록되어 있고 FCM 토큰도 생성되어 있음
       // APNs를 다시 등록할 필요 없음
@@ -66,47 +66,47 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     print("🔔 [FCM] 토큰 수신 콜백 호출")
     print("====================================")
     print("Firebase (FCM) 등록 토큰: \(fcmToken ?? "토큰 없음")")
-    
+
     guard let fcmToken else {
       print("⚠️ FCM 토큰이 nil이므로 저장하지 않음")
       print("====================================\n")
       return
     }
-    
+
     // 기존 토큰 확인
     let existingToken = Keychain.getString(for: KeychainKey.fcmToken)
-    
+
     #if DEBUG
-      if let existingToken = existingToken {
+      if let existingToken {
         print("📋 [FCM] 저장 전 기존 토큰: \(existingToken.prefix(50))...")
       } else {
         print("📋 [FCM] 저장 전 기존 토큰: (없음)")
       }
     #endif
-    
+
     // 등록된 사용자인지 먼저 확인
     let userId = Keychain.getString(for: KeychainKey.userId)
     let deviceSecret = Keychain.getString(for: KeychainKey.deviceSecret)
     let isRegistered = userId != nil && deviceSecret != nil
-    
+
     // 등록되지 않은 사용자면 FCM 토큰 저장하지 않음 (앱 초기화 후 상태)
     guard isRegistered else {
       print("ℹ️ [FCM] 등록되지 않은 사용자 - FCM 토큰 저장하지 않음 (앱 초기화 상태)")
       print("====================================\n")
       return
     }
-    
+
     // 토큰이 실제로 변경되었는지 확인
     let isTokenChanged = existingToken != fcmToken
-    
+
     if isTokenChanged {
       // 토큰이 변경되었을 때만 저장
       let saved = Keychain.setString(fcmToken, for: KeychainKey.fcmToken)
       if saved {
         print("✅ FCM 토큰이 변경되어 키체인에 저장했습니다")
-        
+
         // 이미 등록된 사용자이므로 서버에 토큰 업데이트
-        if let userId = userId, let deviceSecret = deviceSecret {
+        if let userId, let deviceSecret {
           print("📤 [FCM] 서버에 FCM 토큰 업데이트 요청 (userId: \(userId))")
           apiService.updateFCMToken(userId: userId, deviceSecret: deviceSecret, fcmToken: fcmToken)
             .sink(
@@ -129,7 +129,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
       // 동일한 토큰이면 저장 생략
       print("ℹ️ [FCM] 동일한 토큰이므로 저장 생략")
     }
-    
+
     print("====================================\n")
   }
 

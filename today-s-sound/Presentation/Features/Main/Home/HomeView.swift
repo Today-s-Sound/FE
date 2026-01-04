@@ -61,7 +61,6 @@ struct HomeView: View {
             .foregroundColor(Color.text(appTheme.theme))
             .accessibilityHidden(true)
 
-
           Group {
             if viewModel.isLoading {
               Text("불러오는 중...")
