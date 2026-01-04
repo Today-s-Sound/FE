@@ -147,9 +147,51 @@ final class SessionStore: ObservableObject {
 
   /// 로그아웃 (키체인 초기화)
   func logout() {
-    Keychain.delete(for: KeychainKey.userId)
-    Keychain.delete(for: KeychainKey.deviceSecret)
-    Keychain.delete(for: KeychainKey.fcmToken)
+    #if DEBUG
+      print("━━━━━━━━━━━━━━━━━━━━━━━━━━")
+      print("🚪 [logout] 키체인 삭제 시작")
+      print("━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    #endif
+    
+    // 삭제 전 상태 확인
+    #if DEBUG
+      let userIdBefore = Keychain.getString(for: KeychainKey.userId)
+      let deviceSecretBefore = Keychain.getString(for: KeychainKey.deviceSecret)
+      let fcmTokenBefore = Keychain.getString(for: KeychainKey.fcmToken)
+      
+      print("📋 [logout] 삭제 전 키체인 상태:")
+      print("   - userId: \(userIdBefore != nil ? "있음" : "(없음)")")
+      print("   - deviceSecret: \(deviceSecretBefore != nil ? "있음" : "(없음)")")
+      print("   - fcmToken: \(fcmTokenBefore != nil ? "있음" : "(없음)")")
+      
+    #endif
+    
+    // 삭제 실행
+    let userIdDeleted = Keychain.delete(for: KeychainKey.userId)
+    let deviceSecretDeleted = Keychain.delete(for: KeychainKey.deviceSecret)
+    let fcmTokenDeleted = Keychain.delete(for: KeychainKey.fcmToken)
+    
+    #if DEBUG
+      print("📋 [logout] 삭제 결과:")
+      print("   - userId 삭제: \(userIdDeleted ? "✅ 성공" : "❌ 실패")")
+      print("   - deviceSecret 삭제: \(deviceSecretDeleted ? "✅ 성공" : "❌ 실패")")
+      print("   - fcmToken 삭제: \(fcmTokenDeleted)")
+      
+      // 삭제 후 상태 확인
+      let userIdAfter = Keychain.getString(for: KeychainKey.userId)
+      let deviceSecretAfter = Keychain.getString(for: KeychainKey.deviceSecret)
+      let fcmTokenAfter = Keychain.getString(for: KeychainKey.fcmToken)
+      
+      print("📋 [logout] 삭제 후 키체인 상태:")
+      print("   - userId: \(userIdAfter != nil ? "⚠️ 여전히 존재!" : "✅ 삭제됨")")
+      print("   - deviceSecret: \(deviceSecretAfter != nil ? "⚠️ 여전히 존재!" : "✅ 삭제됨")")
+      print("   - fcmToken: \(fcmTokenAfter != nil ? "⚠️ 여전히 존재!" : "✅ 삭제됨")")
+      
+      if fcmTokenAfter != nil {
+        print("   ⚠️⚠️⚠️ fcmToken 삭제 실패! 값: \(fcmTokenAfter!.prefix(50))...")
+      }
+      print("━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
+    #endif
 
     userId = nil
     isRegistered = false

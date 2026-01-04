@@ -70,7 +70,7 @@ struct HomeView: View {
               .accessibilityElement()
               .accessibilityLabel("피드를 불러오는 중입니다")
           } else if viewModel.currentCategoryName.isEmpty {
-            Text("등록된 페이지 없음")
+            Text("새로운 글 없음")
               .font(.KoddiExtraBold32)
               .foregroundColor(.white)
               .padding(.horizontal, 32)

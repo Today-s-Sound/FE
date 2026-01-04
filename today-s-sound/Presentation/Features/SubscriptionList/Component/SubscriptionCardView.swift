@@ -61,13 +61,13 @@ struct SubscriptionCardView: View {
 
       Spacer()
 
-      // 긴급 알림 아이콘
+      // 알림 설정 아이콘
       Button(action: {
         onToggleAlarm?(subscription)
       }, label: {
-        Image(subscription.isUrgent ? "Bell" : "Bell off")
+        Image(subscription.isAlarmEnabled ? "Bell" : "Bell off")
           .frame(width: 40, height: 40)
-          .accessibilityLabel(subscription.isUrgent ? "페이지 알림 설정됨" : "페이지 알림 해제됨")
+          .accessibilityLabel(subscription.isAlarmEnabled ? "페이지 알림 설정됨" : "페이지 알림 해제됨")
       })
       .accessibilityHint("탭하여 이 페이지의 구독 알림 설정을 변경합니다")
     }
@@ -89,6 +89,7 @@ struct SubscriptionCardView_Previews: PreviewProvider {
     url: "https://newsroom.apple.com",
     alias: "애플 뉴스룸",
     isUrgent: false,
+    isAlarmEnabled: true,
     keywords: [
       KeywordItem(id: 1, name: "아이폰"),
       KeywordItem(id: 2, name: "접근성"),

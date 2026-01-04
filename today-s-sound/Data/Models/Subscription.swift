@@ -53,6 +53,7 @@ struct SubscriptionItem: Codable, Identifiable {
   let url: String
   let alias: String
   let isUrgent: Bool
+  let isAlarmEnabled: Bool
   let keywords: [KeywordItem]
 
   enum CodingKeys: String, CodingKey {
@@ -60,6 +61,7 @@ struct SubscriptionItem: Codable, Identifiable {
     case url
     case alias
     case isUrgent
+    case isAlarmEnabled
     case keywords
   }
 }
