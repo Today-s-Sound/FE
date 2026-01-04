@@ -73,7 +73,7 @@ struct SubscriptionListView: View {
                 subscription: subscription,
                 theme: appTheme.theme,
                 onToggleAlarm: { sub in
-                  if sub.isUrgent {
+                  if sub.isAlarmEnabled {
                     viewModel.blockAlarm(sub)
                   } else {
                     viewModel.unblockAlarm(sub)

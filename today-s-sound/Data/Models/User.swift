@@ -22,6 +22,12 @@ struct AnonymousUserResult: Codable {
 /// 익명 사용자 등록 응답
 typealias RegisterAnonymousResponse = APIResponse<AnonymousUserResult>
 
+// MARK: - FCM 토큰 업데이트
+
+struct UpdateFCMTokenRequest: Codable {
+  let fcmToken: String
+}
+
 // MARK: - 에러 응답
 
 struct APIErrorResponse: Codable, Error {

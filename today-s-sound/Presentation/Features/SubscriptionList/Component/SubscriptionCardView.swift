@@ -85,7 +85,7 @@ struct SubscriptionCardView: View {
       Button {
         onToggleAlarm?(subscription)
       } label: {
-        Image(subscription.isUrgent ? "Bell" : "Bell off")
+        Image(subscription.isAlarmEnabled ? "Bell" : "Bell off")
           .resizable()
           .scaledToFit()
           .frame(width: 44, height: 44)
@@ -93,8 +93,8 @@ struct SubscriptionCardView: View {
           .contentShape(Rectangle())
       }
       .buttonStyle(.plain)
-      .accessibilityLabel("긴급 알림")
-      .accessibilityValue(subscription.isUrgent ? "켜짐" : "꺼짐")
+      .accessibilityLabel("알림")
+      .accessibilityValue(subscription.isAlarmEnabled ? "켜짐" : "꺼짐")
     }
     .padding(16)
     .background(
@@ -114,6 +114,7 @@ struct SubscriptionCardView_Previews: PreviewProvider {
     url: "https://newsroom.apple.com",
     alias: "애플 뉴스룸",
     isUrgent: false,
+    isAlarmEnabled: true,
     keywords: [
       KeywordItem(id: 1, name: "아이폰"),
       KeywordItem(id: 2, name: "접근성"),

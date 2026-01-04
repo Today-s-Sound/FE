@@ -97,6 +97,12 @@ class SubscriptionListViewModel: ObservableObject {
 
         let newItems = response.subscriptions
 
+        // 🔍 서버 응답 상세 로깅
+        print("📥 서버 응답 상세:")
+        for item in newItems {
+          print("   - id: \(item.id), alias: \(item.alias), isUrgent: \(item.isUrgent), isAlarmEnabled: \(item.isAlarmEnabled)")
+        }
+
         // 기존 목록에 추가 (서버에서 이미 정렬됨!)
         subscriptions.append(contentsOf: newItems)
 
@@ -215,12 +221,13 @@ class SubscriptionListViewModel: ObservableObject {
           // 차단 성공 시 로컬 상태 업데이트 (종 모양 변경)
           if let index = subscriptions.firstIndex(where: { $0.id == subscription.id }) {
             let updated = subscriptions[index]
-            // isUrgent를 false로 변경 (구조체이므로 새로 생성)
+            // isAlarmEnabled를 false로 변경 (구조체이므로 새로 생성)
             subscriptions[index] = SubscriptionItem(
               id: updated.id,
               url: updated.url,
               alias: updated.alias,
-              isUrgent: false,
+              isUrgent: updated.isUrgent,
+              isAlarmEnabled: false,
               keywords: updated.keywords
             )
           }
@@ -280,12 +287,13 @@ class SubscriptionListViewModel: ObservableObject {
           // 차단 해제 성공 시 로컬 상태 업데이트 (종 모양 변경)
           if let index = subscriptions.firstIndex(where: { $0.id == subscription.id }) {
             let updated = subscriptions[index]
-            // isUrgent를 true로 변경
+            // isAlarmEnabled를 true로 변경
             subscriptions[index] = SubscriptionItem(
               id: updated.id,
               url: updated.url,
               alias: updated.alias,
-              isUrgent: true,
+              isUrgent: updated.isUrgent,
+              isAlarmEnabled: true,
               keywords: updated.keywords
             )
           }
@@ -329,6 +337,7 @@ class SubscriptionListViewModel: ObservableObject {
           url: "https://newsroom.apple.com",
           alias: "애플 뉴스룸",
           isUrgent: false,
+          isAlarmEnabled: true,
           keywords: [
             KeywordItem(id: 1, name: "아이폰"),
             KeywordItem(id: 2, name: "애플워치")
@@ -339,6 +348,7 @@ class SubscriptionListViewModel: ObservableObject {
           url: "https://blog.naver.com/accessibility",
           alias: "접근성 블로그",
           isUrgent: true,
+          isAlarmEnabled: false,
           keywords: [
             KeywordItem(id: 3, name: "시각"),
             KeywordItem(id: 4, name: "보이스오버"),

@@ -7,6 +7,7 @@ protocol APIServiceType {
   func request<T: Decodable>(_ target: some TargetType) -> AnyPublisher<T, NetworkError>
   func registerAnonymous(request: RegisterAnonymousRequest) -> AnyPublisher<RegisterAnonymousResponse, NetworkError>
   func withdrawUser(userId: String, deviceSecret: String) -> AnyPublisher<Void, NetworkError>
+  func updateFCMToken(userId: String, deviceSecret: String, fcmToken: String) -> AnyPublisher<Void, NetworkError>
   func getSubscriptions(
     userId: String, deviceSecret: String, page: Int, size: Int
   ) -> AnyPublisher<SubscriptionListResponse, NetworkError>
@@ -172,6 +173,34 @@ class APIService: APIServiceType {
 
         #if DEBUG
           print("✅ 사용자 탈퇴 성공")
+        #endif
+
+        return ()
+      }
+      .mapError { error -> NetworkError in
+        if let networkError = error as? NetworkError {
+          return networkError
+        } else {
+          return .requestFailed(error)
+        }
+      }
+      .eraseToAnyPublisher()
+  }
+
+  func updateFCMToken(userId: String, deviceSecret: String, fcmToken: String) -> AnyPublisher<Void, NetworkError> {
+    let request = UpdateFCMTokenRequest(fcmToken: fcmToken)
+    return userProvider.requestPublisher(.updateFCMToken(userId: userId, deviceSecret: deviceSecret, request: request))
+      .mapError { moyaError -> NetworkError in
+        .requestFailed(moyaError)
+      }
+      .tryMap { response in
+        // 상태 코드만 확인 (200-299면 성공)
+        guard (200 ... 299).contains(response.statusCode) else {
+          throw NetworkError.serverError(statusCode: response.statusCode)
+        }
+
+        #if DEBUG
+          print("✅ FCM 토큰 업데이트 성공")
         #endif
 
         return ()
