@@ -47,7 +47,7 @@ final class AddSubscriptionViewModel: ObservableObject {
       urlId: selectedURL.id,
       keywordIds: selectedKeywordIds,
       alias: nameText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        ? nil
+        ? selectedURL.title
         : nameText.trimmingCharacters(in: .whitespacesAndNewlines),
       isUrgent: isUrgent
     )
@@ -128,11 +128,6 @@ final class AddSubscriptionViewModel: ObservableObject {
   func selectURL(_ url: URLItem) {
     selectedURL = url
     urlText = url.link
-  }
-
-  func clearURL() {
-    selectedURL = nil
-    urlText = ""
   }
 
   // MARK: - 키워드 선택 로직

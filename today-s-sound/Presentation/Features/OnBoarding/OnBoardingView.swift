@@ -43,25 +43,22 @@ struct OnBoardingView: View {
 
         // 시작하기 버튼
         if !isLoading {
-          Button(action: {
+          MainButton(
+            title: "시작하기",
+            theme: appTheme.theme,
+            isEnabled: true
+          ) {
             Task {
               isLoading = true
               defer { isLoading = false }
               await session.registerIfNeeded()
             }
-          }) {
-            Text("시작하기")
-              .font(.KoddiExtraBold32)
-              .foregroundColor(.white)
-              .frame(maxWidth: .infinity)
-              .padding(.vertical, 16)
-              .background(Color.primaryGreen)
-              .cornerRadius(8)
           }
-          .padding(.horizontal, 32)
-          .padding(.bottom, 40)
-          .accessibilityLabel("시작하기 버튼")
-          .accessibilityHint("탭하면 앱을 시작합니다")
+          .accessibilityLabel("시작하기")
+          .accessibilityHint("앱을 시작합니다")
+          .padding(.horizontal, 16)
+          .padding(.vertical, 16)
+          .padding(.bottom, 20)
         }
 
         // 에러 메시지
@@ -79,21 +76,3 @@ struct OnBoardingView: View {
     .background(Color.background(appTheme.theme))
   }
 }
-
-// struct OnBoardingView_Previews: PreviewProvider {
-//  static var previews: some View {
-//    Group {
-//      OnBoardingView()
-//        .environmentObject(SessionStore.preview)
-//        .environmentObject(AppThemeManager())
-//
-//      OnBoardingView()
-//        .environmentObject(SessionStore.preview)
-//        .environmentObject({
-//          let manager = AppThemeManager()
-//          manager.theme = .highContrast
-//          return manager
-//        }())
-//    }
-//  }
-// }

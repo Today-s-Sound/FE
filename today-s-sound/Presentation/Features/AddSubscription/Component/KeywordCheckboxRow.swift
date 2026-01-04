@@ -42,31 +42,7 @@ struct KeywordCheckboxRow: View {
       .padding(.horizontal, 20)
     }
     .buttonStyle(PlainButtonStyle())
-    .accessibilityLabel("키워드 \(keyword)")
     .accessibilityValue(isSelected ? "선택됨" : "선택 안 됨")
     .accessibilityHint("탭하여 이 키워드를 선택하거나 해제합니다")
-  }
-}
-
-struct KeywordCheckboxRow_Previews: PreviewProvider {
-  static var previews: some View {
-    VStack(spacing: 12) {
-      KeywordCheckboxRow(
-        keyword: "시각장애",
-        isSelected: true,
-        theme: .normal,
-        action: {}
-      )
-
-      KeywordCheckboxRow(
-        keyword: "접근성",
-        isSelected: false,
-        theme: .highContrast,
-        action: {}
-      )
-    }
-    .previewLayout(.sizeThatFits)
-    .padding()
-    .background(Color(UIColor.systemBackground))
   }
 }

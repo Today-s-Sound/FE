@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct NotificationListView: View {
   @StateObject private var viewModel: NotificationListViewModel
@@ -31,7 +32,6 @@ struct NotificationListView: View {
 
   @ViewBuilder
   private var content: some View {
-    // 로딩
     if viewModel.isLoading, viewModel.alarms.isEmpty {
       Spacer()
       ProgressView("불러오는 중...")
@@ -39,16 +39,15 @@ struct NotificationListView: View {
         .accessibilityLabel("알림 목록을 불러오는 중입니다")
         .accessibilityHint("잠시만 기다려주세요")
       Spacer()
-    }
-    // 에러
-    else if let errorMessage = viewModel.errorMessage, viewModel.alarms.isEmpty {
+    } else if let errorMessage = viewModel.errorMessage, viewModel.alarms.isEmpty {
       Spacer()
       VStack(spacing: 16) {
         Text(errorMessage)
           .font(.KoddiBold20)
           .foregroundColor(Color.secondaryText(appTheme.theme))
+          .multilineTextAlignment(.center)
+          .padding(.horizontal, 24)
           .accessibilityLabel("오류: \(errorMessage)")
-          .padding(.bottom)
 
         Button("다시 시도") {
           viewModel.refresh()
@@ -59,13 +58,11 @@ struct NotificationListView: View {
         .foregroundColor(Color.white)
         .background(Color.primaryGreen)
         .cornerRadius(8)
-        .accessibilityLabel("다시 시도 버튼")
-        .accessibilityHint("탭하여 구독 목록을 다시 불러옵니다")
+        .accessibilityLabel("다시 시도")
+        .accessibilityHint("탭하여 알림 목록을 다시 불러옵니다")
       }
       Spacer()
-    }
-    // 알림 없음
-    else if viewModel.alarms.isEmpty {
+    } else if viewModel.alarms.isEmpty {
       Spacer()
       VStack(spacing: 0) {
         Text("새로운 알림이 없습니다")
@@ -75,38 +72,20 @@ struct NotificationListView: View {
       }
       .padding(.top, 28)
       Spacer()
-    }
-    // 알림 목록
-    else {
+    } else {
       List {
         ForEach(viewModel.alarms) { alarm in
-          AlertCardView(
-            alarm: alarm,
-            theme: appTheme.theme,
-            isRead: viewModel.isRead(alarm),
-            onMarkAsRead: { viewModel.markAsRead($0) }
-          )
-          .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 12, trailing: 20))
-          .listRowSeparator(.hidden)
-          .listRowBackground(Color.clear)
-          .onAppear {
-            viewModel.loadMoreIfNeeded(currentItem: alarm)
-          }
-          .swipeActions {
-            Button(role: .destructive) {
-              viewModel.delete(alarm: alarm)
-            } label: {
-              Label("삭제", systemImage: "trash")
+          row(for: alarm)
+            .onAppear {
+              viewModel.loadMoreIfNeeded(currentItem: alarm)
             }
-            .accessibilityLabel("알림 삭제")
-            .accessibilityHint("이 알림을 목록에서 삭제합니다")
-          }
         }
 
         if viewModel.isLoadingMore {
           HStack {
             Spacer()
             ProgressView()
+              .accessibilityLabel("추가 알림을 불러오는 중입니다")
             Spacer()
           }
           .listRowSeparator(.hidden)
@@ -120,27 +99,53 @@ struct NotificationListView: View {
       }
     }
   }
+
+  @ViewBuilder
+  private func row(for alarm: AlarmItem) -> some View {
+    // 공통 카드 스타일
+    let card = AlertCardView(
+      alarm: alarm,
+      theme: appTheme.theme,
+      onDelete: { viewModel.delete(alarm: $0) } // ✅ VoiceOver 사용자 삭제 버튼 로직
+    )
+    .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 12, trailing: 20))
+    .listRowSeparator(.hidden)
+    .listRowBackground(Color.clear)
+
+    // ✅ VoiceOver가 켜져 있으면 swipeActions 제거 (불필요한 "추가 동작..." 안내 방지)
+    if UIAccessibility.isVoiceOverRunning {
+      card
+    } else {
+      card
+        .swipeActions {
+          Button(role: .destructive) {
+            viewModel.delete(alarm: alarm)
+          } label: {
+            Label("삭제", systemImage: "trash")
+          }
+          .tint(.red) // ✅ 스와이프 삭제 배경 빨간색 통일
+          .accessibilityLabel("삭제")
+          .accessibilityHint("이 알림을 목록에서 삭제합니다")
+        }
+    }
+  }
 }
 
 #if DEBUG
   struct NotificationListView_Previews: PreviewProvider {
     static var previews: some View {
       Group {
-        // 데이터 있는 상태 - 라이트 모드
         NotificationListView(viewModel: .previewData)
-          .environmentObject(AppThemeManager()).previewDisplayName("알림 목록 - Light")
+          .environmentObject(AppThemeManager())
+          .previewDisplayName("알림 목록 - Normal")
 
-        // 데이터 있는 상태 - 다크 모드
-        NotificationListView(viewModel: .previewData)
-          .environmentObject(AppThemeManager()).previewDisplayName("알림 목록 - Dark")
-
-        // 빈 상태
         NotificationListView(viewModel: .previewEmpty)
-          .environmentObject(AppThemeManager()).previewDisplayName("알림 없음")
+          .environmentObject(AppThemeManager())
+          .previewDisplayName("알림 없음")
 
-        // 에러 상태
         NotificationListView(viewModel: .previewError)
-          .environmentObject(AppThemeManager()).previewDisplayName("에러 상태")
+          .environmentObject(AppThemeManager())
+          .previewDisplayName("에러 상태")
       }
     }
   }
@@ -153,7 +158,7 @@ struct NotificationListView: View {
           summaryId: 101,
           alias: "동국대 SW 융합교육원",
           summaryContent: "동국대학교 SW 융합교육원에서 신입생 및 재학생을 위한 SW 교육 프로그램 공지가 등록되었습니다. 신청 마감 기한을 꼭 확인해주세요.",
-          postUrl: "exurl",
+          postUrl: "https://example.com/post/101",
           timeAgo: "5분 전",
           isUrgent: true
         ),
@@ -162,7 +167,7 @@ struct NotificationListView: View {
           summaryId: 102,
           alias: "오늘의 소리 팀 공지",
           summaryContent: "오늘의 소리 앱이 업데이트되었습니다. 보이스오버 지원이 개선되고, 일부 버그가 수정되었습니다.",
-          postUrl: "exurl",
+          postUrl: "https://example.com/post/102",
           timeAgo: "12분 전",
           isUrgent: false
         ),
@@ -170,8 +175,8 @@ struct NotificationListView: View {
           subscriptionId: 3,
           summaryId: 103,
           alias: "장학 공지",
-          summaryContent: "2025학년도 1학기 장학금 신청 안내입니다. 신N청 자격과 필요 서류를 꼭 확인한 뒤 기한 내 제출해주세요.",
-          postUrl: "exurl",
+          summaryContent: "2025학년도 1학기 장학금 신청 안내입니다. 신청 자격과 필요 서류를 꼭 확인한 뒤 기한 내 제출해주세요.",
+          postUrl: "https://example.com/post/103",
           timeAgo: "30분 전",
           isUrgent: true
         ),
@@ -180,20 +185,11 @@ struct NotificationListView: View {
           summaryId: 104,
           alias: "동국대 일정 안내",
           summaryContent: "이번 주 캠퍼스 주요 일정과 행사를 정리하여 안내드립니다. 관심 있는 프로그램에 미리 신청해보세요.",
-          postUrl: "url",
+          postUrl: "https://example.com/post/104",
           timeAgo: "1시간 전",
           isUrgent: false
         )
       ]
-    }
-
-    static var previewLoading: NotificationListViewModel {
-      let vm = NotificationListViewModel(apiService: APIService())
-      vm.isLoading = true
-      vm.alarms = []
-      vm.errorMessage = nil
-      vm.disableAutoLoad = true
-      return vm
     }
 
     static var previewError: NotificationListViewModel {

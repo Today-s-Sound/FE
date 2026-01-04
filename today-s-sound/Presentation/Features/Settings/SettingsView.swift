@@ -15,7 +15,6 @@ struct SettingsView: View {
           ScreenMainTitle(text: "관리", theme: appTheme.theme)
             .padding(.bottom, 16)
             .accessibilityAddTraits(.isHeader)
-            .accessibilityLabel("관리 화면")
 
           VStack(spacing: 0) {
             NavigationLink(
@@ -27,7 +26,7 @@ struct SettingsView: View {
             }
             .buttonStyle(PlainButtonStyle())
             .accessibilityLabel("구독 페이지 관리 및 추가")
-            .accessibilityHint("탭하면 구독 페이지 관리 및 추가 화면으로 이동합니다")
+            .accessibilityHint("구독할 웹사이트와 알림을 설정합니다")
 
             Divider()
               .background(Color.border(appTheme.theme))
@@ -43,7 +42,7 @@ struct SettingsView: View {
             }
             .buttonStyle(PlainButtonStyle())
             .accessibilityLabel("재생 설정")
-            .accessibilityHint("탭하면 재생 설정 화면으로 이동합니다")
+            .accessibilityHint("홈 화면에서 재생되는 오늘의 소리 속도를 조절합니다")
 
             Divider()
               .background(Color.border(appTheme.theme))
@@ -59,7 +58,7 @@ struct SettingsView: View {
             }
             .buttonStyle(PlainButtonStyle())
             .accessibilityLabel("개발자에게 문의")
-            .accessibilityHint("탭하면 개발자 문의 화면으로 이동합니다")
+            .accessibilityHint("등록하고 싶은 웹사이트나 기타 건의사항을 요청합니다")
 
             Divider()
               .background(Color.border(appTheme.theme))
@@ -83,7 +82,6 @@ struct SettingsView: View {
             .accessibilityElement(children: .combine)
             .accessibilityLabel("고대비 모드 설정")
             .accessibilityValue(appTheme.isHighContrast ? "켜짐" : "꺼짐")
-            .accessibilityHint("탭하여 고대비 모드 설정을 변경합니다")
           }
           .background(Color.background(appTheme.theme))
           .cornerRadius(12)
@@ -103,10 +101,11 @@ struct SettingsView: View {
               .background(Color.urgentPink)
               .cornerRadius(8)
           }
-          .padding(.horizontal, 8)
+          .padding(.horizontal, 16)
+          .padding(.vertical, 16)
           .padding(.bottom, 40)
           .accessibilityLabel("앱 초기화")
-          .accessibilityHint("탭하면 앱 초기화 확인 창이 열립니다")
+          .accessibilityHint("앱의 모든 데이터를 삭제하고 앱을 종료합니다")
 
           Spacer()
         }
@@ -156,7 +155,6 @@ private struct BackHeaderContainer<Content: View>: View {
       }
     }
     .navigationBarHidden(true)
-    .accessibilityHint("이전 화면으로 돌아가려면 왼쪽 상단의 뒤로가기 버튼을 탭하세요. 보이스오버 사용 중에는 두 손가락으로 Z 모양으로 쓸면 뒤로 갈 수 있습니다.")
   }
 
   private var header: some View {
@@ -182,7 +180,7 @@ private struct BackHeaderContainer<Content: View>: View {
             .frame(width: 44, height: 44)
         }
         .accessibilityLabel("뒤로가기")
-        .accessibilityHint("탭하면 이전 화면으로 돌아갑니다")
+        .accessibilityHint("탭하면 관리 화면으로 돌아갑니다")
 
         Spacer()
       }
@@ -210,11 +208,3 @@ struct SettingsRow: View {
     .contentShape(Rectangle())
   }
 }
-
-// struct SettingsView_Previews: PreviewProvider {
-//  static var previews: some View {
-//    SettingsView()
-//      .environmentObject(SessionStore.preview)
-//      .environmentObject(AppThemeManager())
-//  }
-// }
