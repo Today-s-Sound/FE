@@ -22,16 +22,5 @@ struct StatusBadge: View {
         RoundedRectangle(cornerRadius: 20)
           .fill(Color.badgeGreenBackground)
       )
-      .accessibilityLabel("키워드: \(text)")
-  }
-}
-
-struct StatusBadge_Previews: PreviewProvider {
-  static var previews: some View {
-    VStack(spacing: 16) {
-      StatusBadge(text: "등록중", theme: .normal)
-      StatusBadge(text: "일이삼사", theme: .highContrast)
-    }
-    .padding()
   }
 }

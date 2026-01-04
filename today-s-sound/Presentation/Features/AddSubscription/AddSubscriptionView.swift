@@ -238,7 +238,7 @@ struct AddSubscriptionView: View {
   // MARK: - 제출 버튼 섹션
 
   private var submitButtonSection: some View {
-    AddSubscriptionButton(
+    MainButton(
       title: viewModel.isLoading ? "등록 중..." : "구독 목록에 추가",
       theme: appTheme.theme,
       isEnabled: viewModel.isSubmitEnabled && !viewModel.isLoading
@@ -262,11 +262,3 @@ struct AddSubscriptionView: View {
   }
 }
 
-// MARK: - Preview
-
-struct AddSubscriptionView_Previews: PreviewProvider {
-  static var previews: some View {
-    AddSubscriptionView()
-      .environmentObject(AppThemeManager())
-  }
-}

@@ -47,7 +47,7 @@ final class AddSubscriptionViewModel: ObservableObject {
       urlId: selectedURL.id,
       keywordIds: selectedKeywordIds,
       alias: nameText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-        ? nil
+        ? selectedURL.title
         : nameText.trimmingCharacters(in: .whitespacesAndNewlines),
       isUrgent: isUrgent
     )

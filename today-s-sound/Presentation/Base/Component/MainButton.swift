@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AddSubscriptionButton: View {
+struct MainButton: View {
   /// 버튼에 표시할 텍스트 (예: "등록 승인 요청", "저장하기")
   let title: String
 

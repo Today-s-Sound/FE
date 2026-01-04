@@ -101,7 +101,7 @@ struct KeywordSelectorSheet: View {
           .frame(maxWidth: .infinity, maxHeight: .infinity)
 
           // 하단 고정 "저장하기" 버튼
-          AddSubscriptionButton(
+          MainButton(
             title: "저장하기",
             theme: theme,
             isEnabled: true
