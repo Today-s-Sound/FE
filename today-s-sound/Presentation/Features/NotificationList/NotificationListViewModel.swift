@@ -13,7 +13,6 @@ class NotificationListViewModel: ObservableObject {
   @Published var isLoading: Bool = false
   @Published var isLoadingMore: Bool = false
   @Published var errorMessage: String?
-  @Published var readSummaryIds: Set<Int64> = [] // 읽은 알림 ID (로컬 관리)
   var disableAutoLoad: Bool = false
 
   private let apiService: APIService
@@ -26,11 +25,6 @@ class NotificationListViewModel: ObservableObject {
 
   init(apiService: APIService = APIService()) {
     self.apiService = apiService
-  }
-
-  /// 알림이 읽음 상태인지 확인 (서버 값 + 로컬에서 추가로 읽음 표시한 값)
-  func isRead(_ alarm: AlarmItem) -> Bool {
-    alarm.isRead || readSummaryIds.contains(alarm.summaryId)
   }
 
   /// 알림 목록 불러오기
@@ -63,7 +57,6 @@ class NotificationListViewModel: ObservableObject {
       page: currentPage,
       size: pageSize
     )
-    // getAlarms의 리턴 타입은 AnyPublisher<[AlarmItem], APIError> 라고 가정
     .receive(on: DispatchQueue.main)
     .sink(
       receiveCompletion: { [weak self] completion in
@@ -110,42 +103,9 @@ class NotificationListViewModel: ObservableObject {
     .store(in: &cancellables)
   }
 
-  /// 알림 읽음 표시 (사용자가 직접 체크)
-  func markAsRead(_ alarm: AlarmItem) {
-    // 이미 읽음 상태면 무시 (서버 값 또는 로컬 값)
-    guard !isRead(alarm) else { return }
-
-    // 로컬에서 읽음 상태 업데이트
-    readSummaryIds.insert(alarm.summaryId)
-
-    // 서버에 읽음 처리 요청
-    guard let userId = Keychain.getString(for: KeychainKey.userId),
-          let deviceSecret = Keychain.getString(for: KeychainKey.deviceSecret)
-    else { return }
-
-    apiService.markAlarmsAsRead(
-      userId: userId,
-      deviceSecret: deviceSecret,
-      summaryIds: [alarm.summaryId]
-    )
-    .receive(on: DispatchQueue.main)
-    .sink(
-      receiveCompletion: { completion in
-        if case let .failure(error) = completion {
-          print("⚠️ 알림 읽음 처리 실패: \(error)")
-        }
-      },
-      receiveValue: { _ in
-        print("✅ 알림 읽음 처리 완료: summaryId=\(alarm.summaryId)")
-      }
-    )
-    .store(in: &cancellables)
-  }
-
   /// 새로고침 (처음부터 다시 로드)
   func refresh() {
     alarms = []
-    readSummaryIds = [] // 읽음 상태도 초기화
     currentPage = 0
     hasMoreData = true
     errorMessage = nil
@@ -154,14 +114,13 @@ class NotificationListViewModel: ObservableObject {
 
   /// 특정 아이템이 보일 때 호출 (무한 스크롤 트리거)
   func loadMoreIfNeeded(currentItem item: AlarmItem) {
-    // 마지막 아이템 근처에서만 더 불러오기
     guard let last = alarms.last else { return }
     if item.id == last.id {
       loadAlarms()
     }
   }
 
-  /// 스와이프 삭제 처리
+  /// 삭제 처리
   func delete(alarm: AlarmItem) {
     // 1) 로컬 리스트에서 삭제
     alarms.removeAll { $0.id == alarm.id }
