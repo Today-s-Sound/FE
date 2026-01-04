@@ -76,25 +76,25 @@ struct AlertCardView: View {
         Spacer()
 
         // ✅ 원문 보기: Link (VoiceOver가 “링크”로 읽음)
-          if let url = URL(string: alarm.postUrl) {
-            Link(destination: url) {
-              HStack(spacing: 4) {
-                Text("원문 보기")
-                  .font(.KoddiBold14)
-                Image(systemName: "arrow.up.right")
-                  .font(.system(size: 12, weight: .bold))
-              }
-              .foregroundColor(textColor)
-              .padding(.horizontal, 12)
-              .padding(.vertical, 6)
-              .background(
-                Capsule().fill(Color.white.opacity(0.2))
-              )
+        if let url = URL(string: alarm.postUrl) {
+          Link(destination: url) {
+            HStack(spacing: 4) {
+              Text("원문 보기")
+                .font(.KoddiBold14)
+              Image(systemName: "arrow.up.right")
+                .font(.system(size: 12, weight: .bold))
             }
-            .accessibilityLabel("원문 보기")
-            .accessibilityHint("탭하면 Safari에서 원문 페이지를 엽니다")
-            .accessibilityRemoveTraits(.isButton)
-            .frame(minHeight: 44)
+            .foregroundColor(textColor)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(
+              Capsule().fill(Color.white.opacity(0.2))
+            )
+          }
+          .accessibilityLabel("원문 보기")
+          .accessibilityHint("탭하면 Safari에서 원문 페이지를 엽니다")
+          .accessibilityRemoveTraits(.isButton)
+          .frame(minHeight: 44)
         }
       }
     }

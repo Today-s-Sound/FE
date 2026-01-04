@@ -28,7 +28,7 @@ struct SubscriptionCardView: View {
   private var keywordsA11yText: String {
     if subscription.keywords.isEmpty { return "설정 키워드 없음" }
 
-    let firstThree = subscription.keywords.prefix(3).map { $0.name }
+    let firstThree = subscription.keywords.prefix(3).map(\.name)
     var result = "설정 키워드: " + firstThree.joined(separator: ", ")
 
     if subscription.keywords.count > 3 {

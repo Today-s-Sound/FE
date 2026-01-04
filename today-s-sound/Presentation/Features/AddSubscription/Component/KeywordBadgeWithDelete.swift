@@ -41,4 +41,3 @@ struct KeywordBadgeWithDelete: View {
     .accessibilityHint("탭하여 이 키워드 추가를 취소합니다")
   }
 }
-

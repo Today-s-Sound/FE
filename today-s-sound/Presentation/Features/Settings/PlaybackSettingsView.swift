@@ -64,18 +64,18 @@ struct PlaybackSettingsView: View {
         Spacer()
 
         // 저장하기 버튼
-          MainButton(
-            title: "저장하기",
-            theme: appTheme.theme,
-            isEnabled: true
-          ) {
-              viewModel.saveSettings()
-              dismiss()
-          }
-          .accessibilityLabel("저장하기")
-          .accessibilityHint("재생 설정을 저장하고 관리 화면으로 돌아갑니다")
-          .padding(.horizontal, 16)
-          .padding(.vertical, 16)
+        MainButton(
+          title: "저장하기",
+          theme: appTheme.theme,
+          isEnabled: true
+        ) {
+          viewModel.saveSettings()
+          dismiss()
+        }
+        .accessibilityLabel("저장하기")
+        .accessibilityHint("재생 설정을 저장하고 관리 화면으로 돌아갑니다")
+        .padding(.horizontal, 16)
+        .padding(.vertical, 16)
       }
     }
   }

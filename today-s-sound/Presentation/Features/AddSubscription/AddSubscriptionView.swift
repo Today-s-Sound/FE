@@ -261,4 +261,3 @@ struct AddSubscriptionView: View {
     .padding(.vertical, 16)
   }
 }
-

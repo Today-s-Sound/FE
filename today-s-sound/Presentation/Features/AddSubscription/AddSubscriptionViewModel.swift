@@ -130,7 +130,6 @@ final class AddSubscriptionViewModel: ObservableObject {
     urlText = url.link
   }
 
-
   // MARK: - 키워드 선택 로직
 
   func addKeyword(_ keywordId: Int64) {

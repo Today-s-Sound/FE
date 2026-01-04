@@ -43,22 +43,22 @@ struct OnBoardingView: View {
 
         // 시작하기 버튼
         if !isLoading {
-            MainButton(
-              title: "시작하기",
-              theme: appTheme.theme,
-              isEnabled: true
-            ) {
-                Task {
-                  isLoading = true
-                  defer { isLoading = false }
-                  await session.registerIfNeeded()
-                }
+          MainButton(
+            title: "시작하기",
+            theme: appTheme.theme,
+            isEnabled: true
+          ) {
+            Task {
+              isLoading = true
+              defer { isLoading = false }
+              await session.registerIfNeeded()
             }
-            .accessibilityLabel("시작하기")
-            .accessibilityHint("앱을 시작합니다")
-            .padding(.horizontal, 16)
-            .padding(.vertical, 16)
-            .padding(.bottom, 20)
+          }
+          .accessibilityLabel("시작하기")
+          .accessibilityHint("앱을 시작합니다")
+          .padding(.horizontal, 16)
+          .padding(.vertical, 16)
+          .padding(.bottom, 20)
         }
 
         // 에러 메시지

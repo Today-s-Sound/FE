@@ -32,41 +32,40 @@ struct FormFieldSection<FieldContent: View>: View {
     self.additionalContent = additionalContent
   }
 
-    var body: some View {
+  var body: some View {
     VStack(alignment: .leading, spacing: 12) {
-        VStack(alignment: .leading, spacing: 12) {
+      VStack(alignment: .leading, spacing: 12) {
         // 소제목 + 필수(*) 표시
         HStack(spacing: 4) {
-            Text(title)
+          Text(title)
             .font(.KoddiBold20)
             .foregroundColor(Color.text(theme))
 
-            if isRequired {
+          if isRequired {
             Text("*")
-                .font(.KoddiBold20)
-                .foregroundColor(.red)
-                .accessibilityHidden(true)
-            }
+              .font(.KoddiBold20)
+              .foregroundColor(.red)
+              .accessibilityHidden(true)
+          }
         }
         // 설명
         Text(description)
-            .font(.KoddiRegular16)
-            .foregroundColor(Color.secondaryText(theme))
-            .fixedSize(horizontal: false, vertical: true)
-        }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(isRequired ? "\(title), 필수 항목, \(description)" : "\(title), \(description)")
+          .font(.KoddiRegular16)
+          .foregroundColor(Color.secondaryText(theme))
+          .fixedSize(horizontal: false, vertical: true)
+      }
+      .accessibilityElement(children: .combine)
+      .accessibilityLabel(isRequired ? "\(title), 필수 항목, \(description)" : "\(title), \(description)")
 
-        // 필드 (TextField 또는 Button)
-        fieldContent()
+      // 필드 (TextField 또는 Button)
+      fieldContent()
 
-        // 추가 컨텐츠
-        if let additionalContent {
+      // 추가 컨텐츠
+      if let additionalContent {
         additionalContent()
-        }
+      }
     }
-    }
-
+  }
 }
 
 // MARK: - TextField 전용 편의 이니셜라이저
@@ -87,9 +86,9 @@ extension FormFieldSection {
     self.isRequired = isRequired
     self.theme = theme
     self.additionalContent = additionalContent
-    
+
     // TextField 생성
-    self.fieldContent = {
+    fieldContent = {
       AnyView(
         TextField("", text: text)
           .textInputAutocapitalization(.never)
@@ -113,4 +112,3 @@ extension FormFieldSection {
     }
   }
 }
-

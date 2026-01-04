@@ -94,11 +94,11 @@ struct ContactDeveloperView: View {
 
     // VoiceOver 사용자에게 즉시 피드백 (토스트와 중복 낭독 방지: 토스트는 accessibilityHidden 처리)
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-        UIAccessibility.post(
-          notification: .announcement,
-          argument: "이메일 주소가 클립보드에 복사되었습니다."
-        )
-      }
+      UIAccessibility.post(
+        notification: .announcement,
+        argument: "이메일 주소가 클립보드에 복사되었습니다."
+      )
+    }
     // 시각 토스트 표시
     withAnimation(.easeInOut(duration: 0.15)) {
       showToast = true

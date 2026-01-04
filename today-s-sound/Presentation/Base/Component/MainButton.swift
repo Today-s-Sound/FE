@@ -1,5 +1,5 @@
 //
-//  AddSubscriptionButton.swift
+//  MainButton.swift
 //  today-s-sound
 //
 //  공통 액션 버튼 컴포넌트

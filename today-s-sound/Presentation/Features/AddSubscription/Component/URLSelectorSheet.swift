@@ -149,4 +149,3 @@ struct URLRow: View {
     .accessibilityHint("탭하여 이 URL을 선택합니다")
   }
 }
-
