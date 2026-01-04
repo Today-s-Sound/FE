@@ -1,5 +1,5 @@
 //
-//  AddSubscriptionButton.swift
+//  MainButton.swift
 //  today-s-sound
 //
 //  공통 액션 버튼 컴포넌트
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AddSubscriptionButton: View {
+struct MainButton: View {
   /// 버튼에 표시할 텍스트 (예: "등록 승인 요청", "저장하기")
   let title: String
 
@@ -44,37 +44,5 @@ struct AddSubscriptionButton: View {
     .disabled(!isEnabled)
     .accessibilityLabel(title)
     .accessibilityHint(isEnabled ? "탭하여 \(title)합니다" : "현재 사용할 수 없습니다")
-  }
-}
-
-// MARK: - Preview
-
-struct AddSubscriptionButton_Previews: PreviewProvider {
-  static var previews: some View {
-    Group {
-      // Normal Mode
-      AddSubscriptionButton(
-        title: "등록 승인 요청",
-        theme: .normal,
-        isEnabled: true,
-        action: {}
-      )
-      .previewDisplayName("Normal Mode")
-      .previewLayout(.sizeThatFits)
-      .padding()
-      .background(Color.background(.normal))
-
-      // High Contrast Mode
-      AddSubscriptionButton(
-        title: "등록 승인 요청",
-        theme: .highContrast,
-        isEnabled: true,
-        action: {}
-      )
-      .previewDisplayName("High Contrast Mode")
-      .previewLayout(.sizeThatFits)
-      .padding()
-      .background(Color.background(.highContrast))
-    }
   }
 }
