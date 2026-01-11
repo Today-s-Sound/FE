@@ -124,7 +124,7 @@ struct AddSubscriptionView: View {
           HStack {
             Text(
               viewModel.isEditMode
-                ? (viewModel.subscriptionToEdit?.url ?? "URL")
+                ? (viewModel.subscriptionToEdit?.alias ?? "URL")
                 : (viewModel.selectedURL?.title ?? "URL 선택...")
             )
             .font(.KoddiRegular16)
@@ -152,7 +152,7 @@ struct AddSubscriptionView: View {
         .accessibilityLabel("URL 선택")
         .accessibilityValue(
           viewModel.isEditMode
-            ? (viewModel.subscriptionToEdit?.url ?? "URL")
+            ? (viewModel.subscriptionToEdit?.alias ?? "URL")
             : (viewModel.selectedURL?.title ?? "선택 안 됨")
         )
         .accessibilityHint(
