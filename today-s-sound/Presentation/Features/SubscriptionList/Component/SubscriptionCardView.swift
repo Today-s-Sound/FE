@@ -11,6 +11,7 @@ struct SubscriptionCardView: View {
   let subscription: SubscriptionItem
   let theme: AppTheme
   var onToggleAlarm: ((SubscriptionItem) -> Void)?
+  var onEdit: ((SubscriptionItem) -> Void)?
 
   private var resolvedTextColor: Color {
     theme == .highContrast ? .white : Color.primaryGrey
@@ -81,20 +82,21 @@ struct SubscriptionCardView: View {
 
       Spacer()
 
-      // 알림 토글 버튼
+      // 수정 버튼 (종 버튼 스타일로 변경)
       Button {
-        onToggleAlarm?(subscription)
+        onEdit?(subscription)
       } label: {
-        Image(subscription.isAlarmEnabled ? "Bell" : "Bell off")
+        Image(systemName: "pencil")
           .resizable()
           .scaledToFit()
           .frame(width: 44, height: 44)
           .frame(width: 44, height: 44)
+          .foregroundColor(Color.text(theme))
           .contentShape(Rectangle())
       }
       .buttonStyle(.plain)
-      .accessibilityLabel("알림")
-      .accessibilityValue(subscription.isAlarmEnabled ? "켜짐" : "꺼짐")
+      .accessibilityLabel("구독 수정")
+      .accessibilityHint("탭하면 구독 정보를 수정할 수 있습니다")
     }
     .padding(16)
     .background(

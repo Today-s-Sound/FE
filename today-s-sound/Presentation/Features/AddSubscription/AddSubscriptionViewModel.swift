@@ -2,6 +2,11 @@ import Combine
 import Foundation
 
 final class AddSubscriptionViewModel: ObservableObject {
+  // 수정 모드 관련
+  let subscriptionToEdit: SubscriptionItem?
+  var isEditMode: Bool { subscriptionToEdit != nil }
+  private var subscriptionId: Int64? { subscriptionToEdit?.id }
+
   // 입력값
   @Published var urlText: String = ""
   @Published var selectedURL: URLItem? = nil
@@ -31,13 +36,24 @@ final class AddSubscriptionViewModel: ObservableObject {
   private let apiService: APIService
   private var cancellables = Set<AnyCancellable>()
 
-  init(apiService: APIService = APIService()) {
+  init(subscriptionToEdit: SubscriptionItem? = nil, apiService: APIService = APIService()) {
+    self.subscriptionToEdit = subscriptionToEdit
     self.apiService = apiService
+    
+    // 수정 모드일 때 기존 값 로드
+    if let subscription = subscriptionToEdit {
+      nameText = subscription.alias
+      isAlarmEnabled = subscription.isAlarmEnabled
+      selectedKeywordIds = subscription.keywords.map { $0.id }
+      // URL은 수정 불가이므로 표시만 하기 위해 URLItem을 찾아서 설정
+      // 실제로는 URL 선택 섹션을 비활성화할 예정
+    }
   }
 
-  /// URL이 선택되었을 때만 전송 가능
+  /// URL이 선택되었을 때만 전송 가능 (생성 모드)
+  /// 수정 모드에서는 항상 활성화
   var isSubmitEnabled: Bool {
-    selectedURL != nil
+    isEditMode ? true : selectedURL != nil
   }
 
   /// 현재 입력 상태를 기반으로 Request payload 생성
@@ -53,8 +69,17 @@ final class AddSubscriptionViewModel: ObservableObject {
     )
   }
 
-  /// 구독 생성 API 호출
+  /// 구독 생성 또는 수정 API 호출
   func createSubscription(completion: @escaping (Bool) -> Void) {
+    if isEditMode {
+      updateSubscription(completion: completion)
+    } else {
+      createSubscriptionInternal(completion: completion)
+    }
+  }
+  
+  /// 구독 생성 API 호출
+  private func createSubscriptionInternal(completion: @escaping (Bool) -> Void) {
     guard !isLoading else { return }
 
     guard let userId = Keychain.getString(for: KeychainKey.userId),
@@ -117,6 +142,83 @@ final class AddSubscriptionViewModel: ObservableObject {
       receiveValue: { [weak self] response in
         guard let self else { return }
         print("✅ 구독 생성 성공: subscriptionId=\(response.subscriptionId)")
+        completion(true)
+      }
+    )
+      .store(in: &cancellables)
+  }
+  
+  /// 구독 수정 API 호출
+  private func updateSubscription(completion: @escaping (Bool) -> Void) {
+    guard !isLoading else { return }
+    guard let subscriptionId = subscriptionId else {
+      errorMessage = "구독 정보가 없습니다"
+      completion(false)
+      return
+    }
+
+    guard let userId = Keychain.getString(for: KeychainKey.userId),
+          let deviceSecret = Keychain.getString(for: KeychainKey.deviceSecret)
+    else {
+      errorMessage = "사용자 정보가 없습니다"
+      completion(false)
+      return
+    }
+
+    isLoading = true
+    errorMessage = nil
+
+    let request = UpdateSubscriptionRequest(
+      keywordIds: selectedKeywordIds,
+      alias: nameText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        ? nil
+        : nameText.trimmingCharacters(in: .whitespacesAndNewlines),
+      isAlarmEnabled: isAlarmEnabled
+    )
+
+    print("📤 구독 수정 요청:", request)
+
+    apiService.updateSubscription(
+      userId: userId,
+      deviceSecret: deviceSecret,
+      subscriptionId: subscriptionId,
+      request: request
+    )
+    .receive(on: DispatchQueue.main)
+    .sink(
+      receiveCompletion: { [weak self] apiCompletion in
+        guard let self else { return }
+        isLoading = false
+
+        switch apiCompletion {
+        case .finished:
+          break
+
+        case let .failure(error):
+          switch error {
+          case let .serverError(statusCode):
+            errorMessage = "서버 오류 (상태: \(statusCode))"
+
+          case .decodingFailed:
+            errorMessage = "응답 처리 실패"
+
+          case let .requestFailed(requestError):
+            errorMessage = "요청 실패: \(requestError.localizedDescription)"
+
+          case .invalidURL:
+            errorMessage = "잘못된 URL"
+
+          case .unknown:
+            errorMessage = "알 수 없는 오류"
+          }
+
+          print("❌ 구독 수정 실패: \(errorMessage ?? "")")
+          completion(false)
+        }
+      },
+      receiveValue: { [weak self] _ in
+        guard let self else { return }
+        print("✅ 구독 수정 성공: subscriptionId=\(subscriptionId)")
         completion(true)
       }
     )

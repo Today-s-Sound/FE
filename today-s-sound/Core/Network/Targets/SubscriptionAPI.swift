@@ -11,6 +11,7 @@ import Moya
 enum SubscriptionAPI {
   case getSubscriptions(userId: String, deviceSecret: String, page: Int, size: Int)
   case createSubscription(userId: String, deviceSecret: String, request: CreateSubscriptionRequest)
+  case updateSubscription(userId: String, deviceSecret: String, subscriptionId: Int64, request: UpdateSubscriptionRequest)
   case deleteSubscription(userId: String, deviceSecret: String, subscriptionId: Int64)
 }
 
@@ -21,6 +22,8 @@ extension SubscriptionAPI: APITargetType {
       "/api/subscriptions"
     case .createSubscription:
       "/api/subscriptions"
+    case let .updateSubscription(_, _, subscriptionId, _):
+      "/api/subscriptions/\(subscriptionId)"
     case let .deleteSubscription(_, _, subscriptionId):
       "/api/subscriptions/\(subscriptionId)"
     }
@@ -32,6 +35,8 @@ extension SubscriptionAPI: APITargetType {
       .get
     case .createSubscription:
       .post
+    case .updateSubscription:
+      .patch
     case .deleteSubscription:
       .delete
     }
@@ -49,6 +54,8 @@ extension SubscriptionAPI: APITargetType {
       )
     case let .createSubscription(_, _, request):
       .requestJSONEncodable(request)
+    case let .updateSubscription(_, _, _, request):
+      .requestJSONEncodable(request)
     case .deleteSubscription:
       .requestPlain
     }
@@ -64,6 +71,13 @@ extension SubscriptionAPI: APITargetType {
         "X-Device-Secret": deviceSecret
       ]
     case let .createSubscription(userId, deviceSecret, _):
+      [
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "X-User-ID": userId,
+        "X-Device-Secret": deviceSecret
+      ]
+    case let .updateSubscription(userId, deviceSecret, _, _):
       [
         "Content-Type": "application/json",
         "Accept": "application/json",

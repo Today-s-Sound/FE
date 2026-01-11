@@ -14,6 +14,9 @@ protocol APIServiceType {
   func createSubscription(
     userId: String, deviceSecret: String, request: CreateSubscriptionRequest
   ) -> AnyPublisher<CreateSubscriptionResponse, NetworkError>
+  func updateSubscription(
+    userId: String, deviceSecret: String, subscriptionId: Int64, request: UpdateSubscriptionRequest
+  ) -> AnyPublisher<Void, NetworkError>
   func deleteSubscription(
     userId: String, deviceSecret: String, subscriptionId: Int64
   ) -> AnyPublisher<DeleteSubscriptionResponse, NetworkError>
@@ -251,6 +254,39 @@ class APIService: APIServiceType {
           .eraseToAnyPublisher()
       }
       return handleResponse(response, decodeTo: CreateSubscriptionResponse.self, debugLabel: "구독 생성 응답")
+    }
+    .eraseToAnyPublisher()
+  }
+
+  func updateSubscription(
+    userId: String, deviceSecret: String, subscriptionId: Int64, request: UpdateSubscriptionRequest
+  ) -> AnyPublisher<Void, NetworkError> {
+    subscriptionProvider.requestPublisher(.updateSubscription(
+      userId: userId,
+      deviceSecret: deviceSecret,
+      subscriptionId: subscriptionId,
+      request: request
+    ))
+    .mapError { moyaError -> NetworkError in
+      .requestFailed(moyaError)
+    }
+    .tryMap { response in
+      guard (200 ... 299).contains(response.statusCode) else {
+        throw NetworkError.serverError(statusCode: response.statusCode)
+      }
+
+      #if DEBUG
+        print("✅ 구독 수정 성공: subscriptionId=\(subscriptionId)")
+      #endif
+
+      return ()
+    }
+    .mapError { error -> NetworkError in
+      if let networkError = error as? NetworkError {
+        return networkError
+      } else {
+        return .requestFailed(error)
+      }
     }
     .eraseToAnyPublisher()
   }

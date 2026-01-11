@@ -5,6 +5,9 @@ struct SubscriptionListView: View {
   @EnvironmentObject var appTheme: AppThemeManager
   @Environment(\.dismiss) var dismiss
   @State private var showAddSubscription = false
+  @State private var showEditSubscription = false
+  @State private var subscriptionToEdit: SubscriptionItem?
+  @State private var shouldRefreshAfterEdit = false
 
   init(viewModel: SubscriptionListViewModel = SubscriptionListViewModel()) {
     _viewModel = StateObject(wrappedValue: viewModel)
@@ -74,6 +77,14 @@ struct SubscriptionListView: View {
                 theme: appTheme.theme,
                 onToggleAlarm: { _ in
                   // 벨 아이콘은 유지하되 클릭 시 아무 동작도 하지 않음
+                },
+                onEdit: { sub in
+                  // subscriptionToEdit를 먼저 설정한 후 sheet 표시
+                  DispatchQueue.main.async {
+                    subscriptionToEdit = sub
+                    shouldRefreshAfterEdit = false
+                    showEditSubscription = true
+                  }
                 }
               )
               .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
@@ -155,6 +166,29 @@ struct SubscriptionListView: View {
       viewModel.refresh()
     }) {
       AddSubscriptionView()
+    }
+    .sheet(isPresented: Binding(
+      get: { showEditSubscription && subscriptionToEdit != nil },
+      set: { newValue in
+        showEditSubscription = newValue
+        if !newValue {
+          // 시트가 닫힐 때
+          if shouldRefreshAfterEdit {
+            viewModel.refresh()
+            shouldRefreshAfterEdit = false
+          }
+          subscriptionToEdit = nil
+        }
+      }
+    )) {
+      if let subscription = subscriptionToEdit {
+        AddSubscriptionView(
+          subscriptionToEdit: subscription,
+          onSuccess: {
+            shouldRefreshAfterEdit = true
+          }
+        )
+      }
     }
   }
 }

@@ -17,6 +17,19 @@ struct CreateSubscriptionRequest: Codable {
   }
 }
 
+/// 구독 수정 요청
+struct UpdateSubscriptionRequest: Codable {
+  let keywordIds: [Int64]
+  let alias: String?
+  let isAlarmEnabled: Bool
+  
+  enum CodingKeys: String, CodingKey {
+    case keywordIds
+    case alias
+    case isAlarmEnabled = "isAlarmEnabled"
+  }
+}
+
 // MARK: - Subscription Response Models
 
 /// 구독 목록 응답

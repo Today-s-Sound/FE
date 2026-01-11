@@ -1,9 +1,15 @@
 import SwiftUI
 
 struct AddSubscriptionView: View {
-  @StateObject private var viewModel = AddSubscriptionViewModel()
+  @StateObject private var viewModel: AddSubscriptionViewModel
   @EnvironmentObject var appTheme: AppThemeManager
   @Environment(\.dismiss) var dismiss
+  var onSuccess: (() -> Void)?
+  
+  init(subscriptionToEdit: SubscriptionItem? = nil, onSuccess: (() -> Void)? = nil) {
+    _viewModel = StateObject(wrappedValue: AddSubscriptionViewModel(subscriptionToEdit: subscriptionToEdit))
+    self.onSuccess = onSuccess
+  }
 
   var body: some View {
     ZStack {
@@ -24,7 +30,7 @@ struct AddSubscriptionView: View {
         .accessibilityHint("탭하거나 두 손가락을 아래로 스와이프하면 창이 닫힙니다")
 
         // 화면 제목
-        ScreenSubTitle(text: "새 웹페이지 추가", theme: appTheme.theme)
+        ScreenSubTitle(text: viewModel.isEditMode ? "구독 수정" : "새 웹페이지 추가", theme: appTheme.theme)
           .padding(.bottom, 8)
           .padding(.top, 4)
 
@@ -78,6 +84,12 @@ struct AddSubscriptionView: View {
           }
         }
     }
+    .onAppear {
+      // 수정 모드일 때 키워드 목록 자동 로드
+      if viewModel.isEditMode && viewModel.availableKeywords.isEmpty {
+        viewModel.loadKeywords()
+      }
+    }
     .toolbar {
       ToolbarItemGroup(placement: .keyboard) {
         Spacer()
@@ -105,16 +117,24 @@ struct AddSubscriptionView: View {
       theme: appTheme.theme,
       fieldContent: {
         Button(action: {
-          viewModel.showURLSelector = true
+          if !viewModel.isEditMode {
+            viewModel.showURLSelector = true
+          }
         }) {
           HStack {
-            Text(viewModel.selectedURL?.title ?? "URL 선택...")
-              .font(.KoddiRegular16)
-              .foregroundColor(
-                viewModel.selectedURL == nil
+            Text(
+              viewModel.isEditMode
+                ? (viewModel.subscriptionToEdit?.url ?? "URL")
+                : (viewModel.selectedURL?.title ?? "URL 선택...")
+            )
+            .font(.KoddiRegular16)
+            .foregroundColor(
+              viewModel.isEditMode
+                ? Color.secondaryText(appTheme.theme)
+                : (viewModel.selectedURL == nil
                   ? Color.secondaryText(appTheme.theme)
-                  : Color.text(appTheme.theme)
-              )
+                  : Color.text(appTheme.theme))
+            )
             Spacer()
           }
           .padding(.horizontal, 18)
@@ -128,9 +148,18 @@ struct AddSubscriptionView: View {
               .stroke(Color.border(appTheme.theme), lineWidth: 1)
           )
         }
+        .disabled(viewModel.isEditMode)
         .accessibilityLabel("URL 선택")
-        .accessibilityValue(viewModel.selectedURL?.title ?? "선택 안 됨")
-        .accessibilityHint("탭하면 웹사이트 선택 창이 나타납니다")
+        .accessibilityValue(
+          viewModel.isEditMode
+            ? (viewModel.subscriptionToEdit?.url ?? "URL")
+            : (viewModel.selectedURL?.title ?? "선택 안 됨")
+        )
+        .accessibilityHint(
+          viewModel.isEditMode
+            ? "수정 모드에서는 URL을 변경할 수 없습니다"
+            : "탭하면 웹사이트 선택 창이 나타납니다"
+        )
       }
     )
   }
@@ -239,23 +268,32 @@ struct AddSubscriptionView: View {
 
   private var submitButtonSection: some View {
     MainButton(
-      title: viewModel.isLoading ? "등록 중..." : "구독 목록에 추가",
+      title: viewModel.isLoading
+        ? (viewModel.isEditMode ? "수정 중..." : "등록 중...")
+        : (viewModel.isEditMode ? "수정 완료" : "구독 목록에 추가"),
       theme: appTheme.theme,
       isEnabled: viewModel.isSubmitEnabled && !viewModel.isLoading
     ) {
       viewModel.createSubscription { success in
         if success {
+          onSuccess?()
           dismiss()
         }
       }
     }
-    .accessibilityLabel(viewModel.isLoading ? "등록 중" : "구독 목록에 추가")
+    .accessibilityLabel(
+      viewModel.isLoading
+        ? (viewModel.isEditMode ? "수정 중" : "등록 중")
+        : (viewModel.isEditMode ? "수정 완료" : "구독 목록에 추가")
+    )
     .accessibilityHint(
       viewModel.isLoading
-        ? "등록 중입니다"
-        : viewModel.isSubmitEnabled
-        ? "이 웹사이트를 구독 목록에 추가합니다"
-        : "웹사이트 URL을 선택해야 활성화됩니다"
+        ? (viewModel.isEditMode ? "수정 중입니다" : "등록 중입니다")
+        : viewModel.isEditMode
+        ? "구독 정보를 수정합니다"
+        : (viewModel.isSubmitEnabled
+          ? "이 웹사이트를 구독 목록에 추가합니다"
+          : "웹사이트 URL을 선택해야 활성화됩니다")
     )
     .padding(.horizontal, 16)
     .padding(.vertical, 16)
