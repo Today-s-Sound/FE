@@ -12,8 +12,6 @@ enum SubscriptionAPI {
   case getSubscriptions(userId: String, deviceSecret: String, page: Int, size: Int)
   case createSubscription(userId: String, deviceSecret: String, request: CreateSubscriptionRequest)
   case deleteSubscription(userId: String, deviceSecret: String, subscriptionId: Int64)
-  case blockAlarm(userId: String, deviceSecret: String, subscriptionId: Int64)
-  case unblockAlarm(userId: String, deviceSecret: String, subscriptionId: Int64)
 }
 
 extension SubscriptionAPI: APITargetType {
@@ -25,10 +23,6 @@ extension SubscriptionAPI: APITargetType {
       "/api/subscriptions"
     case let .deleteSubscription(_, _, subscriptionId):
       "/api/subscriptions/\(subscriptionId)"
-    case let .blockAlarm(_, _, subscriptionId):
-      "/api/subscriptions/\(subscriptionId)/alarm/block"
-    case let .unblockAlarm(_, _, subscriptionId):
-      "/api/subscriptions/\(subscriptionId)/alarm/unblock"
     }
   }
 
@@ -40,8 +34,6 @@ extension SubscriptionAPI: APITargetType {
       .post
     case .deleteSubscription:
       .delete
-    case .blockAlarm, .unblockAlarm:
-      .patch
     }
   }
 
@@ -57,7 +49,7 @@ extension SubscriptionAPI: APITargetType {
       )
     case let .createSubscription(_, _, request):
       .requestJSONEncodable(request)
-    case .deleteSubscription, .blockAlarm, .unblockAlarm:
+    case .deleteSubscription:
       .requestPlain
     }
   }
@@ -79,20 +71,6 @@ extension SubscriptionAPI: APITargetType {
         "X-Device-Secret": deviceSecret
       ]
     case let .deleteSubscription(userId, deviceSecret, _):
-      [
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "X-User-ID": userId,
-        "X-Device-Secret": deviceSecret
-      ]
-    case let .blockAlarm(userId, deviceSecret, _):
-      [
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "X-User-ID": userId,
-        "X-Device-Secret": deviceSecret
-      ]
-    case let .unblockAlarm(userId, deviceSecret, _):
       [
         "Content-Type": "application/json",
         "Accept": "application/json",

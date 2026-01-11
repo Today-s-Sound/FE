@@ -17,12 +17,6 @@ protocol APIServiceType {
   func deleteSubscription(
     userId: String, deviceSecret: String, subscriptionId: Int64
   ) -> AnyPublisher<DeleteSubscriptionResponse, NetworkError>
-  func blockAlarm(
-    userId: String, deviceSecret: String, subscriptionId: Int64
-  ) -> AnyPublisher<Void, NetworkError>
-  func unblockAlarm(
-    userId: String, deviceSecret: String, subscriptionId: Int64
-  ) -> AnyPublisher<Void, NetworkError>
   func getAlarms(
     userId: String, deviceSecret: String, page: Int, size: Int
   ) -> AnyPublisher<AlarmListResponse, NetworkError>
@@ -279,74 +273,6 @@ class APIService: APIServiceType {
           .eraseToAnyPublisher()
       }
       return handleResponse(response, decodeTo: DeleteSubscriptionResponse.self, debugLabel: "구독 삭제 응답")
-    }
-    .eraseToAnyPublisher()
-  }
-
-  // MARK: - Subscription API (Alarm Block/Unblock)
-
-  func blockAlarm(
-    userId: String, deviceSecret: String, subscriptionId: Int64
-  ) -> AnyPublisher<Void, NetworkError> {
-    subscriptionProvider.requestPublisher(.blockAlarm(
-      userId: userId,
-      deviceSecret: deviceSecret,
-      subscriptionId: subscriptionId
-    ))
-    .mapError { moyaError -> NetworkError in
-      .requestFailed(moyaError)
-    }
-    .tryMap { response in
-      // 상태 코드만 확인 (200-299면 성공)
-      guard (200 ... 299).contains(response.statusCode) else {
-        throw NetworkError.serverError(statusCode: response.statusCode)
-      }
-
-      #if DEBUG
-        print("✅ 알람 차단 성공: subscriptionId=\(subscriptionId)")
-      #endif
-
-      return ()
-    }
-    .mapError { error -> NetworkError in
-      if let networkError = error as? NetworkError {
-        return networkError
-      } else {
-        return .requestFailed(error)
-      }
-    }
-    .eraseToAnyPublisher()
-  }
-
-  func unblockAlarm(
-    userId: String, deviceSecret: String, subscriptionId: Int64
-  ) -> AnyPublisher<Void, NetworkError> {
-    subscriptionProvider.requestPublisher(.unblockAlarm(
-      userId: userId,
-      deviceSecret: deviceSecret,
-      subscriptionId: subscriptionId
-    ))
-    .mapError { moyaError -> NetworkError in
-      .requestFailed(moyaError)
-    }
-    .tryMap { response in
-      // 상태 코드만 확인 (200-299면 성공)
-      guard (200 ... 299).contains(response.statusCode) else {
-        throw NetworkError.serverError(statusCode: response.statusCode)
-      }
-
-      #if DEBUG
-        print("✅ 알람 차단 해제 성공: subscriptionId=\(subscriptionId)")
-      #endif
-
-      return ()
-    }
-    .mapError { error -> NetworkError in
-      if let networkError = error as? NetworkError {
-        return networkError
-      } else {
-        return .requestFailed(error)
-      }
     }
     .eraseToAnyPublisher()
   }

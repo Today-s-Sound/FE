@@ -72,12 +72,8 @@ struct SubscriptionListView: View {
               SubscriptionCardView(
                 subscription: subscription,
                 theme: appTheme.theme,
-                onToggleAlarm: { sub in
-                  if sub.isAlarmEnabled {
-                    viewModel.blockAlarm(sub)
-                  } else {
-                    viewModel.unblockAlarm(sub)
-                  }
+                onToggleAlarm: { _ in
+                  // 벨 아이콘은 유지하되 클릭 시 아무 동작도 하지 않음
                 }
               )
               .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
