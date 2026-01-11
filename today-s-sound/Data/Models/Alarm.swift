@@ -36,7 +36,7 @@ struct AlarmItem: Codable, Identifiable {
     case summaryContent
     case postUrl
     case timeAgo
-    case isKeywordMatched = "is_keyword_matched"
+    case isKeywordMatched
   }
 
   // Preview 등에서 쓰기 위한 커스텀 init
