@@ -8,7 +8,7 @@ struct CreateSubscriptionRequest: Codable {
   let keywordIds: [Int64]
   let alias: String?
   let isAlarmEnabled: Bool
-
+  
   enum CodingKeys: String, CodingKey {
     case urlId
     case keywordIds
@@ -22,11 +22,11 @@ struct UpdateSubscriptionRequest: Codable {
   let keywordIds: [Int64]
   let alias: String?
   let isAlarmEnabled: Bool
-
+  
   enum CodingKeys: String, CodingKey {
     case keywordIds
     case alias
-    case isAlarmEnabled
+    case isAlarmEnabled = "isAlarmEnabled"
   }
 }
 

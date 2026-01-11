@@ -39,12 +39,12 @@ final class AddSubscriptionViewModel: ObservableObject {
   init(subscriptionToEdit: SubscriptionItem? = nil, apiService: APIService = APIService()) {
     self.subscriptionToEdit = subscriptionToEdit
     self.apiService = apiService
-
+    
     // 수정 모드일 때 기존 값 로드
     if let subscription = subscriptionToEdit {
       nameText = subscription.alias
       isAlarmEnabled = subscription.isAlarmEnabled
-      selectedKeywordIds = subscription.keywords.map(\.id)
+      selectedKeywordIds = subscription.keywords.map { $0.id }
       // URL은 수정 불가이므로 표시만 하기 위해 URLItem을 찾아서 설정
       // 실제로는 URL 선택 섹션을 비활성화할 예정
     }
@@ -77,7 +77,7 @@ final class AddSubscriptionViewModel: ObservableObject {
       createSubscriptionInternal(completion: completion)
     }
   }
-
+  
   /// 구독 생성 API 호출
   private func createSubscriptionInternal(completion: @escaping (Bool) -> Void) {
     guard !isLoading else { return }
@@ -145,13 +145,13 @@ final class AddSubscriptionViewModel: ObservableObject {
         completion(true)
       }
     )
-    .store(in: &cancellables)
+      .store(in: &cancellables)
   }
-
+  
   /// 구독 수정 API 호출
   private func updateSubscription(completion: @escaping (Bool) -> Void) {
     guard !isLoading else { return }
-    guard let subscriptionId else {
+    guard let subscriptionId = subscriptionId else {
       errorMessage = "구독 정보가 없습니다"
       completion(false)
       return
