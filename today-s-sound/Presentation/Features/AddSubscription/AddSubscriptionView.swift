@@ -135,6 +135,8 @@ struct AddSubscriptionView: View {
                   ? Color.secondaryText(appTheme.theme)
                   : Color.text(appTheme.theme))
             )
+            .lineLimit(1)
+            .truncationMode(.tail)
             Spacer()
           }
           .padding(.horizontal, 18)
