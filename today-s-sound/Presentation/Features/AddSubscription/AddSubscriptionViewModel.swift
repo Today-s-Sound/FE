@@ -6,7 +6,7 @@ final class AddSubscriptionViewModel: ObservableObject {
   @Published var urlText: String = ""
   @Published var selectedURL: URLItem? = nil
   @Published var nameText: String = ""
-  @Published var isUrgent: Bool = false
+  @Published var isAlarmEnabled: Bool = true
 
   // URL 선택 관련
   @Published var showURLSelector: Bool = false
@@ -49,7 +49,7 @@ final class AddSubscriptionViewModel: ObservableObject {
       alias: nameText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         ? selectedURL.title
         : nameText.trimmingCharacters(in: .whitespacesAndNewlines),
-      isUrgent: isUrgent
+      isAlarmEnabled: isAlarmEnabled
     )
   }
 

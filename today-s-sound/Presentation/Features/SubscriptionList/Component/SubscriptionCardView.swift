@@ -113,7 +113,6 @@ struct SubscriptionCardView_Previews: PreviewProvider {
     id: 1,
     url: "https://newsroom.apple.com",
     alias: "애플 뉴스룸",
-    isUrgent: false,
     isAlarmEnabled: true,
     keywords: [
       KeywordItem(id: 1, name: "아이폰"),

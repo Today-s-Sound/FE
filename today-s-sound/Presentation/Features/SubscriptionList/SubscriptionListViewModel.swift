@@ -100,7 +100,7 @@ class SubscriptionListViewModel: ObservableObject {
         // 🔍 서버 응답 상세 로깅
         print("📥 서버 응답 상세:")
         for item in newItems {
-          print("   - id: \(item.id), alias: \(item.alias), isUrgent: \(item.isUrgent), isAlarmEnabled: \(item.isAlarmEnabled)")
+          print("   - id: \(item.id), alias: \(item.alias), isAlarmEnabled: \(item.isAlarmEnabled)")
         }
 
         // 기존 목록에 추가 (서버에서 이미 정렬됨!)
@@ -204,7 +204,6 @@ class SubscriptionListViewModel: ObservableObject {
           id: 1,
           url: "https://newsroom.apple.com",
           alias: "애플 뉴스룸",
-          isUrgent: false,
           isAlarmEnabled: true,
           keywords: [
             KeywordItem(id: 1, name: "아이폰"),
@@ -215,7 +214,6 @@ class SubscriptionListViewModel: ObservableObject {
           id: 2,
           url: "https://blog.naver.com/accessibility",
           alias: "접근성 블로그",
-          isUrgent: true,
           isAlarmEnabled: false,
           keywords: [
             KeywordItem(id: 3, name: "시각"),

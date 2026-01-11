@@ -17,7 +17,7 @@ struct AlertCardView: View {
   }
 
   private var cardColor: Color {
-    alarm.isUrgent ? .urgentPink : .primaryGreen
+    alarm.isKeywordMatched ? .urgentPink : .primaryGreen
   }
 
   private var textColor: Color { .white }
@@ -26,7 +26,7 @@ struct AlertCardView: View {
     VStack(alignment: .leading, spacing: 16) {
       // 상단: 아이콘 + 제목 + (오른쪽 상단 삭제 버튼)
       HStack(alignment: .top, spacing: 12) {
-        Image(alarm.isUrgent ? "notice" : "mail")
+        Image(alarm.isKeywordMatched ? "notice" : "mail")
           .resizable()
           .scaledToFit()
           .frame(width: 48, height: 48)
@@ -36,7 +36,7 @@ struct AlertCardView: View {
           .font(.KoddiExtraBold32)
           .foregroundColor(textColor)
           .multilineTextAlignment(.leading)
-          .accessibilityLabel(alarm.isUrgent ? "긴급 알림" + alarm.alias : alarm.alias)
+          .accessibilityLabel(alarm.isKeywordMatched ? "키워드 매칭 알림 " + alarm.alias : alarm.alias)
           .accessibilityAddTraits(.isHeader)
 
         Spacer()

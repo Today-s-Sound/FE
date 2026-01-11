@@ -20,6 +20,7 @@ protocol APIServiceType {
   func getAlarms(
     userId: String, deviceSecret: String, page: Int, size: Int
   ) -> AnyPublisher<AlarmListResponse, NetworkError>
+  func deleteSummary(userId: String, deviceSecret: String, summaryId: Int64) -> AnyPublisher<Void, NetworkError>
   func getKeywords() -> AnyPublisher<KeywordsResponse, NetworkError>
   func getURLs() -> AnyPublisher<URLsResponse, NetworkError>
   func getHomeFeed(
@@ -297,38 +298,6 @@ class APIService: APIServiceType {
           .eraseToAnyPublisher()
       }
       return handleResponse(response, decodeTo: AlarmListResponse.self, debugLabel: "알림 목록 응답")
-    }
-    .eraseToAnyPublisher()
-  }
-
-  func markAlarmsAsRead(
-    userId: String, deviceSecret: String, summaryIds: [Int64]
-  ) -> AnyPublisher<Void, NetworkError> {
-    alarmProvider.requestPublisher(.markAsRead(
-      userId: userId,
-      deviceSecret: deviceSecret,
-      summaryIds: summaryIds
-    ))
-    .mapError { moyaError -> NetworkError in
-      .requestFailed(moyaError)
-    }
-    .tryMap { response in
-      guard (200 ... 299).contains(response.statusCode) else {
-        throw NetworkError.serverError(statusCode: response.statusCode)
-      }
-
-      #if DEBUG
-        print("✅ 알림 읽음 처리 성공: \(summaryIds.count)개")
-      #endif
-
-      return ()
-    }
-    .mapError { error -> NetworkError in
-      if let networkError = error as? NetworkError {
-        return networkError
-      } else {
-        return .requestFailed(error)
-      }
     }
     .eraseToAnyPublisher()
   }

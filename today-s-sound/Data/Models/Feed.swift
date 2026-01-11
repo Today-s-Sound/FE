@@ -7,7 +7,6 @@ struct HomeFeedItemResponse: Codable, Identifiable {
   let summaryContent: String
   let postUrl: String
   let timeAgo: String
-  let isUrgent: Bool
 
   // SwiftUI ForEach에서 사용할 식별자
   var id: Int64 { subscriptionId }
@@ -18,7 +17,6 @@ struct HomeFeedItemResponse: Codable, Identifiable {
     case summaryContent
     case postUrl
     case timeAgo
-    case isUrgent
   }
 }
 
@@ -52,7 +50,6 @@ struct FeedItemResponse: Codable, Identifiable {
   let summaryContent: String
   let postUrl: String
   let timeAgo: String
-  let isUrgent: Bool
 
   // SwiftUI ForEach에서 사용할 식별자
   var id: Int64 { subscriptionId }
@@ -64,6 +61,5 @@ struct FeedItemResponse: Codable, Identifiable {
     case summaryContent
     case postUrl
     case timeAgo
-    case isUrgent
   }
 }

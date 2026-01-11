@@ -7,7 +7,14 @@ struct CreateSubscriptionRequest: Codable {
   let urlId: Int64
   let keywordIds: [Int64]
   let alias: String?
-  let isUrgent: Bool
+  let isAlarmEnabled: Bool
+  
+  enum CodingKeys: String, CodingKey {
+    case urlId
+    case keywordIds
+    case alias
+    case isAlarmEnabled = "is_alarm_enabled"
+  }
 }
 
 // MARK: - Subscription Response Models
@@ -52,7 +59,6 @@ struct SubscriptionItem: Codable, Identifiable {
   let id: Int64
   let url: String
   let alias: String
-  let isUrgent: Bool
   let isAlarmEnabled: Bool
   let keywords: [KeywordItem]
 
@@ -60,7 +66,6 @@ struct SubscriptionItem: Codable, Identifiable {
     case id
     case url
     case alias
-    case isUrgent
     case isAlarmEnabled
     case keywords
   }

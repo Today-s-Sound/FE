@@ -160,7 +160,7 @@ struct NotificationListView: View {
           summaryContent: "동국대학교 SW 융합교육원에서 신입생 및 재학생을 위한 SW 교육 프로그램 공지가 등록되었습니다. 신청 마감 기한을 꼭 확인해주세요.",
           postUrl: "https://example.com/post/101",
           timeAgo: "5분 전",
-          isUrgent: true
+          isKeywordMatched: true
         ),
         AlarmItem(
           subscriptionId: 2,
@@ -169,7 +169,7 @@ struct NotificationListView: View {
           summaryContent: "오늘의 소리 앱이 업데이트되었습니다. 보이스오버 지원이 개선되고, 일부 버그가 수정되었습니다.",
           postUrl: "https://example.com/post/102",
           timeAgo: "12분 전",
-          isUrgent: false
+          isKeywordMatched: false
         ),
         AlarmItem(
           subscriptionId: 3,
@@ -178,7 +178,7 @@ struct NotificationListView: View {
           summaryContent: "2025학년도 1학기 장학금 신청 안내입니다. 신청 자격과 필요 서류를 꼭 확인한 뒤 기한 내 제출해주세요.",
           postUrl: "https://example.com/post/103",
           timeAgo: "30분 전",
-          isUrgent: true
+          isKeywordMatched: true
         ),
         AlarmItem(
           subscriptionId: 4,
@@ -187,7 +187,7 @@ struct NotificationListView: View {
           summaryContent: "이번 주 캠퍼스 주요 일정과 행사를 정리하여 안내드립니다. 관심 있는 프로그램에 미리 신청해보세요.",
           postUrl: "https://example.com/post/104",
           timeAgo: "1시간 전",
-          isUrgent: false
+          isKeywordMatched: false
         )
       ]
     }

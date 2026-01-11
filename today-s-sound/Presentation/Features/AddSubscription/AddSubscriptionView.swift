@@ -207,13 +207,13 @@ struct AddSubscriptionView: View {
     )
   }
 
-  // MARK: - 긴급 알림 토글 섹션
+  // MARK: - 알림 설정 토글 섹션
 
   private var urgentToggleSection: some View {
     HStack(alignment: .top, spacing: 16) {
       // 타이틀과 설명을 왼쪽에 배치 (보이스오버 순서: 타이틀 → 설명)
       VStack(alignment: .leading, spacing: 12) {
-        Text("긴급 알림으로 설정")
+        Text("알림 받기")
           .font(.KoddiBold20)
           .foregroundColor(Color.text(appTheme.theme))
 
@@ -227,10 +227,10 @@ struct AddSubscriptionView: View {
       Spacer()
 
       // 토글을 오른쪽에 배치 (보이스오버에서는 마지막에 읽힘)
-      Toggle("", isOn: $viewModel.isUrgent)
+      Toggle("", isOn: $viewModel.isAlarmEnabled)
         .labelsHidden()
-        .accessibilityLabel("긴급 알림")
-        .accessibilityValue(viewModel.isUrgent ? "켜짐" : "꺼짐")
+        .accessibilityLabel("알림 받기")
+        .accessibilityValue(viewModel.isAlarmEnabled ? "켜짐" : "꺼짐")
     }
     .padding(.vertical)
   }
