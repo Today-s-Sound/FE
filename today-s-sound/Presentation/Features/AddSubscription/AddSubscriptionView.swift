@@ -5,7 +5,7 @@ struct AddSubscriptionView: View {
   @EnvironmentObject var appTheme: AppThemeManager
   @Environment(\.dismiss) var dismiss
   var onSuccess: (() -> Void)?
-  
+
   init(subscriptionToEdit: SubscriptionItem? = nil, onSuccess: (() -> Void)? = nil) {
     _viewModel = StateObject(wrappedValue: AddSubscriptionViewModel(subscriptionToEdit: subscriptionToEdit))
     self.onSuccess = onSuccess
@@ -30,7 +30,7 @@ struct AddSubscriptionView: View {
         .accessibilityHint("탭하거나 두 손가락을 아래로 스와이프하면 창이 닫힙니다")
 
         // 화면 제목
-        ScreenSubTitle(text: viewModel.isEditMode ? "구독 수정" : "새 웹페이지 추가", theme: appTheme.theme)
+        ScreenSubTitle(text: viewModel.isEditMode ? "구독 웹페이지 수정" : "새 웹페이지 추가", theme: appTheme.theme)
           .padding(.bottom, 8)
           .padding(.top, 4)
 
@@ -86,7 +86,7 @@ struct AddSubscriptionView: View {
     }
     .onAppear {
       // 수정 모드일 때 키워드 목록 자동 로드
-      if viewModel.isEditMode && viewModel.availableKeywords.isEmpty {
+      if viewModel.isEditMode, viewModel.availableKeywords.isEmpty {
         viewModel.loadKeywords()
       }
     }
@@ -242,7 +242,7 @@ struct AddSubscriptionView: View {
     HStack(alignment: .top, spacing: 16) {
       // 타이틀과 설명을 왼쪽에 배치 (보이스오버 순서: 타이틀 → 설명)
       VStack(alignment: .leading, spacing: 12) {
-        Text("알림 받기")
+        Text("새로운 글을 알림으로 받기")
           .font(.KoddiBold20)
           .foregroundColor(Color.text(appTheme.theme))
 
@@ -258,7 +258,7 @@ struct AddSubscriptionView: View {
       // 토글을 오른쪽에 배치 (보이스오버에서는 마지막에 읽힘)
       Toggle("", isOn: $viewModel.isAlarmEnabled)
         .labelsHidden()
-        .accessibilityLabel("알림 받기")
+        .accessibilityLabel("알림")
         .accessibilityValue(viewModel.isAlarmEnabled ? "켜짐" : "꺼짐")
     }
     .padding(.vertical)

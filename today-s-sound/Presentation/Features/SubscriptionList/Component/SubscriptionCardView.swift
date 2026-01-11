@@ -89,12 +89,10 @@ struct SubscriptionCardView: View {
         Image(systemName: "pencil")
           .resizable()
           .scaledToFit()
-          .frame(width: 44, height: 44)
-          .frame(width: 44, height: 44)
-          .foregroundColor(Color.text(theme))
+          .frame(width: 40, height: 40)
+          .foregroundColor(.primaryGreen)
           .contentShape(Rectangle())
       }
-      .buttonStyle(.plain)
       .accessibilityLabel("구독 수정")
       .accessibilityHint("탭하면 구독 정보를 수정할 수 있습니다")
     }
