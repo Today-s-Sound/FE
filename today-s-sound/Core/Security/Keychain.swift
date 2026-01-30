@@ -11,8 +11,12 @@ import Security
 enum KeychainKey {
   static let deviceSecret = "device_secret"
   static let userId = "user_id"
-  static let fcmToken = "fcm_token"
   static let apiKey = "api_key" // 서버가 추가 키를 준다면 여기에 저장 (옵셔널)
+
+  // NOTE: FCM 토큰은 Keychain에 저장하지 않음
+  // - Firebase SDK가 자체적으로 토큰을 관리/캐싱함
+  // - Messaging.messaging().fcmToken으로 언제든 현재 토큰 조회 가능
+  // - 토큰 갱신 시 didReceiveRegistrationToken 콜백에서 서버에 업데이트
 }
 
 enum Keychain {

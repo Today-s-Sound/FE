@@ -22,7 +22,7 @@ extension UserAPI: APITargetType {
     case .withdraw:
       "/api/users/withdraw"
     case .updateFCMToken:
-      "/api/fcm"
+      "/api/fcm/v2"
     }
   }
 

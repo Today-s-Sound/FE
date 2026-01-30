@@ -9,7 +9,31 @@ import Combine
 import FirebaseCore
 import FirebaseMessaging
 import SwiftUI
+import UIKit
 import UserNotifications
+
+// MARK: - UIDevice Extension (상세 모델 식별자)
+
+extension UIDevice {
+  /// 디바이스 모델 식별자 반환 (예: "iPhone15,2", "iPad14,1")
+  /// - UIDevice.current.model은 "iPhone", "iPad" 같은 일반적인 값만 반환
+  /// - 이 프로퍼티는 실제 하드웨어 식별자를 반환
+  var modelIdentifier: String {
+    #if targetEnvironment(simulator)
+      // 시뮬레이터에서는 환경변수에서 가져옴
+      return ProcessInfo.processInfo.environment["SIMULATOR_MODEL_IDENTIFIER"] ?? "Simulator"
+    #else
+      var systemInfo = utsname()
+      uname(&systemInfo)
+      let machineMirror = Mirror(reflecting: systemInfo.machine)
+      let identifier = machineMirror.children.reduce("") { identifier, element in
+        guard let value = element.value as? Int8, value != 0 else { return identifier }
+        return identifier + String(UnicodeScalar(UInt8(value)))
+      }
+      return identifier
+    #endif
+  }
+}
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate { // 3. Delegate 프로토콜 3개 추가
 
@@ -36,22 +60,13 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     )
 
     // 6. APNs에 기기 등록 요청
-    // FCM 토큰이 있으면 = 이미 APNs 등록 완료 + FCM 토큰 생성 완료
-    // 따라서 APNs를 다시 등록할 필요 없음
-    let hasFCMToken = Keychain.getString(for: KeychainKey.fcmToken) != nil
-
-    if hasFCMToken {
-      // FCM 토큰이 있으면 이미 APNs도 등록되어 있고 FCM 토큰도 생성되어 있음
-      // APNs를 다시 등록할 필요 없음
-      print("ℹ️ [APNs] FCM 토큰이 이미 있으므로 APNs 등록 생략 (이미 등록 완료)")
-    } else if !hasRegisteredForRemoteNotifications {
-      // FCM 토큰이 없고, 아직 등록 요청하지 않았으면 등록 요청
-      // APNs 등록 → deviceToken → FCM 토큰 생성 순서로 진행됨
-      print("📱 [APNs] 기기 등록 요청 (FCM 토큰이 없으므로 등록 필요)")
+    // NOTE: APNs 등록은 앱 시작 시 항상 실행
+    // - FCM 토큰이 있어도 APNs 토큰은 갱신될 수 있음
+    // - Firebase SDK가 APNs ↔ FCM 토큰 매핑을 자동 처리
+    // - 토큰 갱신 시 didReceiveRegistrationToken 콜백 호출됨
+    if !hasRegisteredForRemoteNotifications {
+      print("📱 [APNs] 기기 등록 요청")
       application.registerForRemoteNotifications()
-    } else {
-      // 이미 등록 요청했지만 아직 완료되지 않음
-      print("ℹ️ [APNs] 이미 등록 요청했으므로 대기 중")
     }
 
     // 7. FCM 메시징 대리자 설정
@@ -60,77 +75,55 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     return true
   }
 
-  // 8. FCM 토큰을 수신했을 때 호출되는 함수 (이 토큰을 Firebase 콘솔에 입력!)
+  // 8. FCM 토큰을 수신했을 때 호출되는 함수
+  // NOTE: 이 콜백은 다음 상황에서 호출됨
+  // - 앱 최초 실행 시 토큰 발급
+  // - Firebase SDK가 토큰을 갱신할 때 (보안상 주기적 갱신)
+  // - 앱 삭제 후 재설치 시
   func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
     print("====================================")
     print("🔔 [FCM] 토큰 수신 콜백 호출")
     print("====================================")
-    print("Firebase (FCM) 등록 토큰: \(fcmToken ?? "토큰 없음")")
 
     guard let fcmToken else {
-      print("⚠️ FCM 토큰이 nil이므로 저장하지 않음")
+      print("⚠️ [FCM] 토큰이 nil")
       print("====================================\n")
       return
     }
-
-    // 기존 토큰 확인
-    let existingToken = Keychain.getString(for: KeychainKey.fcmToken)
 
     #if DEBUG
-      if let existingToken {
-        print("📋 [FCM] 저장 전 기존 토큰: \(existingToken.prefix(50))...")
-      } else {
-        print("📋 [FCM] 저장 전 기존 토큰: (없음)")
-      }
+      print("📋 [FCM] 토큰: \(fcmToken.prefix(50))...")
     #endif
 
-    // 등록된 사용자인지 먼저 확인
-    let userId = Keychain.getString(for: KeychainKey.userId)
-    let deviceSecret = Keychain.getString(for: KeychainKey.deviceSecret)
-    let isRegistered = userId != nil && deviceSecret != nil
-
-    // 등록되지 않은 사용자면 FCM 토큰 저장하지 않음 (앱 초기화 후 상태)
-    guard isRegistered else {
-      print("ℹ️ [FCM] 등록되지 않은 사용자 - FCM 토큰 저장하지 않음 (앱 초기화 상태)")
+    // 등록된 사용자인지 확인
+    guard let userId = Keychain.getString(for: KeychainKey.userId),
+          let deviceSecret = Keychain.getString(for: KeychainKey.deviceSecret) else {
+      // 미등록 사용자는 registerIfNeeded()에서 토큰과 함께 등록됨
+      print("ℹ️ [FCM] 미등록 사용자 - 서버 업데이트 생략 (추후 등록 시 전송)")
       print("====================================\n")
       return
     }
 
-    // 토큰이 실제로 변경되었는지 확인
-    let isTokenChanged = existingToken != fcmToken
-
-    if isTokenChanged {
-      // 토큰이 변경되었을 때만 저장
-      let saved = Keychain.setString(fcmToken, for: KeychainKey.fcmToken)
-      if saved {
-        print("✅ FCM 토큰이 변경되어 키체인에 저장했습니다")
-
-        // 이미 등록된 사용자이므로 서버에 토큰 업데이트
-        if let userId, let deviceSecret {
-          print("📤 [FCM] 서버에 FCM 토큰 업데이트 요청 (userId: \(userId))")
-          apiService.updateFCMToken(userId: userId, deviceSecret: deviceSecret, fcmToken: fcmToken)
-            .sink(
-              receiveCompletion: { completion in
-                switch completion {
-                case .finished:
-                  print("✅ [FCM] 서버 토큰 업데이트 성공")
-                case let .failure(error):
-                  print("❌ [FCM] 서버 토큰 업데이트 실패: \(error)")
-                }
-              },
-              receiveValue: { _ in }
-            )
-            .store(in: &cancellables)
-        }
-      } else {
-        print("❌ FCM 토큰 저장 실패!")
-      }
-    } else {
-      // 동일한 토큰이면 저장 생략
-      print("ℹ️ [FCM] 동일한 토큰이므로 저장 생략")
-    }
-
-    print("====================================\n")
+    // 등록된 사용자면 서버에 현재 토큰 전송
+    // NOTE: 토큰 변경 여부와 관계없이 항상 전송
+    // - 서버는 동일 토큰이면 무시하거나 updated_at만 갱신
+    // - 변경됐으면 새 토큰으로 업데이트
+    let deviceModel = UIDevice.current.modelIdentifier
+    print("📤 [FCM] 서버에 토큰 업데이트 요청 (userId: \(userId), model: \(deviceModel))")
+    apiService.updateFCMToken(userId: userId, deviceSecret: deviceSecret, fcmToken: fcmToken, model: deviceModel)
+      .sink(
+        receiveCompletion: { completion in
+          switch completion {
+          case .finished:
+            print("✅ [FCM] 서버 토큰 업데이트 성공")
+          case let .failure(error):
+            print("❌ [FCM] 서버 토큰 업데이트 실패: \(error)")
+          }
+          print("====================================\n")
+        },
+        receiveValue: { _ in }
+      )
+      .store(in: &cancellables)
   }
 
   // 9. APNs 등록에 성공하여 deviceToken을 받았을 때

@@ -22,10 +22,14 @@ struct AnonymousUserResult: Codable {
 /// 익명 사용자 등록 응답
 typealias RegisterAnonymousResponse = APIResponse<AnonymousUserResult>
 
-// MARK: - FCM 토큰 업데이트
+// MARK: - FCM 토큰 업데이트 (v2)
 
+/// FCM 토큰 업데이트 요청 (v2)
+/// - fcmToken: Firebase Cloud Messaging 토큰
+/// - model: 디바이스 모델 식별자 (예: "iPhone15,2", "iPad14,1")
 struct UpdateFCMTokenRequest: Codable {
   let fcmToken: String
+  let model: String
 }
 
 // MARK: - 에러 응답

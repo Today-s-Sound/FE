@@ -7,7 +7,7 @@ protocol APIServiceType {
   func request<T: Decodable>(_ target: some TargetType) -> AnyPublisher<T, NetworkError>
   func registerAnonymous(request: RegisterAnonymousRequest) -> AnyPublisher<RegisterAnonymousResponse, NetworkError>
   func withdrawUser(userId: String, deviceSecret: String) -> AnyPublisher<Void, NetworkError>
-  func updateFCMToken(userId: String, deviceSecret: String, fcmToken: String) -> AnyPublisher<Void, NetworkError>
+  func updateFCMToken(userId: String, deviceSecret: String, fcmToken: String, model: String) -> AnyPublisher<Void, NetworkError>
   func getSubscriptions(
     userId: String, deviceSecret: String, page: Int, size: Int
   ) -> AnyPublisher<SubscriptionListResponse, NetworkError>
@@ -185,8 +185,8 @@ class APIService: APIServiceType {
       .eraseToAnyPublisher()
   }
 
-  func updateFCMToken(userId: String, deviceSecret: String, fcmToken: String) -> AnyPublisher<Void, NetworkError> {
-    let request = UpdateFCMTokenRequest(fcmToken: fcmToken)
+  func updateFCMToken(userId: String, deviceSecret: String, fcmToken: String, model: String) -> AnyPublisher<Void, NetworkError> {
+    let request = UpdateFCMTokenRequest(fcmToken: fcmToken, model: model)
     return userProvider.requestPublisher(.updateFCMToken(userId: userId, deviceSecret: deviceSecret, request: request))
       .mapError { moyaError -> NetworkError in
         .requestFailed(moyaError)

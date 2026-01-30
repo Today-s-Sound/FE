@@ -38,17 +38,15 @@ final class SessionStore: ObservableObject {
       } else {
         print("❌ userId: (없음)")
       }
-      if let fcmToken = Keychain.getString(for: KeychainKey.fcmToken) {
-        print("✅ fcmToken: \(fcmToken)")
-      } else {
-        print("❌ fcmToken: (없음)")
-      }
+      // NOTE: FCM 토큰은 Firebase SDK가 관리하므로 Keychain에 저장하지 않음
+      // Messaging.messaging().fcmToken으로 필요 시 조회
       print("━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
     #else
       print("⚠️ RELEASE 모드로 실행 중 - DEBUG 로그 비활성화")
     #endif
 
-    // deviceSecret, userId가 있으면 등록된 것으로 간주 (FCM 토큰은 나중에 업데이트 가능)
+    // deviceSecret, userId가 있으면 등록된 것으로 간주
+    // NOTE: FCM 토큰은 앱 시작 시 Firebase에서 자동 발급되므로 등록 조건에서 제외
     let hasDeviceSecret = Keychain.getString(for: KeychainKey.deviceSecret) != nil
     let hasUserId = Keychain.getString(for: KeychainKey.userId) != nil
 
@@ -78,14 +76,12 @@ final class SessionStore: ObservableObject {
     let deviceModel = UIDevice.current.model
 
     // 3) FCM 토큰 가져오기
+    // NOTE: Firebase SDK에서 직접 조회 (Keychain 저장 불필요)
+    // - Firebase가 토큰을 내부적으로 관리/캐싱함
+    // - 토큰 갱신 시 didReceiveRegistrationToken 콜백에서 서버 업데이트
     let fcmToken = Messaging.messaging().fcmToken
 
-    // 4) FCM 토큰이 있으면 키체인에 저장
-    if let fcmToken {
-      Keychain.setString(fcmToken, for: KeychainKey.fcmToken)
-    }
-
-    // 5) 요청 객체 생성
+    // 4) 요청 객체 생성
     let request = RegisterAnonymousRequest(
       deviceSecret: secret,
       model: deviceModel,
@@ -146,6 +142,9 @@ final class SessionStore: ObservableObject {
   }
 
   /// 로그아웃 (키체인 초기화)
+  /// NOTE: FCM 토큰은 Firebase SDK가 관리하므로 Keychain에서 삭제하지 않음
+  /// - 로그아웃해도 기기의 FCM 토큰은 유효함
+  /// - 재로그인 시 동일 토큰으로 서버에 등록됨
   func logout() {
     #if DEBUG
       print("━━━━━━━━━━━━━━━━━━━━━━━━━━")
@@ -153,43 +152,30 @@ final class SessionStore: ObservableObject {
       print("━━━━━━━━━━━━━━━━━━━━━━━━━━")
     #endif
 
-    // 삭제 전 상태 확인
     #if DEBUG
       let userIdBefore = Keychain.getString(for: KeychainKey.userId)
       let deviceSecretBefore = Keychain.getString(for: KeychainKey.deviceSecret)
-      let fcmTokenBefore = Keychain.getString(for: KeychainKey.fcmToken)
 
       print("📋 [logout] 삭제 전 키체인 상태:")
       print("   - userId: \(userIdBefore != nil ? "있음" : "(없음)")")
       print("   - deviceSecret: \(deviceSecretBefore != nil ? "있음" : "(없음)")")
-      print("   - fcmToken: \(fcmTokenBefore != nil ? "있음" : "(없음)")")
-
     #endif
 
-    // 삭제 실행
+    // 삭제 실행 (userId, deviceSecret만 삭제)
     let userIdDeleted = Keychain.delete(for: KeychainKey.userId)
     let deviceSecretDeleted = Keychain.delete(for: KeychainKey.deviceSecret)
-    let fcmTokenDeleted = Keychain.delete(for: KeychainKey.fcmToken)
 
     #if DEBUG
       print("📋 [logout] 삭제 결과:")
       print("   - userId 삭제: \(userIdDeleted ? "✅ 성공" : "❌ 실패")")
       print("   - deviceSecret 삭제: \(deviceSecretDeleted ? "✅ 성공" : "❌ 실패")")
-      print("   - fcmToken 삭제: \(fcmTokenDeleted)")
 
-      // 삭제 후 상태 확인
       let userIdAfter = Keychain.getString(for: KeychainKey.userId)
       let deviceSecretAfter = Keychain.getString(for: KeychainKey.deviceSecret)
-      let fcmTokenAfter = Keychain.getString(for: KeychainKey.fcmToken)
 
       print("📋 [logout] 삭제 후 키체인 상태:")
       print("   - userId: \(userIdAfter != nil ? "⚠️ 여전히 존재!" : "✅ 삭제됨")")
       print("   - deviceSecret: \(deviceSecretAfter != nil ? "⚠️ 여전히 존재!" : "✅ 삭제됨")")
-      print("   - fcmToken: \(fcmTokenAfter != nil ? "⚠️ 여전히 존재!" : "✅ 삭제됨")")
-
-      if fcmTokenAfter != nil {
-        print("   ⚠️⚠️⚠️ fcmToken 삭제 실패! 값: \(fcmTokenAfter!.prefix(50))...")
-      }
       print("━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
     #endif
 
