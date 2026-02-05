@@ -1,4 +1,4 @@
-import Combine
+    import Combine
 import Foundation
 
 class MainViewModel: ObservableObject {
@@ -7,6 +7,7 @@ class MainViewModel: ObservableObject {
   @Published var recentAlerts: [Alert] = []
   @Published var homeFeedItems: [HomeFeedItemResponse] = []
   @Published var isLoading: Bool = false
+  @Published var isPaused: Bool = false
   @Published var errorMessage: String?
 
   private let apiService: APIService
@@ -163,12 +164,25 @@ class MainViewModel: ObservableObject {
     playCurrentGroup()
   }
 
+  /// 일시정지
+  func pausePlayback() {
+    SpeechService.shared.pause()
+    isPaused = true
+  }
+
+  /// 이어서 재생
+  func resumePlayback() {
+    SpeechService.shared.resume()
+    isPaused = false
+  }
+
   /// 재생 중단 시 큐 초기화
   func stopPlayback() {
     SpeechService.shared.stop()
     playbackQueue = []
     currentGroupIndex = 0
     currentItemIndex = 0
+    isPaused = false
   }
 
   /// 현재 그룹 재생 (카테고리명 먼저, 그 다음 summary들)

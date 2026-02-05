@@ -10,6 +10,7 @@ class SpeechService: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
   let didFinishSpeaking = PassthroughSubject<Void, Never>()
 
   @Published var isSpeaking: Bool = false
+  @Published var isPaused: Bool = false
 
   override private init() {
     super.init()
@@ -39,21 +40,37 @@ class SpeechService: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
     }
 
     // Stop any speaking in progress before starting a new one
-    if synthesizer.isSpeaking {
+    if synthesizer.isSpeaking || isPaused {
       synthesizer.stopSpeaking(at: .immediate)
-      // 중단 이벤트는 didFinishSpeaking으로 전달하지 않음
     }
 
+    isPaused = false
     isSpeaking = true
     synthesizer.speak(utterance)
   }
 
-  func stop() {
+  func pause() {
     if synthesizer.isSpeaking {
+      isSpeaking = false
+      isPaused = true
+      synthesizer.pauseSpeaking(at: .immediate)
+    }
+  }
+
+  func resume() {
+    if isPaused {
+      isPaused = false
+      isSpeaking = true
+      synthesizer.continueSpeaking()
+    }
+  }
+
+  func stop() {
+    isSpeaking = false
+    isPaused = false
+    if synthesizer.isSpeaking || synthesizer.isPaused {
       synthesizer.stopSpeaking(at: .immediate)
     }
-    isSpeaking = false
-    // stop() 호출 시에는 didFinishSpeaking 이벤트를 보내지 않음 (의도적 중단)
   }
 
   // MARK: - AVSpeechSynthesizerDelegate

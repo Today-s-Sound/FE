@@ -34,11 +34,17 @@ struct HomeView: View {
         Button(
           action: {
             if speechService.isSpeaking {
-              speechService.stop()
+              // 재생 중 → 일시정지
+              viewModel.pausePlayback()
+            } else if viewModel.isPaused {
+              // 일시정지 상태 → 이어서 재생
+              viewModel.resumePlayback()
             } else {
-              // 홈 피드가 있으면 첫 번째 피드 아이템 재생
+              // 정지 상태 → 처음부터 재생
               if !viewModel.homeFeedItems.isEmpty {
                 viewModel.playFirstFeedItem()
+              } else {
+                SpeechService.shared.speak(text: "아직 구독한 페이지가 없거나 새로운 글이 없습니다.")
               }
             }
           },
@@ -50,7 +56,7 @@ struct HomeView: View {
               .padding(20)
           }
         )
-        .accessibilityLabel(speechService.isSpeaking ? "재생 중단" : "재생 시작")
+        .accessibilityLabel(speechService.isSpeaking ? "일시정지" : viewModel.isPaused ? "이어서 재생" : "재생 시작")
         .padding(.bottom, 60)
 
         Spacer()
