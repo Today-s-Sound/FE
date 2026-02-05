@@ -12,134 +12,137 @@ struct SettingsView: View {
           .ignoresSafeArea()
 
         VStack(spacing: 0) {
+          // 제목 고정
           ScreenMainTitle(text: "관리", theme: appTheme.theme)
             .padding(.bottom, 16)
             .accessibilityAddTraits(.isHeader)
 
-          VStack(spacing: 0) {
-            NavigationLink(
-              destination: BackHeaderContainer(title: "구독 관리", theme: appTheme.theme) {
-                SubscriptionListView()
+          // 메뉴 및 버튼 스크롤
+          ScrollView {
+            VStack(spacing: 0) {
+              VStack(spacing: 0) {
+                NavigationLink(
+                  destination: BackHeaderContainer(title: "구독 관리", theme: appTheme.theme) {
+                    SubscriptionListView()
+                  }
+                ) {
+                  SettingsRow(title: "구독 페이지 관리 및 추가", theme: appTheme.theme)
+                }
+                .buttonStyle(PlainButtonStyle())
+                .accessibilityLabel("구독 페이지 관리 및 추가")
+                .accessibilityHint("구독할 웹사이트와 알림을 설정합니다")
+
+                Divider()
+                  .background(Color.border(appTheme.theme))
+                  .padding(.horizontal, 4)
+                  .accessibilityHidden(true)
+
+                NavigationLink(
+                  destination: BackHeaderContainer(title: "재생 설정", theme: appTheme.theme) {
+                    PlaybackSettingsView()
+                  }
+                ) {
+                  SettingsRow(title: "재생 설정", theme: appTheme.theme)
+                }
+                .buttonStyle(PlainButtonStyle())
+                .accessibilityLabel("재생 설정")
+                .accessibilityHint("홈 화면에서 재생되는 오늘의 소리 속도를 조절합니다")
+
+                Divider()
+                  .background(Color.border(appTheme.theme))
+                  .padding(.horizontal, 4)
+                  .accessibilityHidden(true)
+
+                NavigationLink(
+                  destination: BackHeaderContainer(title: "개발자 문의", theme: appTheme.theme) {
+                    ContactDeveloperView()
+                  }
+                ) {
+                  SettingsRow(title: "개발자에게 문의", theme: appTheme.theme)
+                }
+                .buttonStyle(PlainButtonStyle())
+                .accessibilityLabel("개발자에게 문의")
+                .accessibilityHint("등록하고 싶은 웹사이트나 기타 건의사항을 요청합니다")
+
+                Divider()
+                  .background(Color.border(appTheme.theme))
+                  .padding(.horizontal, 4)
+                  .accessibilityHidden(true)
+
+                HStack {
+                  Text("고대비 모드 설정")
+                    .font(.KoddiBold28)
+                    .foregroundColor(Color.text(appTheme.theme))
+                  Spacer()
+                  Toggle("", isOn: Binding(
+                    get: { appTheme.isHighContrast },
+                    set: { _ in appTheme.toggleTheme() }
+                  ))
+                  .labelsHidden()
+                  .tint(Color.primaryGreen)
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+                .accessibilityElement(children: .combine)
+                .accessibilityLabel("고대비 모드 설정")
+                .accessibilityValue(appTheme.isHighContrast ? "켜짐" : "꺼짐")
+
+                Divider()
+                  .background(Color.border(appTheme.theme))
+                  .padding(.horizontal, 4)
+                  .accessibilityHidden(true)
+
+                NavigationLink(
+                  destination: BackHeaderContainer(title: "도움말", theme: appTheme.theme) {
+                    HelpView(theme: appTheme.theme)
+                  }
+                ) {
+                  SettingsRow(title: "도움말", theme: appTheme.theme)
+                }
+                .buttonStyle(PlainButtonStyle())
+                .accessibilityLabel("도움말")
+                .accessibilityHint("앱 사용 방법과 기능을 안내합니다")
+
+                Divider()
+                  .background(Color.border(appTheme.theme))
+                  .padding(.horizontal, 4)
+                  .accessibilityHidden(true)
+
+                NavigationLink(
+                  destination: BackHeaderContainer(title: "FAQ", theme: appTheme.theme) {
+                    FAQView(theme: appTheme.theme)
+                  }
+                ) {
+                  SettingsRow(title: "자주 묻는 질문", theme: appTheme.theme)
+                }
+                .buttonStyle(PlainButtonStyle())
+                .accessibilityLabel("자주 묻는 질문")
+                .accessibilityHint("자주 묻는 질문과 답변을 확인합니다")
               }
-            ) {
-              SettingsRow(title: "구독 페이지 관리 및 추가", theme: appTheme.theme)
-            }
-            .buttonStyle(PlainButtonStyle())
-            .accessibilityLabel("구독 페이지 관리 및 추가")
-            .accessibilityHint("구독할 웹사이트와 알림을 설정합니다")
+              .background(Color.background(appTheme.theme))
+              .cornerRadius(12)
+              .padding(.horizontal, 8)
+              .accessibilityElement(children: .contain)
 
-            Divider()
-              .background(Color.border(appTheme.theme))
-              .padding(.horizontal, 4)
-              .accessibilityHidden(true)
-
-            NavigationLink(
-              destination: BackHeaderContainer(title: "재생 설정", theme: appTheme.theme) {
-                PlaybackSettingsView()
+              // 앱 초기화 버튼
+              Button {
+                showDeleteAlert = true
+              } label: {
+                Text("앱 초기화")
+                  .font(.KoddiExtraBold32)
+                  .foregroundColor(.white)
+                  .frame(maxWidth: .infinity)
+                  .padding(.vertical, 16)
+                  .background(Color.urgentPink)
+                  .cornerRadius(8)
               }
-            ) {
-              SettingsRow(title: "재생 설정", theme: appTheme.theme)
+              .padding(.horizontal, 16)
+              .padding(.top, 24)
+              .padding(.bottom, 40)
+              .accessibilityLabel("앱 초기화")
+              .accessibilityHint("앱의 모든 데이터를 삭제하고 앱을 종료합니다")
             }
-            .buttonStyle(PlainButtonStyle())
-            .accessibilityLabel("재생 설정")
-            .accessibilityHint("홈 화면에서 재생되는 오늘의 소리 속도를 조절합니다")
-
-            Divider()
-              .background(Color.border(appTheme.theme))
-              .padding(.horizontal, 4)
-              .accessibilityHidden(true)
-
-            NavigationLink(
-              destination: BackHeaderContainer(title: "개발자 문의", theme: appTheme.theme) {
-                ContactDeveloperView()
-              }
-            ) {
-              SettingsRow(title: "개발자에게 문의", theme: appTheme.theme)
-            }
-            .buttonStyle(PlainButtonStyle())
-            .accessibilityLabel("개발자에게 문의")
-            .accessibilityHint("등록하고 싶은 웹사이트나 기타 건의사항을 요청합니다")
-
-            Divider()
-              .background(Color.border(appTheme.theme))
-              .padding(.horizontal, 4)
-              .accessibilityHidden(true)
-
-            HStack {
-              Text("고대비 모드 설정")
-                .font(.KoddiBold28)
-                .foregroundColor(Color.text(appTheme.theme))
-              Spacer()
-              Toggle("", isOn: Binding(
-                get: { appTheme.isHighContrast },
-                set: { _ in appTheme.toggleTheme() }
-              ))
-              .labelsHidden()
-              .tint(Color.primaryGreen)
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel("고대비 모드 설정")
-            .accessibilityValue(appTheme.isHighContrast ? "켜짐" : "꺼짐")
-
-            Divider()
-              .background(Color.border(appTheme.theme))
-              .padding(.horizontal, 4)
-              .accessibilityHidden(true)
-
-            NavigationLink(
-              destination: BackHeaderContainer(title: "도움말", theme: appTheme.theme) {
-                HelpView(theme: appTheme.theme)
-              }
-            ) {
-              SettingsRow(title: "도움말", theme: appTheme.theme)
-            }
-            .buttonStyle(PlainButtonStyle())
-            .accessibilityLabel("도움말")
-            .accessibilityHint("앱 사용 방법과 기능을 안내합니다")
-
-            Divider()
-              .background(Color.border(appTheme.theme))
-              .padding(.horizontal, 4)
-              .accessibilityHidden(true)
-
-            NavigationLink(
-              destination: BackHeaderContainer(title: "FAQ", theme: appTheme.theme) {
-                FAQView(theme: appTheme.theme)
-              }
-            ) {
-              SettingsRow(title: "자주 묻는 질문", theme: appTheme.theme)
-            }
-            .buttonStyle(PlainButtonStyle())
-            .accessibilityLabel("자주 묻는 질문")
-            .accessibilityHint("자주 묻는 질문과 답변을 확인합니다")
           }
-          .background(Color.background(appTheme.theme))
-          .cornerRadius(12)
-          .padding(.horizontal, 8)
-          .padding(.bottom, 40)
-          .accessibilityElement(children: .contain)
-
-          // 앱 초기화 버튼
-          Button {
-            showDeleteAlert = true
-          } label: {
-            Text("앱 초기화")
-              .font(.KoddiExtraBold32)
-              .foregroundColor(.white)
-              .frame(maxWidth: .infinity)
-              .padding(.vertical, 16)
-              .background(Color.urgentPink)
-              .cornerRadius(8)
-          }
-          .padding(.horizontal, 16)
-          .padding(.vertical, 16)
-          .padding(.bottom, 40)
-          .accessibilityLabel("앱 초기화")
-          .accessibilityHint("앱의 모든 데이터를 삭제하고 앱을 종료합니다")
-
-          Spacer()
         }
       }
       .navigationBarHidden(true)
