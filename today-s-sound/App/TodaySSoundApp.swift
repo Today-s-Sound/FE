@@ -97,7 +97,8 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 
     // 등록된 사용자인지 확인
     guard let userId = Keychain.getString(for: KeychainKey.userId),
-          let deviceSecret = Keychain.getString(for: KeychainKey.deviceSecret) else {
+          let deviceSecret = Keychain.getString(for: KeychainKey.deviceSecret)
+    else {
       // 미등록 사용자는 registerIfNeeded()에서 토큰과 함께 등록됨
       print("ℹ️ [FCM] 미등록 사용자 - 서버 업데이트 생략 (추후 등록 시 전송)")
       print("====================================\n")
