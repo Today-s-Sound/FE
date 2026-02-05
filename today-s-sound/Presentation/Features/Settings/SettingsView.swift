@@ -82,6 +82,38 @@ struct SettingsView: View {
             .accessibilityElement(children: .combine)
             .accessibilityLabel("고대비 모드 설정")
             .accessibilityValue(appTheme.isHighContrast ? "켜짐" : "꺼짐")
+
+            Divider()
+              .background(Color.border(appTheme.theme))
+              .padding(.horizontal, 4)
+              .accessibilityHidden(true)
+
+            NavigationLink(
+              destination: BackHeaderContainer(title: "도움말", theme: appTheme.theme) {
+                HelpView(theme: appTheme.theme)
+              }
+            ) {
+              SettingsRow(title: "도움말", theme: appTheme.theme)
+            }
+            .buttonStyle(PlainButtonStyle())
+            .accessibilityLabel("도움말")
+            .accessibilityHint("앱 사용 방법과 기능을 안내합니다")
+
+            Divider()
+              .background(Color.border(appTheme.theme))
+              .padding(.horizontal, 4)
+              .accessibilityHidden(true)
+
+            NavigationLink(
+              destination: BackHeaderContainer(title: "FAQ", theme: appTheme.theme) {
+                FAQView(theme: appTheme.theme)
+              }
+            ) {
+              SettingsRow(title: "자주 묻는 질문", theme: appTheme.theme)
+            }
+            .buttonStyle(PlainButtonStyle())
+            .accessibilityLabel("자주 묻는 질문")
+            .accessibilityHint("자주 묻는 질문과 답변을 확인합니다")
           }
           .background(Color.background(appTheme.theme))
           .cornerRadius(12)

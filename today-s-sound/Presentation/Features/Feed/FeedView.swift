@@ -96,11 +96,11 @@ struct FeedView: View {
   private var emptyState: some View {
     VStack {
       Spacer()
-      Text("표시할 피드가 없습니다")
+      Text("현재 표시할 피드가 없습니다\n구독한 페이지에 새로운 글이 올라오면 표시됩니다\n관리 탭에서 구독 페이지를 추가해주세요")
         .font(.KoddiBold20)
         .foregroundColor(Color.secondaryText(appTheme.theme))
         .multilineTextAlignment(.center)
-        .accessibilityLabel("표시할 피드가 없습니다")
+        .accessibilityLabel("현재 표시할 피드가 없습니다. 구독한 페이지에 새로운 글이 올라오면 표시됩니다. 관리 탭에서 구독 페이지를 추가해주세요.")
       Spacer()
     }
     .padding(.horizontal, 24)
@@ -251,7 +251,7 @@ private struct FeedCard: View {
           )
         }
         .buttonStyle(.borderless)
-        .accessibilityLabel("원문 보기 버튼")
+        .accessibilityLabel("원문 보기")
         .accessibilityHint("탭하면 Safari에서 원문 페이지를 엽니다")
       }
     }
