@@ -24,24 +24,17 @@ struct AlertCardView: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
-      // 상단: 아이콘 + 제목 + (오른쪽 상단 삭제 버튼)
-      HStack(alignment: .top, spacing: 12) {
+      // 상단: 아이콘 + 삭제 버튼 (양쪽 끝)
+      HStack(alignment: .top) {
         Image(alarm.isKeywordMatched ? "notice" : "mail")
           .resizable()
           .scaledToFit()
           .frame(width: 48, height: 48)
           .accessibilityHidden(true)
 
-        Text(alarm.alias)
-          .font(.KoddiExtraBold32)
-          .foregroundColor(textColor)
-          .multilineTextAlignment(.leading)
-          .accessibilityLabel(alarm.isKeywordMatched ? "키워드 매칭 알림 " + alarm.alias : alarm.alias)
-          .accessibilityAddTraits(.isHeader)
-
         Spacer()
 
-        // ✅ 삭제 버튼: 예전 읽음 체크 자리(오른쪽 상단), 아이콘만, 투명 배경
+        // ✅ 삭제 버튼: 오른쪽 상단, 아이콘만, 투명 배경
         Button {
           onDelete?(alarm)
         } label: {
@@ -60,6 +53,14 @@ struct AlertCardView: View {
         .accessibilityLabel("삭제")
         .accessibilityHint("이 알림을 삭제합니다")
       }
+
+      // 제목: 아래로 넓게 펼쳐짐
+      Text(alarm.alias)
+        .font(.KoddiExtraBold32)
+        .foregroundColor(textColor)
+        .multilineTextAlignment(.leading)
+        .accessibilityLabel(alarm.isKeywordMatched ? "키워드 매칭 알림 " + alarm.alias : alarm.alias)
+        .accessibilityAddTraits(.isHeader)
 
       // 본문
       Text(alarm.summaryContent)
